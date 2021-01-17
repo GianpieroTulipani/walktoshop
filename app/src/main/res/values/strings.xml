@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">WalkToShop</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="action_exit">Esci</string>
+    <string name="search">search</string>
+    <string name="content_description_search">contenuto</string>
+    <string name="action_home">home</string>
+    <string name="action_map">mappa</string>
+    <string name="action_statistics">statistiche</string>
+    <string name="action_discount">miei sconti</string>
+    <string name="action_notification">notifiche</string>
+    <string name="action_search">cerca</string>
+    <string name="snackbar_message">Caricamento schermata di inserimento sconto</string>
+    <string name="snackbar_action">CLOSE</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="emailEmpty">Inserire email</string>
+    <string name="passwordEmpty">Inserire password</string>
+    <string name="usernameEmpty">Inserire username</string>
+    <string name="InvalidPassword">Password non valida</string>
+    <string name="InvalidEmail">Password non valida</string>
+    <string name="InvalidUsername">Password non valida</string>
+    <string name="weight">Peso</string>
+    <string name="height">Altezza</string>
+    <string name="weightEmpty">Peso assente</string>
+    <string name="heightEmpty">Altezza assente</string>
+    <string name="title_activity_seller_maps_view">Map</string>
+</resources>

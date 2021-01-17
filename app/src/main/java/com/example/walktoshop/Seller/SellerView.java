@@ -135,7 +135,7 @@ public class SellerView extends AppCompatActivity {
                         Log.d("array2",businessArray.get(0).getName());
                         progressBar.setVisibility(View.GONE);
                         Log.d("array",businessArray.toString());
-                        final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,businessArray);
+                        final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,businessArray, UID);
                         listView.setAdapter(adapter);
                     }
                 });

@@ -18,31 +18,28 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            android:padding="5dp"
             android:text="main"
             android:textColor="#000"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:padding="5dp"/>
+            android:textStyle="bold" />
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/deletebusiness"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginTop="20dp"
             android:layout_marginLeft="310dp"
-
-            />
+            android:layout_marginTop="20dp" />
 
         <TextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="description"
-            android:textColor="#000"
-            android:textSize="20sp"
             android:layout_marginTop="50dp"
             android:padding="5dp"
-            />
+            android:text="description"
+            android:textColor="#000"
+            android:textSize="20sp" />
 
 
     </RelativeLayout>

@@ -1,6 +1,9 @@
 package com.example.walktoshop.Seller;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,12 +50,7 @@ public class SellerViewAdapter extends ArrayAdapter {
     }
     @Override
     public int getCount() {
-        if(business.size()<1){
-            return 1;
-        }else{
-            return business.size();
-        }
-
+        return business.size();
     }
     @Override
     public Object getItem(int position) {
@@ -85,6 +83,8 @@ public class SellerViewAdapter extends ArrayAdapter {
             Business b=this.business.get(position);
             myTitle.setText(b.getName());
             myDescription.setText("vuota");
+        }else{
+            Log.d("else","else");
         }
         deletebusiness.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,10 +123,12 @@ public class SellerViewAdapter extends ArrayAdapter {
              {
                  DocumentSnapshot document = task.getResult();
                  ArrayList<String> businessUID = (ArrayList<String>) document.get("businessUID");
+                 Log.d("venditore",businessUID.toString());
                  businessUID.remove(position);
+                 Log.d("venditore",businessUID.toString());
                  SellerViewAdapter.this.business.remove(position);
                  SellerViewAdapter.this.notifyDataSetChanged();
-                 Log.d("venditore",businessUID.toString());
+
                  updateSeller(businessUID);
              }
             }
@@ -145,4 +147,5 @@ public class SellerViewAdapter extends ArrayAdapter {
             }
         });
     }
+
 }

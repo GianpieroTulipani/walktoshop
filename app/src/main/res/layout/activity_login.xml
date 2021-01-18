@@ -3,60 +3,100 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#f8f8ff">
 
     <Button
         android:id="@+id/buttonlogIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="288dp"
+        android:layout_marginBottom="164dp"
+        android:background="@color/verde_maggio"
         android:onClick="login"
-        android:text="Ok"
+        android:text="Accedi"
+        android:textColor="#f8f8ff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.789"
+        app:layout_constraintHorizontal_bias="0.85"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/emailLogIn"
-        android:layout_width="247dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="76dp"
+        android:layout_width="317dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="336dp"
+        android:background="@drawable/ic_text_box"
+        android:drawableStart="@drawable/ic_email"
+        android:drawablePadding="4dp"
+        android:elevation="6dp"
         android:ems="10"
-        android:hint="email"
+        android:hint="Email"
         android:inputType="textEmailAddress"
+        android:paddingStart="6dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/passwordLogIn"
-        android:layout_width="249dp"
-        android:layout_height="46dp"
-        android:layout_marginBottom="356dp"
-        android:ems="10"
-        android:hint="password"
+        android:layout_width="317dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="248dp"
+        android:background="@drawable/ic_text_box"
+        android:drawableStart="@drawable/ic_psw"
+        android:drawablePadding="4dp"
+        android:elevation="6dp"
+
+        android:hint="Password"
         android:inputType="textPassword"
+        android:paddingStart="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/emailLogIn" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="276dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
     <TextView
-        android:id="@+id/textView4"
-        android:layout_width="250dp"
-        android:layout_height="44dp"
-        android:layout_marginStart="82dp"
-        android:layout_marginTop="112dp"
-        android:layout_marginEnd="79dp"
+        android:id="@+id/not_registered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Non sei registrato? Clicca qui!"
+        android:textColor="@android:color/holo_blue_bright"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.837"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="WalkToShop"
         android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textDirection="firstStrongRtl"
-        android:textSize="36sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="60sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.139"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="0dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,18 +22,23 @@
         <activity android:name=".Seller.SellerView">
 
         </activity>
-        <activity android:name=".Seller.SellerMapView">
-
-        </activity>
-        <activity android:name=".Login_SignUp.SignUp">
-
-        </activity>
-        <activity android:name=".Login_SignUp.LogIn">
+        <activity android:name=".Login_SignUp.LogIn"
+            android:theme="@style/FullScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+
+        </activity>
+        <activity android:name=".Seller.SellerMapView">
+
+        </activity>
+        <activity android:name=".Login_SignUp.SignUp"
+            android:theme="@style/FullScreen">
+
+
         </activity>
     </application>
 

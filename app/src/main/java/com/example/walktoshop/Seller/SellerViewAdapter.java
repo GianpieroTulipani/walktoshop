@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.walktoshop.R;
+import com.example.walktoshop.Seller.Business;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -119,18 +120,18 @@ public class SellerViewAdapter extends ArrayAdapter {
         db.collection("venditore").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-             if(task.isSuccessful())
-             {
-                 DocumentSnapshot document = task.getResult();
-                 ArrayList<String> businessUID = (ArrayList<String>) document.get("businessUID");
-                 Log.d("venditore",businessUID.toString());
-                 businessUID.remove(position);
-                 Log.d("venditore",businessUID.toString());
-                 SellerViewAdapter.this.business.remove(position);
-                 SellerViewAdapter.this.notifyDataSetChanged();
+                if(task.isSuccessful())
+                {
+                    DocumentSnapshot document = task.getResult();
+                    ArrayList<String> businessUID = (ArrayList<String>) document.get("businessUID");
+                    Log.d("venditore",businessUID.toString());
+                    businessUID.remove(position);
+                    Log.d("venditore",businessUID.toString());
+                    SellerViewAdapter.this.business.remove(position);
+                    SellerViewAdapter.this.notifyDataSetChanged();
 
-                 updateSeller(businessUID);
-             }
+                    updateSeller(businessUID);
+                }
             }
         });
     }

@@ -3,8 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:id="@+id/itemPage"
-    >
+    android:id="@+id/itemPage">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -43,12 +42,7 @@
             android:layout_marginStart="270dp"
             android:layout_marginTop="20dp"
             android:backgroundTint="@color/red"
-            android:drawableStart="@drawable/ic_bin"
-
-
-            />
-
-
+            android:drawableStart="@drawable/ic_bin" />
 
 
     </RelativeLayout>

@@ -20,7 +20,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.walktoshop.R;
-import com.example.walktoshop.User.FragmentUserMapBackDrop;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -44,6 +43,7 @@ public class SellerView extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_view);
+        //View coordinatorLayout = findViewById(android.R.id.content);
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,19 +57,32 @@ public class SellerView extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Log.d("SELLERVIEW","sei dentro l'onclick");
+                
             }
         });
         Intent intent = getIntent();
         if(intent.hasExtra("UID")){
             UID=intent.getStringExtra("UID");
         }
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*Snackbar.make(coordinatorLayout, R.string.snackbar_message, Snackbar.LENGTH_LONG)
+                .setAction(R.string.snackbar_action, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_FADE).show();*/
+            }
+        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         getSellerBusinessUID();
+        Log.d("b",businessUID.toString());
 
     }
 
@@ -101,6 +114,7 @@ public class SellerView extends AppCompatActivity {
                         DocumentSnapshot document= task.getResult();
                         businessUID= (ArrayList) document.get("businessUID");
                         //se ha delle attività le recupera
+                        Log.d("businessUID",businessUID.toString());
                         if(businessUID.size()>0 && businessUID!=null && !businessUID.isEmpty()){
                             getBusiness();
                         }else{
@@ -117,6 +131,7 @@ public class SellerView extends AppCompatActivity {
             for(int i=0;i<businessUID.size();i++){
                 String b=businessUID.get(i);
                 b=b.trim();
+                Log.d("b",b);
                 db.collection("attivita").document(b).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -136,12 +151,15 @@ public class SellerView extends AppCompatActivity {
                             business.setLongitude(document.getString("longitude"));
                             business.setDiscountUID((ArrayList) document.get("discountUID"));
                             businessArray.add(business);
+                            //Log.d("array2",business.getName());
                         }
                     }
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        Log.d("array2",businessArray.get(0).getName());
                         progressBar.setVisibility(View.GONE);
+                        Log.d("array",businessArray.toString());
                         final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,businessArray, UID,businessUID);
                         listView.setAdapter(adapter);
                     }

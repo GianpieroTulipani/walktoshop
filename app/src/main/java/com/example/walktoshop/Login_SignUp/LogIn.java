@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walktoshop.R;
+import com.example.walktoshop.Seller.SellerView;
 import com.example.walktoshop.User.UserView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -103,17 +104,23 @@ public class LogIn extends AppCompatActivity {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()) {
                     Log.d("ok", "venditore");
+                    goSellerViewActivity();
+                    finish();
                 }
                 else{
                     Log.d("ok", "utente");
-                    goHomeActivity();
+                    goUserViewActivity();
                     finish();
                 }
             }
         });
     }
-
-    public void goHomeActivity() {
+    private void goSellerViewActivity(){
+        final Intent intent = new Intent(this, SellerView.class);
+        intent.putExtra("UID", Uid);
+        startActivity(intent);
+    }
+    private void goUserViewActivity() {
         final Intent intent = new Intent(this, UserView.class);
         intent.putExtra("UID", Uid);
         startActivity(intent);

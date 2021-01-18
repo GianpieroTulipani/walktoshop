@@ -25,4 +25,16 @@
     <string name="weightEmpty">Peso assente</string>
     <string name="heightEmpty">Altezza assente</string>
     <string name="title_activity_seller_maps_view">Map</string>
+    //framgent_manageDiscount
+    <string name="disocuntsQuantity">Quantità</string>
+    <string name="percentage">Percentuale</string>
+    <string name="description">Descrizione</string>
+    <string name="expiringDate">Data di scadenza</string>
+    <string name="add">Aggiungi</string>
+    //dialog
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="ok">Ok</string>
+    <string name="businessNotFound">Ci spiace!Località non trovata.Riprovare</string>
+    <string name="emptyBusiness">Non possiedi attività.Vuoi registrarne una?</string>
 </resources>

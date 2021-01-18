@@ -1,16 +1,25 @@
 package com.example.walktoshop.Seller;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class Business{
-    private String UID;
-    private String name;
-    private String latitude;
-    private String longitude;
-    private ArrayList discountUID;
+    private String UID=null;
+    private String ownerUID=null;
+    private String name=null;
+    private String latitude=null;
+    private String longitude=null;
+    private String locality=null;
+    private ArrayList discountUID=null;
 
     public Business(){}
     //getter
+
+    public String getOwnerUID() {
+        return ownerUID;
+    }
+
     public String getUID() {
         return UID;
     }
@@ -23,6 +32,10 @@ public class Business{
         return latitude;
     }
 
+    public String getLocality() {
+        return locality;
+    }
+
     public ArrayList getDiscountUID() {
         return discountUID;
     }
@@ -31,9 +44,8 @@ public class Business{
         return name;
     }
     //setter
-
-    public void setUID(String UID) {
-        this.UID = UID;
+    public void setOwnerUID(String ownerUID) {
+        this.ownerUID = ownerUID;
     }
 
     public void setLongitude(String longitude) {
@@ -50,5 +62,13 @@ public class Business{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
+    }
+
+    public void setUID(String UID) {
+        this.UID = UID;
     }
 }

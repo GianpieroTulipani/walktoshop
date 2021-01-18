@@ -34,14 +34,16 @@ public class SellerViewAdapter extends ArrayAdapter {
     private Context context;
     private ArrayList<Business> business;
     private String UID;
+    private ArrayList<String> businessUID;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
 
 
-    public SellerViewAdapter(Context context, ArrayList<Business> business, String UID) {
+    public SellerViewAdapter(Context context, ArrayList<Business> business, String UID,ArrayList businessUID) {
         super(context, R.layout.activity_sellerviewadapter);
         this.context=context;
         this.business=business;
         this.UID = UID;
+        this.businessUID = businessUID;
     }
     @Override
     public int getCount() {
@@ -120,7 +122,6 @@ public class SellerViewAdapter extends ArrayAdapter {
              if(task.isSuccessful())
              {
                  DocumentSnapshot document = task.getResult();
-                 Seller seller = new Seller();
                  ArrayList<String> businessUID = (ArrayList<String>) document.get("businessUID");
                  businessUID.remove(position);
                  SellerViewAdapter.this.business.remove(position);

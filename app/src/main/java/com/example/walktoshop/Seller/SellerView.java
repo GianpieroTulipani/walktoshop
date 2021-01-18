@@ -1,5 +1,7 @@
 package com.example.walktoshop.Seller;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,7 +30,7 @@ import java.util.ArrayList;
 
 public class SellerView extends AppCompatActivity {
     private ListView listView;
-    private String UID="ErwvRrl854W3ghKfevEuZd5On0R2";
+    private String UID=null;
 
     private ProgressBar progressBar;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
@@ -96,7 +98,13 @@ public class SellerView extends AppCompatActivity {
                     if(task.isSuccessful()){
                         DocumentSnapshot document= task.getResult();
                         businessUID= (ArrayList) document.get("businessUID");
-                        getBusiness();
+                        //se ha delle attività le recupera
+                        Log.d("businessUID",businessUID.toString());
+                        if(businessUID.size()>0 && businessUID!=null && !businessUID.isEmpty()){
+                            getBusiness();
+                        }else{
+                            dialog();
+                        }
                     }
                 }
             });
@@ -120,7 +128,9 @@ public class SellerView extends AppCompatActivity {
                             } else {
                                 Log.d("TAG", "No such document");
                             }
+                            business.setOwnerUID(UID);
                             business.setUID(document.getString("uid"));
+                            business.setLocality(document.getString("locality"));
                             business.setName(document.getString("name"));
                             business.setLatitude(document.getString("latitude"));
                             business.setLongitude(document.getString("longitude"));
@@ -135,12 +145,34 @@ public class SellerView extends AppCompatActivity {
                         Log.d("array2",businessArray.get(0).getName());
                         progressBar.setVisibility(View.GONE);
                         Log.d("array",businessArray.toString());
-                        final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,businessArray, UID);
+                        final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,businessArray, UID,businessUID);
                         listView.setAdapter(adapter);
                     }
                 });
             }
         }
+    }
+    private void dialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Add the buttons
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+                goSellerMapView();
+
+            }
+        }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User cancelled the dialog
+            }
+        }).setMessage(R.string.emptyBusiness);
+        // Set other d
+        builder.show();
+    }
+    private void goSellerMapView(){
+        final Intent intent = new Intent(this, SellerMapView.class);
+        intent.putExtra("UID",UID);
+        startActivity(intent);
     }
 }
 

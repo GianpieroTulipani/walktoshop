@@ -30,7 +30,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
 
-public class Fragment_manageDiscounts extends FragmentActivity {
+public class Fragment_manageDiscounts extends Fragment {
     private EditText percentage;
     private EditText description;
     private EditText quantity;
@@ -61,7 +61,7 @@ public class Fragment_manageDiscounts extends FragmentActivity {
                 int month=cal.get(Calendar.MONTH);
                 int year=cal.get(Calendar.YEAR);
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    DatePickerDialog datePickerDialog=new DatePickerDialog(Fragment_manageDiscounts.this, android.R.style.Theme_DeviceDefault_Dialog, new DatePickerDialog.OnDateSetListener() {
+                    DatePickerDialog datePickerDialog=new DatePickerDialog(getContext(), android.R.style.Theme_DeviceDefault_Dialog, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int month, int date) {
                             expiringDate.setText(date+"-"+month+"-"+year);

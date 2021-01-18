@@ -10,10 +10,10 @@ public class Discount {
     //private Date expiring date
        /*
     o	UID
-o	Codice(per renderlo unico uidsconto+uidUtente)
-o	Stato
-o	NPassiCompletamentoSconto
-o	GiornodiScadenza
+    o	Codice(per renderlo unico uidsconto+uidUtente)
+    o	Stato
+    o	NPassiCompletamentoSconto
+    o	GiornodiScadenza
 
      */
     public Discount(){};

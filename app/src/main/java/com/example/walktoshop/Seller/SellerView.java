@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.walktoshop.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,9 +45,21 @@ public class SellerView extends AppCompatActivity {
         setContentView(R.layout.activity_seller_view);
         //View coordinatorLayout = findViewById(android.R.id.content);
         mFab = (FloatingActionButton) findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goSellerMapView();
+            }
+        });
         progressBar=findViewById(R.id.sellerViewProgressBar);
         progressBar.setVisibility(View.INVISIBLE);
         listView=findViewById(R.id.listView);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                
+            }
+        });
         Intent intent = getIntent();
         if(intent.hasExtra("UID")){
             UID=intent.getStringExtra("UID");
@@ -90,6 +104,7 @@ public class SellerView extends AppCompatActivity {
                 break;
         }
     }
+
     private void getSellerBusinessUID(){
         if(UID!=null){
             db.collection("venditore").document(this.UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -173,6 +188,9 @@ public class SellerView extends AppCompatActivity {
         final Intent intent = new Intent(this, SellerMapView.class);
         intent.putExtra("UID",UID);
         startActivity(intent);
+    }
+    private void startDiscountFragment(){
+
     }
 }
 

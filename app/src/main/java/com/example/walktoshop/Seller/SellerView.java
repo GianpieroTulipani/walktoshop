@@ -57,7 +57,7 @@ public class SellerView extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                
+
             }
         });
         Intent intent = getIntent();

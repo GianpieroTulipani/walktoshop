@@ -17,8 +17,8 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".User.UserView">
-
         </activity>
+        <activity android:name=".User.UserMapView"></activity>
         <activity android:name=".Seller.SellerView">
 
         </activity>
@@ -35,7 +35,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
     </application>
 

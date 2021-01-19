@@ -56,11 +56,14 @@ public class UserView extends AppCompatActivity {
     LocationManager service;
     LocationListener locationListener;
     private boolean statusOfGPS = false;
+    double longitude = 0;
+    double latitude = 0;
+    String city = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        askGPSpermission();
+
         setContentView(R.layout.activity_user_view);
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -71,7 +74,7 @@ public class UserView extends AppCompatActivity {
                         goHome();
                         break;
                     case R.id.action_map:
-                        goToUserViewMap();
+                        askGPSpermission();
                         break;
                     case R.id.action_statistics:
                         break;
@@ -83,20 +86,14 @@ public class UserView extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        getUserPosition();
-
-    }
-
-    private void getUserPosition() {
+   private void getUserPosition() {
         service = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                double latitude=location.getLatitude();
-                double longitude=location.getLongitude();
+                latitude=location.getLatitude();
+                longitude=location.getLongitude();
+                goToUserViewMap();
                 Log.d("coordinates",latitude+"\n"+longitude);
                 try {
                     Geocoder geocoder=new Geocoder(UserView.this);
@@ -137,8 +134,9 @@ public class UserView extends AppCompatActivity {
             }
             return;
         }
-        service.requestLocationUpdates("gps", 2000, 0, locationListener);
-
+        int minTime;
+        getUserPosition();
+        service.requestLocationUpdates("gps", 1000, 1000, locationListener);
     }
 
     @Override
@@ -164,10 +162,11 @@ public class UserView extends AppCompatActivity {
 
     private void goToUserViewMap() {
         final Intent intent = new Intent(UserView.this, UserMapView.class);
+        intent.putExtra("latitude", latitude);
+        intent.putExtra("longitude", longitude);
         startActivity(intent);
 
     }
-
 
     public void goHome() {
         final Intent intent = new Intent(this, UserView.class);

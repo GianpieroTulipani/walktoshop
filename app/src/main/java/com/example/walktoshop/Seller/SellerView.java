@@ -64,18 +64,6 @@ public class SellerView extends AppCompatActivity {
         if(intent.hasExtra("UID")){
             UID=intent.getStringExtra("UID");
         }
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*Snackbar.make(coordinatorLayout, R.string.snackbar_message, Snackbar.LENGTH_LONG)
-                .setAction(R.string.snackbar_action, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                }).setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_FADE).show();*/
-            }
-        });
     }
 
     @Override

@@ -62,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Sei già registrato? Clicca qui!"
-        android:textColor="@android:color/holo_blue_bright"
+        android:textColor="#7081DF"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

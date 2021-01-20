@@ -46,7 +46,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.78" />
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/fragmentSignUpprogressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="89dp"
         android:layout_height="74dp"

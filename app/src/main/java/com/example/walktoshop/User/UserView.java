@@ -18,30 +18,15 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 
 import com.example.walktoshop.R;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.PlaceLikelihood;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
-import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
-import com.google.android.libraries.places.api.net.PlacesClient;
+
+import com.example.walktoshop.Seller.Discount;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -56,11 +41,12 @@ import java.util.Locale;
 public class UserView extends AppCompatActivity {
     LocationManager service;
     LocationListener locationListener;
+    FirebaseFirestore db =FirebaseFirestore.getInstance();
     private boolean statusOfGPS = false;
     double longitude;
     double latitude;
     String city;
-
+    private ArrayList<Discount> myDiscounts= new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +72,14 @@ public class UserView extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+    }
+    private void getUserDiscounts(){
+       // db.collection("utente").document("")
+    }
     private void getUserPosition() {
         service = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {

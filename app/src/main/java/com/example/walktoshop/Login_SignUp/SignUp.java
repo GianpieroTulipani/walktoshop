@@ -59,8 +59,12 @@ public class SignUp extends AppCompatActivity {
                     if(switchButton.isChecked()){
                         //crea e carica il negoziante
                         createSeller();
+
                     }else{
                         //lato utente
+                        username.setVisibility(View.INVISIBLE);
+                        password.setVisibility(View.INVISIBLE);
+                        email.setVisibility(View.INVISIBLE);
                         startFragment();
                     }
                 }

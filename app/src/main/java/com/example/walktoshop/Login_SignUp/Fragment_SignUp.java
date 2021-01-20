@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -24,6 +25,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 public class Fragment_SignUp extends Fragment {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -31,12 +34,15 @@ public class Fragment_SignUp extends Fragment {
     private EditText weight;
     private EditText height;
     private Button confirm;
+    private ProgressBar fragmentSignUpprogressBar;
     String userWeight;
     String userHeight;
     private User user =new User();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view =inflater.inflate(R.layout.fragment_signup,container,false);
+        fragmentSignUpprogressBar=view.findViewById(R.id.fragmentSignUpprogressBar);
+        fragmentSignUpprogressBar.setVisibility(View.INVISIBLE);
         weight=(EditText)view.findViewById(R.id.weight);
         height=(EditText)view.findViewById(R.id.height);
         confirm=(Button)view.findViewById(R.id.confirm);
@@ -60,7 +66,9 @@ public class Fragment_SignUp extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
+                                fragmentSignUpprogressBar.setVisibility(View.VISIBLE);
                                 uploadUser();
+                                fragmentSignUpprogressBar.setVisibility(View.INVISIBLE);
                             }
                         }
                     });
@@ -80,6 +88,8 @@ public class Fragment_SignUp extends Fragment {
     private void uploadUser()
     {
         user.setUID(mAuth.getUid());
+        user.setWalkUID(new ArrayList<>());
+        user.setDisocuntUID(new ArrayList<>());
         db.collection("utente").document(user.getUID()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

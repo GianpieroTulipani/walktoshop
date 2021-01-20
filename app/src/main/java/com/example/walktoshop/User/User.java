@@ -12,8 +12,8 @@ public class User {
     private String height;//cm
     private String weight;//kg
     private int falcata;
-    private ArrayList<String> camminataUID;
-    private ArrayList<String> scontiUID;
+    private ArrayList<String> walkUID;
+    private ArrayList<String> disocuntUID;
     /*
    o	UID
 o	Email
@@ -64,12 +64,13 @@ o	ScontiUID[]
     public void setFalcata(int falcata) {
         this.falcata = falcata;
     }
-    public void setCamminataUID(ArrayList<String> camminataUID) {
-        this.camminataUID = camminataUID;
+
+    public void setWalkUID(ArrayList<String> walkUID) {
+        this.walkUID = walkUID;
     }
 
-    public void setScontiUID(ArrayList<String> scontiUID) {
-        this.scontiUID = scontiUID;
+    public void setDisocuntUID(ArrayList<String> disocuntUID) {
+        this.disocuntUID = disocuntUID;
     }
 
     //getters
@@ -109,13 +110,12 @@ o	ScontiUID[]
         return falcata;
     }
 
-    public ArrayList<String> getCamminataUID() {
-        return camminataUID;
+    public ArrayList<String> getWalkUID() {
+        return walkUID;
     }
 
-    public ArrayList<String> getScontiUID() {
-        return scontiUID;
+    public ArrayList<String> getDisocuntUID() {
+        return disocuntUID;
     }
-
 }
 

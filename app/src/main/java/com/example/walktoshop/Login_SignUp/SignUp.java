@@ -72,11 +72,6 @@ public class SignUp extends AppCompatActivity {
         });
 
     }
-    public void goHomeActivity() {
-        final Intent intent = new Intent(this, UserView.class);
-        intent.putExtra("UID",seller.getUID());
-        startActivity(intent);
-    }
 
     private void startFragment()
     {

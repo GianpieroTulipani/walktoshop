@@ -27,13 +27,17 @@ import android.view.MenuItem;
 import com.example.walktoshop.R;
 
 import com.example.walktoshop.Seller.Discount;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -46,6 +50,7 @@ public class UserView extends AppCompatActivity {
     double longitude;
     double latitude;
     String city;
+    private String userUID=null;
     private ArrayList<Discount> myDiscounts= new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,15 +75,58 @@ public class UserView extends AppCompatActivity {
                 return true;
             }
         });
+        Intent intent =getIntent();
+        if(intent.hasExtra("UID")){
+            this.userUID = intent.getStringExtra("UID");
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        getUserDiscounts();
 
     }
     private void getUserDiscounts(){
-       // db.collection("utente").document("")
+        db.collection("utente").document(userUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document= task.getResult();
+                    ArrayList<String> discountUID = (ArrayList) document.get("disocuntUID");
+                    if(discountUID!=null){
+                        getMyDiscounts(discountUID);
+                    }
+                }
+            }
+        });
+    }
+    private void getMyDiscounts(ArrayList discountUID){
+        Iterator it =discountUID.iterator();
+        while(it.hasNext()){
+            String uid= (String) it.next();
+            db.collection("sconti").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        DocumentSnapshot document= task.getResult();
+                        Discount discount=new Discount();
+                        discount.setExpiringDate(document.getString("expiringDate"));
+                        discount.setBusinessUID(document.getString("businessUID"));
+                        discount.setState(document.getString("state"));
+                        discount.setDescription(document.getString("description"));
+                        discount.setStepNumber(document.getString("stepNumber"));
+                        discount.setBusinessUID(document.getString("businessUID"));
+                        myDiscounts.add(discount);
+                    }
+                }
+            }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    Log.d("myDiscounts",myDiscounts.get(0).getDescription());
+                }
+            });
+        }
     }
     private void getUserPosition() {
         service = (LocationManager) getSystemService(LOCATION_SERVICE);

@@ -79,12 +79,19 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                         mMap.addMarker(new MarkerOptions().position(place).title(location));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place,10));
                         //inizalizzazione oggetto da scrivere
-
+                        /*
+                            Mettere tutto in un metodo ,nome esatto della citta
+                            if(SellerMapView.this.location.contains(",")){
+                                String[] res = SellerMapView.this.location.split("[,]", 0);
+                                SellerMapView.this.location=res[0]
+                            }
+                            in setName inserire res[0] e provare
+                         */
                         SellerMapView.this.business.setName(SellerMapView.this.location);
                         SellerMapView.this.business.setLongitude(String.valueOf(addr.getLongitude()));
                         SellerMapView.this.business.setLatitude(String.valueOf(addr.getLatitude()));
                         SellerMapView.this.business.setLocality(addr.getLocality());
-                        SellerMapView.this.business.setUID(calculateMyCustomUID(addr.getLatitude(),addr.getLongitude()));
+                        SellerMapView.this.business.setUID(calculateMyBusinessCustomUID(addr.getLatitude(),addr.getLongitude()));
                         Log.d("customuid",SellerMapView.this.business.getUID());
                         setBusiness(SellerMapView.this.business);
                     }
@@ -167,7 +174,7 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
         // Set other d
         builder.show();
     }
-    private String calculateMyCustomUID(Double latitude,Double longitude){
+    private String calculateMyBusinessCustomUID(Double latitude,Double longitude){
         if(latitude!=null && longitude!=null){
             String customUID=null;
             customUID= String.valueOf(latitude+longitude);

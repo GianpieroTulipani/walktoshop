@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -17,8 +18,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.walktoshop.Login_SignUp.Fragment_SignUp;
 import com.example.walktoshop.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -33,33 +36,36 @@ import java.util.ArrayList;
 public class SellerView extends AppCompatActivity {
     private ListView listView;
     private String UID=null;
-
     private ProgressBar progressBar;
+    private Button addActivityButton;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
-    private ArrayList<Business> businessArray=new ArrayList<>();
+    private ArrayList<Discount> discountArray=new ArrayList<>();
+    //private Set<Discount> discountArray=new ArrayList<>();
     private ArrayList<String> businessUID =new ArrayList<>();
+    private ArrayList<String> discountUID = new ArrayList<>();
     private FloatingActionButton mFab;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_view);
         //View coordinatorLayout = findViewById(android.R.id.content);
+        addActivityButton=(Button)findViewById(R.id.addActivityButton);
+        addActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goSellerMapView();
+                addActivityButton.setVisibility(View.INVISIBLE);
+            }
+        });
         mFab = (FloatingActionButton) findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goSellerMapView();
+                startManageDiscount();
             }
         });
         progressBar=findViewById(R.id.sellerViewProgressBar);
-        progressBar.setVisibility(View.INVISIBLE);
         listView=findViewById(R.id.listView);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                
-            }
-        });
         Intent intent = getIntent();
         if(intent.hasExtra("UID")){
             UID=intent.getStringExtra("UID");
@@ -70,9 +76,14 @@ public class SellerView extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         getSellerBusinessUID();
-        Log.d("b",businessUID.toString());
-
+        if(discountUID.isEmpty()){
+            Log.d("bi",discountUID.toString());
+            addActivityButton.setVisibility(View.INVISIBLE);
+        }else{
+            //editext con su scritto non hai alcuno sconto disponibile
+        }
     }
+
 
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_action_bar, menu);
@@ -104,7 +115,9 @@ public class SellerView extends AppCompatActivity {
                         //se ha delle attività le recupera
                         Log.d("businessUID",businessUID.toString());
                         if(businessUID.size()>0 && businessUID!=null && !businessUID.isEmpty()){
+                            progressBar.setVisibility(View.VISIBLE);
                             getBusiness();
+                            progressBar.setVisibility(View.INVISIBLE);
                         }else{
                             dialog();
                         }
@@ -115,45 +128,60 @@ public class SellerView extends AppCompatActivity {
     }
     private void getBusiness(){
         if(businessUID!=null && !businessUID.isEmpty()){
-            progressBar.setVisibility(View.VISIBLE);
             for(int i=0;i<businessUID.size();i++){
                 String b=businessUID.get(i);
-                b=b.trim();
                 Log.d("b",b);
                 db.collection("attivita").document(b).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if(task.isSuccessful()){
-                            Business business=new Business();
                             DocumentSnapshot document= task.getResult();
                             if (document.exists()) {
-                                Log.d("TAG", "DocumentSnapshot data: " + document.getData());
+                                //Log.d("TAG", "DocumentSnapshot data: " + document.getData());
+                                discountUID=(ArrayList) document.get("discountUID");
+                                Log.d("TAG", "uid dello sconto" + discountUID.toString());
+                                getDiscounts();
                             } else {
                                 Log.d("TAG", "No such document");
                             }
-                            business.setOwnerUID(UID);
-                            business.setUID(document.getString("uid"));
-                            business.setLocality(document.getString("locality"));
-                            business.setName(document.getString("name"));
-                            business.setLatitude(document.getString("latitude"));
-                            business.setLongitude(document.getString("longitude"));
-                            business.setDiscountUID((ArrayList) document.get("discountUID"));
-                            businessArray.add(business);
-                            //Log.d("array2",business.getName());
+                        }
+                    }
+                });
+            }
+        }
+
+    }
+    private void getDiscounts(){
+        discountArray.clear();
+            for(int k=0;k<discountUID.size();k++){
+                db.collection("sconti").document(discountUID.get(k)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            Discount discount=new Discount();
+                            DocumentSnapshot document=task.getResult();
+                            discount.setUID(document.getString("uid"));
+                            discount.setBusinessUID(document.getString("businessUID"));
+                            discount.setState(document.getString("state"));
+                            discount.setExpiringDate(document.getString("expiringDate"));
+                            discount.setStepNumber(document.getString("stepNumber"));
+                            discount.setPercentage(document.getString("percentage"));
+                            discount.setDescription(document.getString("description"));
+                            discount.setDiscountsQuantity(document.getString("discountsQuantity"));
+                            discountArray.add(discount);
                         }
                     }
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        Log.d("array2",businessArray.get(0).getName());
-                        progressBar.setVisibility(View.GONE);
-                        Log.d("array",businessArray.toString());
-                        final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,businessArray, UID,businessUID);
+                        for(int i=0;i<discountArray.size();i++){
+                            Log.d("array",discountArray.get(i).getDescription()+" ");
+                        }
+                        final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,discountArray, UID,businessUID);
                         listView.setAdapter(adapter);
                     }
                 });
             }
-        }
     }
     private void dialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -177,8 +205,11 @@ public class SellerView extends AppCompatActivity {
         intent.putExtra("UID",UID);
         startActivity(intent);
     }
-    private void startDiscountFragment(){
-
+    private void startManageDiscount(){
+        final Intent intent = new Intent(this, ManageDiscount.class);
+        intent.putExtra("businessUID",businessUID.get(0));
+        //Log.d("u",businessUID.get(0).toString());
+        startActivity(intent);
     }
 }
 

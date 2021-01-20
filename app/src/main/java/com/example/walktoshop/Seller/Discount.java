@@ -2,11 +2,13 @@ package com.example.walktoshop.Seller;
 
 public class Discount {
     private String UID;
+    private String businessUID;
     private String state;
+    private String expiringDate;
     private String stepNumber;
     private String percentage;
     private String description;
-    private String disocuntsQuantity;
+    private String discountsQuantity;
     //private Date expiring date
        /*
     o	UID
@@ -19,12 +21,20 @@ public class Discount {
     public Discount(){};
     //setters
 
+    public void setBusinessUID(String businessUID) {
+        this.businessUID = businessUID;
+    }
+
     public void setUID(String UID) {
         this.UID = UID;
     }
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public void setExpiringDate(String expiringDate) {
+        this.expiringDate = expiringDate;
     }
 
     public void setStepNumber(String stepNumber) {
@@ -39,13 +49,21 @@ public class Discount {
         this.description = description;
     }
 
-    public void setDisocuntsQuantity(String disocuntsQuantity) {
-        this.disocuntsQuantity = disocuntsQuantity;
+    public void setDiscountsQuantity(String discountsQuantity) {
+        this.discountsQuantity = discountsQuantity;
     }
 
     //getters
     public String getUID() {
         return UID;
+    }
+
+    public String getBusinessUID() {
+        return businessUID;
+    }
+
+    public String getExpiringDate() {
+        return expiringDate;
     }
 
     public String getState() {
@@ -64,7 +82,7 @@ public class Discount {
         return percentage;
     }
 
-    public String getDisocuntsQuantity() {
-        return disocuntsQuantity;
+    public String getDiscountsQuantity() {
+        return discountsQuantity;
     }
 }

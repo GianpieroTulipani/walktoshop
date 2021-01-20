@@ -36,26 +36,26 @@ import java.util.Map;
 
 public class SellerViewAdapter extends ArrayAdapter {
     private Context context;
-    private ArrayList<Business> business;
+    private ArrayList<Discount> discounts;
     private String UID;
     private ArrayList<String> businessUID;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
 
 
-    public SellerViewAdapter(Context context, ArrayList<Business> business, String UID,ArrayList businessUID) {
+    public SellerViewAdapter(Context context, ArrayList<Discount> discounts, String UID,ArrayList businessUID) {
         super(context, R.layout.activity_sellerviewadapter);
         this.context=context;
-        this.business=business;
+        this.discounts=discounts;
         this.UID = UID;
         this.businessUID = businessUID;
     }
     @Override
     public int getCount() {
-        return business.size();
+        return discounts.size();
     }
     @Override
     public Object getItem(int position) {
-        return business.get(position);
+        return discounts.get(position);
     }
 
     @Override
@@ -64,7 +64,11 @@ public class SellerViewAdapter extends ArrayAdapter {
     }
     @Override
     public int getViewTypeCount() {
-        return getCount();
+        if(getCount() > 0){
+            return getCount();
+        }else{
+            return super.getViewTypeCount();
+        }
     }
     @Override
     public int getItemViewType(int position) {
@@ -76,34 +80,41 @@ public class SellerViewAdapter extends ArrayAdapter {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater layoutInflater=(LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View activity_business = layoutInflater.inflate(R.layout.activity_sellerviewadapter,parent,false);
+        //caratteristiche card di sconto
         TextView myTitle = activity_business.findViewById(R.id.text);
-        TextView myDescription = activity_business.findViewById(R.id.description);
-        Button deletebusiness = activity_business.findViewById(R.id.deletebusiness);
 
-        if(this.business.get(position) != null && position>=0){
-            Business b=this.business.get(position);
-            myTitle.setText(b.getName());
+        TextView myDescription = activity_business.findViewById(R.id.description);
+        //bottone eliminazione
+        Button deletebusiness = activity_business.findViewById(R.id.deletebusiness);
+        //bottone attivazione contapassi
+
+        //bottone abilitazione
+
+        if(this.discounts.get(position) != null && position>=0 && !discounts.isEmpty()){
+            Discount d=this.discounts.get(position);
+            Log.d("nome",discounts.get(position).getDescription() + position);
+            myTitle.setText(d.getDescription());
             myDescription.setText("vuota");
+            deletebusiness.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("p",discounts.get(position).getUID()+" ");
+                        getBusiness(position);
+                }
+            });
         }else{
             Log.d("else","else");
         }
-        deletebusiness.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("pos", String.valueOf(position));
-                deleteBusiness(position);
-            }
-        });
         return activity_business;
     }
 
-    private void deleteBusiness(int position){
-        db.collection("attivita").document(business.get(position).getUID())
+    private void deleteDiscount(int position){
+        //getBusiness(position);
+        db.collection("sconti").document(discounts.get(position).getUID())
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        getSeller(position);
                         Log.d("delete", "DocumentSnapshot successfully deleted!");
                     }
                 })
@@ -112,38 +123,42 @@ public class SellerViewAdapter extends ArrayAdapter {
                     public void onFailure(@NonNull Exception e) {
                         Log.w("delete", "Error deleting document", e);
                     }
-                });
+                }).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                SellerViewAdapter.this.discounts.remove(position);
+                SellerViewAdapter.this.notifyDataSetChanged();
+            }
+        });
     }
 
-    private void getSeller(int position)
+    private void getBusiness(int position)
     {
-        db.collection("venditore").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        db.collection("attivita").document(businessUID.get(0)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful())
-                {
+                {   Log.d("position",position+" ");
                     DocumentSnapshot document = task.getResult();
-                    ArrayList<String> businessUID = (ArrayList<String>) document.get("businessUID");
-                    Log.d("venditore",businessUID.toString());
-                    businessUID.remove(position);
-                    Log.d("venditore",businessUID.toString());
-                    SellerViewAdapter.this.business.remove(position);
-                    SellerViewAdapter.this.notifyDataSetChanged();
-
-                    updateSeller(businessUID);
+                    ArrayList<String> discountUID = (ArrayList<String>) document.get("discountUID");
+                    discountUID.remove(position);
+                    Log.d("disocuntUID", discountUID.size()+" ");
+                    updateBusiness(discountUID,position);
+                }else{
+                    Log.d("non successo","non successo");
                 }
             }
         });
     }
 
-    private void updateSeller(ArrayList<String> businessUID)
+    private void updateBusiness(ArrayList<String> discountUID,int position)
     {
-        db.collection("venditore").document(UID).update("businessUID",businessUID).addOnCompleteListener(new OnCompleteListener<Void>() {
+        db.collection("attivita").document(businessUID.get(0)).update("discountUID",discountUID).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful())
                 {
-                    Log.d("venditore","eliminato dall'array");
+                    deleteDiscount(position);
                 }
             }
         });

@@ -35,12 +35,19 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -48,11 +55,13 @@ import java.util.ListIterator;
 public class UserMapView extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     GoogleMap mMap;
     ProgressBar progressBar;
-    List<LatLng> latLngs;
+    List<LatLng> latLngs = new ArrayList<LatLng>();
     LocationManager service;
     LocationListener locationListener;
     double latitude;
     double longitude;
+    String city;
+    FirebaseFirestore db =FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,6 +70,10 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
         Intent intent = getIntent();
         latitude = intent.getDoubleExtra("latitude", 0.0f);
         longitude = intent.getDoubleExtra("longitude", 0.0f);
+        city = intent.getStringExtra("city");
+        Log.d("city",city);
+        getBusinessOnMap();
+        Log.d("Dimension", String.valueOf(latLngs.size()));
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(UserMapView.this);
@@ -87,10 +100,25 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
     @Override
     protected void onStart() {
         super.onStart();
-        latLngs = new ArrayList<LatLng>();
-        latLngs.add(new LatLng(41.187990927198975, 16.669861102796478));
-        latLngs.add(new LatLng(41.18824898295932, 16.66897696063842));
-        latLngs.add(new LatLng(41.188575016414724, 16.665692929489552));
+
+    }
+    private void getBusinessOnMap(){
+        db.collection("attivita").whereEqualTo("locality", city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for (QueryDocumentSnapshot document : task.getResult()){
+                        double lat = Double.parseDouble(document.getString("latitude"));
+                        Log.d("latitude", String.valueOf(lat));
+                        double longt = Double.parseDouble(document.getString("longitude"));
+                        Log.d("longitude", String.valueOf(longt));
+                        latLngs.add(new LatLng(lat, longt));
+                        Log.d("LatLng", String.valueOf(latLngs));
+                        Log.d("Attività", String.valueOf(document.getData()));
+                    }
+                }
+            }
+        });
     }
 
     public void goHome() {
@@ -120,16 +148,12 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
-        //progressBar.setVisibility(View.VISIBLE);
         mMap = googleMap;
-        ListIterator<LatLng> iterator = latLngs.listIterator();
+        Iterator<LatLng> iterator = latLngs.listIterator();
         while(iterator.hasNext()){
+            Log.d("Iterator", String.valueOf(iterator.next().latitude)+"-"+iterator.next().longitude);
             mMap.addMarker(new MarkerOptions().position(iterator.next()));
         }
-
-
-        // Add a marker in Sydney and move the camera
         LatLng myPlace = new LatLng(latitude, longitude);
         //mMap.addMarker(new MarkerOptions().position(italy).title("I'm here"));
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(italy));

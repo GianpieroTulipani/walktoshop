@@ -43,6 +43,7 @@ import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
 import java.text.BreakIterator;
@@ -56,14 +57,13 @@ public class UserView extends AppCompatActivity {
     LocationManager service;
     LocationListener locationListener;
     private boolean statusOfGPS = false;
-    double longitude = 0;
-    double latitude = 0;
-    String city = null;
+    double longitude;
+    double latitude;
+    String city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_user_view);
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -86,22 +86,22 @@ public class UserView extends AppCompatActivity {
         });
     }
 
-   private void getUserPosition() {
+    private void getUserPosition() {
         service = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 latitude=location.getLatitude();
                 longitude=location.getLongitude();
-                goToUserViewMap();
                 Log.d("coordinates",latitude+"\n"+longitude);
                 try {
                     Geocoder geocoder=new Geocoder(UserView.this);
                     List<Address> addresses=new ArrayList<>();
                     addresses=geocoder.getFromLocation(latitude,longitude,1);
                     String country=addresses.get(0).getCountryName();
-                    String city=addresses.get(0).getLocality();
-                    Log.d("city",city);
+                    city=addresses.get(0).getLocality();
+                    goToUserViewMap();
+                    //Log.d("city",city);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -134,9 +134,8 @@ public class UserView extends AppCompatActivity {
             }
             return;
         }
-        int minTime;
         getUserPosition();
-        service.requestLocationUpdates("gps", 1000, 1000, locationListener);
+        service.requestLocationUpdates("gps", 500, 1000, locationListener);
     }
 
     @Override
@@ -164,6 +163,7 @@ public class UserView extends AppCompatActivity {
         final Intent intent = new Intent(UserView.this, UserMapView.class);
         intent.putExtra("latitude", latitude);
         intent.putExtra("longitude", longitude);
+        intent.putExtra("city", city );
         startActivity(intent);
 
     }

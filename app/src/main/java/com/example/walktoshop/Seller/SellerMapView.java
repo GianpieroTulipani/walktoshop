@@ -144,6 +144,10 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                 if(task.isSuccessful()){
                     DocumentSnapshot document = task.getResult();
                     ArrayList<String> businessUID = (ArrayList<String>) document.get("businessUID");
+                    if(businessUID == null)
+                    {
+                        businessUID = new ArrayList<>();
+                    }
                     businessUID.add(businessCustomUID);
                     Log.d("op",businessUID.toString());
                     updateSeller(businessUID);

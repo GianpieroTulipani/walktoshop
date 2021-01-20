@@ -4,10 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.Toast;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,15 +20,17 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.Seller;
-import com.example.walktoshop.User.UserView;
+import com.example.walktoshop.Seller.SellerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.regex.Pattern;
+
 
 public class SignUp extends AppCompatActivity {
 
@@ -35,7 +41,7 @@ public class SignUp extends AppCompatActivity {
     private EditText email;
     private Switch switchButton;
     private Button goNext;
-    private Button goBack;
+    private TextView already_registered;
     String stringEmail=null;
     String stringPassword=null;
     String stringUsername=null;
@@ -49,9 +55,17 @@ public class SignUp extends AppCompatActivity {
         email=(EditText) findViewById(R.id.email);
         switchButton=(Switch)findViewById(R.id.switch1);
         goNext=(Button)findViewById(R.id.nextButton);
-        goBack=(Button)findViewById(R.id.backButton);
-        goBack.setVisibility(View.VISIBLE);
+        already_registered = (TextView) findViewById(R.id.already_registered);
         goNext.setVisibility(View.VISIBLE);
+        seller.setUID(mAuth.getUid());
+
+        already_registered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goUserLogInActivity();
+            }
+        });
+
         goNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,7 +73,6 @@ public class SignUp extends AppCompatActivity {
                     if(switchButton.isChecked()){
                         //crea e carica il negoziante
                         createSeller();
-
                     }else{
                         //lato utente
                         username.setVisibility(View.INVISIBLE);
@@ -73,9 +86,19 @@ public class SignUp extends AppCompatActivity {
 
     }
 
+    private void goSellerViewActivity(){
+        final Intent intent = new Intent(this, SellerView.class);
+        intent.putExtra("UID", seller.getUID());
+        startActivity(intent);
+    }
+
+    private void goUserLogInActivity(){
+        final Intent intent = new Intent(this, LogIn.class);
+        startActivity(intent);
+    }
+
     private void startFragment()
     {
-        Log.d("prova","ok");
         Bundle bundle = new Bundle();
         bundle.putString("email", stringEmail.toString());
         bundle.putString("password", stringPassword.toString());
@@ -85,12 +108,10 @@ public class SignUp extends AppCompatActivity {
         //addaniamtion
         fragment_signup.setArguments(bundle);
         fm.beginTransaction().addToBackStack(null).replace(R.id.signUpLayout,fragment_signup).commit();
-        goBack.setVisibility(View.GONE);
         goNext.setVisibility(View.GONE);
     }
 
     private void createSeller() {
-        Log.d("venditore","venditore");
         seller.setEmail(stringEmail);
         seller.setPassword(stringPassword);
         seller.setUsername(stringUsername);
@@ -105,12 +126,11 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void uploadSeller() {
-        seller.setUID(mAuth.getUid());
+
         db.collection("venditore").document(seller.getUID()).set(seller).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                //vai alla home seller
-                //.finish()
+                goSellerViewActivity();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -124,24 +144,30 @@ public class SignUp extends AppCompatActivity {
         stringEmail=this.email.getText().toString().trim();
         stringPassword= this.password.getText().toString().trim();
         stringUsername=this.username.getText().toString().trim();
+        Pattern PASSWORD_PATTERN
+                = Pattern.compile(
+                "[a-zA-Z0-9\\!\\@\\#\\$]{8,24}");
 
-        if(stringEmail.isEmpty()){
-            this.email.setError( getResources().getString(R.string.emailEmpty));
-            this.email.requestFocus();
-            return false;
-        }else if(stringPassword.isEmpty()){
-            this.password.setError(getResources().getString(R.string.passwordEmpty));
-            this.password.requestFocus();
-            return false;
-        }else if(stringUsername.isEmpty()){
-            this.username.setError( getResources().getString(R.string.usernameEmpty));
+        if(stringUsername.isEmpty()){
+            this.username.setError(getResources().getString(R.string.usernameEmpty));
             this.username.requestFocus();
+            return false;
+        }else if(stringEmail.isEmpty()){
+            this.email.setError(getResources().getString(R.string.emailEmpty));
+            this.email.requestFocus();
             return false;
         }else if(!Patterns.EMAIL_ADDRESS.matcher(stringEmail).matches()){
             this.email.setError(getResources().getString(R.string.InvalidEmail));
             this.email.requestFocus();
             return false;
-        }else if(stringPassword.length()<6 || stringPassword.length()>20){
+        } else if(stringPassword.isEmpty()){
+            this.password.setError(getResources().getString(R.string.passwordEmpty));
+            this.password.requestFocus();
+            return false;
+        }else if(stringPassword.length()<6 || stringPassword.length()>20 || !PASSWORD_PATTERN.matcher(stringPassword).matches()){
+            Toast toast = Toast.makeText(this,"Inserire almeno: una lettera minuscola[a-z], un carattere speciale[!,@,#,$] e due numeri[0,9]",Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
             this.password.setError(getResources().getString(R.string.InvalidPassword));
             this.password.requestFocus();
             return false;

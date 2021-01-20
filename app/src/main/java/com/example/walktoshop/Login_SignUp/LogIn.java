@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,16 +21,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 
 public class LogIn extends AppCompatActivity {
 
     private EditText emailLogIn;
     private EditText passwordLogIn;
     private Button buttonLogIn;
+    private TextView notRegistered;
     private String email;
     private String password;
     private String Uid = null;
@@ -45,21 +46,39 @@ public class LogIn extends AppCompatActivity {
         emailLogIn = (EditText) findViewById(R.id.emailLogIn);
         passwordLogIn = (EditText) findViewById(R.id.passwordLogIn);
         buttonLogIn = (Button) findViewById(R.id.buttonlogIn);
+        notRegistered = (TextView) findViewById(R.id.not_registered);
 
         mAuth = FirebaseAuth.getInstance();
 
+        notRegistered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goUserRegistrationActivity();
+            }
+        });
+
     }
+
+
 
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser == null) {
-            //rimane nel login
-        }
-        else{
-            //checkUser();
+        if(currentUser != null) {
+           Uid = mAuth.getUid();
+           Log.d("loggato",Uid);
+           db.collection("venditore").document(Uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+               @Override
+               public void onSuccess(DocumentSnapshot documentSnapshot) {
+                   if(documentSnapshot.exists()) {
+                       goSellerViewActivity();
+                   }else{
+                       goUserViewActivity();
+                   }
+               }
+           });
         }
     }
 
@@ -72,27 +91,29 @@ public class LogIn extends AppCompatActivity {
         //qui viene effettuata l'autenticazione che se va a buon fine, controlla la tipologia di utente
         //e lo manda alla home rispettiva
         //altrimenti segnala degli errori rispetto ai campi
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("ok", "è andato");
-                            Uid = mAuth.getCurrentUser().getUid();
-                            checkUser();
-                        }
-                        else {
-                            emailLogIn.setError(getResources().getString(R.string.InvalidEmail));
-                            passwordLogIn.setError(getResources().getString(R.string.InvalidPassword));
-                            Log.d("ok", "non è andato");
-                        }
-                    }
-                });
+        if(checkInfo()) {
 
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Uid = mAuth.getCurrentUser().getUid();
+                                checkTypeUser();
+                            }
+                            else
+                            {
+                                emailLogIn.setError(getResources().getString(R.string.InvalidEmail));
+                                passwordLogIn.setError(getResources().getString(R.string.InvalidPassword));
+                            }
+                        }
+                    });
+
+        }
     }
 
     // questo metodo controlla che tipo di utente si sta loggando e quindi in che home indirizzarlo
-    public void  checkUser()
+    public void  checkTypeUser()
     {
         db.collection("venditore").document(Uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 
@@ -103,12 +124,10 @@ public class LogIn extends AppCompatActivity {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()) {
-                    Log.d("ok", "venditore");
                     goSellerViewActivity();
                     finish();
                 }
                 else{
-                    Log.d("ok", "utente");
                     goUserViewActivity();
                     finish();
                 }
@@ -124,5 +143,30 @@ public class LogIn extends AppCompatActivity {
         final Intent intent = new Intent(this, UserView.class);
         intent.putExtra("UID", Uid);
         startActivity(intent);
+    }
+    private void goUserRegistrationActivity(){
+        final Intent intent = new Intent(this, SignUp.class);
+        startActivity(intent);
+    }
+
+    private boolean checkInfo(){
+
+        if(email.isEmpty() ){
+            emailLogIn.setError(getResources().getString(R.string.emailEmpty));
+            this.emailLogIn.requestFocus();
+            return false;
+
+        }else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+            emailLogIn.setError(getResources().getString(R.string.InvalidEmail));
+            this.emailLogIn.requestFocus();
+            return false;
+
+        }else if(password.isEmpty()){
+            passwordLogIn.setError(getResources().getString(R.string.passwordEmpty));
+            this.passwordLogIn.requestFocus();
+            return false;
+        }
+
+        return true;
     }
 }

@@ -18,12 +18,12 @@
     <string name="passwordEmpty">Inserire password</string>
     <string name="usernameEmpty">Inserire username</string>
     <string name="InvalidPassword">Password non valida</string>
-    <string name="InvalidEmail">Password non valida</string>
+    <string name="InvalidEmail">Email non valida</string>
     <string name="InvalidUsername">Password non valida</string>
     <string name="weight">Peso</string>
     <string name="height">Altezza</string>
-    <string name="weightEmpty">Peso assente</string>
-    <string name="heightEmpty">Altezza assente</string>
+    <string name="InvalidWeight">formato peso errato</string>
+    <string name="InvalidHeight">formato altezza errato</string>
     <string name="title_activity_seller_maps_view">Map</string>
     //framgent_manageDiscount
     <string name="disocuntsQuantity">Quantità</string>

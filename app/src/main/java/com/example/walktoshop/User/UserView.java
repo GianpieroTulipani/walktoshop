@@ -24,12 +24,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
+import com.example.walktoshop.Login_SignUp.LogIn;
+import com.example.walktoshop.Login_SignUp.SignUp;
 import com.example.walktoshop.R;
 
 import com.example.walktoshop.Seller.Discount;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -228,9 +231,17 @@ public class UserView extends AppCompatActivity {
             case R.id.action_search:
                 break;
             case R.id.action_exit:
+                logOut();
                 break;
             case R.id.action_settings:
                 break;
         }
+    }
+
+    private void logOut(){
+        FirebaseAuth.getInstance().signOut();
+        final Intent intent = new Intent(this, LogIn.class);
+        startActivity(intent);
+        finish();
     }
 }

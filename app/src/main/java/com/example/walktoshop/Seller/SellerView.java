@@ -115,8 +115,8 @@ public class SellerView extends AppCompatActivity {
                         DocumentSnapshot document= task.getResult();
                         businessUID= (ArrayList) document.get("businessUID");
                         //se ha delle attività le recupera
-                        Log.d("businessUID",businessUID.toString());
-                        if(businessUID.size()>0 && businessUID!=null && !businessUID.isEmpty()){
+                        //Log.d("businessUID",businessUID.toString());
+                        if(businessUID!=null){
                             progressBar.setVisibility(View.VISIBLE);
                             getBusiness();
                             progressBar.setVisibility(View.INVISIBLE);

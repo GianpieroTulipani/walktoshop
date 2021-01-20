@@ -26,7 +26,8 @@
         <activity android:name=".Seller.SellerMapView">
 
         </activity>
-        <activity android:name=".Login_SignUp.SignUp">
+        <activity android:name=".Login_SignUp.SignUp"
+            android:theme="@style/FullScreen">
 
         </activity>
         <activity android:name=".Login_SignUp.LogIn"
@@ -36,7 +37,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity android:name=".Seller.ManageDiscount">
 

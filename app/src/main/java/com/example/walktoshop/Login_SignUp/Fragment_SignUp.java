@@ -22,7 +22,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -111,18 +110,16 @@ public class Fragment_SignUp extends Fragment {
         if(userWeight.isEmpty()){
             try {
                 int num = Integer.parseInt(userWeight);
-                Log.i("",num+" is a number");
             } catch (NumberFormatException e) {
-                this.weight.setError( getResources().getString(R.string.weightEmpty));
+                this.weight.setError( getResources().getString(R.string.InvalidWeight));
                 this.weight.requestFocus();
                 return false;
             }
         }else if(userHeight.isEmpty()){
             try {
                 int num = Integer.parseInt(userHeight);
-                Log.i("",num+" is a number");
             } catch (NumberFormatException e) {
-                this.height.setError( getResources().getString(R.string.heightEmpty));
+                this.height.setError( getResources().getString(R.string.InvalidHeight));
                 this.height.requestFocus();
                 return false;
             }

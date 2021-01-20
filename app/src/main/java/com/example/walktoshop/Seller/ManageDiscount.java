@@ -121,6 +121,7 @@ public class ManageDiscount extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
+                    Log.d("customDiscountUID",customDiscountUID);
                     getBusiness(customDiscountUID);
                 }
             }
@@ -133,6 +134,9 @@ public class ManageDiscount extends AppCompatActivity {
                 if(task.isSuccessful()){
                     DocumentSnapshot document=task.getResult();
                     ArrayList<String> discountUID= (ArrayList<String>) document.get("discountUID");
+                    if(discountUID == null){
+                        discountUID =new ArrayList<String>();
+                    }
                     discountUID.add(customDiscountUID);
                     updateBusiness(discountUID);
                 }

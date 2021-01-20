@@ -40,7 +40,6 @@ public class SellerView extends AppCompatActivity {
     private Button addActivityButton;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
     private ArrayList<Discount> discountArray=new ArrayList<>();
-    //private Set<Discount> discountArray=new ArrayList<>();
     private ArrayList<String> businessUID =new ArrayList<>();
     private ArrayList<String> discountUID = new ArrayList<>();
     private FloatingActionButton mFab;
@@ -76,10 +75,13 @@ public class SellerView extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         getSellerBusinessUID();
-        if(discountUID.isEmpty()){
+        if(discountUID==null){
+            addActivityButton.setVisibility(View.INVISIBLE);
+        }else if(discountUID.isEmpty()){
             Log.d("bi",discountUID.toString());
             addActivityButton.setVisibility(View.INVISIBLE);
-        }else{
+        }else
+        {
             //editext con su scritto non hai alcuno sconto disponibile
         }
     }
@@ -119,7 +121,8 @@ public class SellerView extends AppCompatActivity {
                             getBusiness();
                             progressBar.setVisibility(View.INVISIBLE);
                         }else{
-                            dialog();
+                            addActivityButton.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.INVISIBLE);
                         }
                     }
                 }
@@ -139,8 +142,13 @@ public class SellerView extends AppCompatActivity {
                             if (document.exists()) {
                                 //Log.d("TAG", "DocumentSnapshot data: " + document.getData());
                                 discountUID=(ArrayList) document.get("discountUID");
-                                Log.d("TAG", "uid dello sconto" + discountUID.toString());
-                                getDiscounts();
+                                //Log.d("TAG", "uid dello sconto" + discountUID.toString());
+                                if(discountUID!=null && !discountUID.isEmpty()){
+                                    getDiscounts();
+                                }else{
+                                    final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,discountArray, UID,businessUID);
+                                    listView.setAdapter(adapter);
+                                }
                             } else {
                                 Log.d("TAG", "No such document");
                             }

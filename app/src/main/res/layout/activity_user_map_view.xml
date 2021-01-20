@@ -7,6 +7,13 @@
     tools:context="com.example.walktoshop.User.UserView"
     android:orientation="horizontal">
 
+    <ProgressBar
+        android:id="@+id/sellerViewProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="91dp"
+        android:layout_height="81dp"
+        android:layout_marginLeft="160dp"
+        android:layout_marginTop="350dp" />
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"

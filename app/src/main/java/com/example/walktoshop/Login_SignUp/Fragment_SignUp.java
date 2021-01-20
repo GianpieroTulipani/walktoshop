@@ -51,19 +51,16 @@ public class Fragment_SignUp extends Fragment {
             user.setEmail(email);
             user.setPassword(password);
             user.setUsername(username);
-            Log.d("user",user.getEmail()+user.getPassword());
         }
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(checkInfo() && getArguments()!=null){
-                    Log.d("user",user.toString());
                     mAuth.createUserWithEmailAndPassword(user.getEmail(),user.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if(task.isSuccessful()){
                                 uploadUser();
-                                Log.d("ok","ok");
                             }
                         }
                     });
@@ -73,11 +70,13 @@ public class Fragment_SignUp extends Fragment {
 
         return view;
     }
+
     public void goHomeActivity() {
         final Intent intent = new Intent(getActivity(), UserView.class);
         intent.putExtra("UID",user.getUID());
         startActivity(intent);
     }
+
     private void uploadUser()
     {
         user.setUID(mAuth.getUid());
@@ -93,23 +92,32 @@ public class Fragment_SignUp extends Fragment {
 
             }
         });
-        Log.d("ok","ok");
     }
 
     private boolean checkInfo(){
         userWeight=this.weight.getText().toString().trim();
         userHeight=this.height.getText().toString().trim();
-        //finire controlli
-        /*
+
         if(userWeight.isEmpty()){
-            this.weight.setError( getResources().getString(R.string.weightEmpty));
-            this.weight.requestFocus();
-            return false;
+            try {
+                int num = Integer.parseInt(userWeight);
+                Log.i("",num+" is a number");
+            } catch (NumberFormatException e) {
+                this.weight.setError( getResources().getString(R.string.weightEmpty));
+                this.weight.requestFocus();
+                return false;
+            }
         }else if(userHeight.isEmpty()){
-            this.height.setError( getResources().getString(R.string.heightEmpty));
-            this.height.requestFocus();
-            return false;
-        }*/
+            try {
+                int num = Integer.parseInt(userHeight);
+                Log.i("",num+" is a number");
+            } catch (NumberFormatException e) {
+                this.height.setError( getResources().getString(R.string.heightEmpty));
+                this.height.requestFocus();
+                return false;
+            }
+        }
+
         user.setHeight(userHeight);
         user.setWeight(userWeight);
         return true;

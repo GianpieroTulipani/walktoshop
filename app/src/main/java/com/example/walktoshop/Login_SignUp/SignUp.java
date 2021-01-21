@@ -165,6 +165,7 @@ public class SignUp extends AppCompatActivity {
 
     private void uploadSeller() {
         String sellerUID=mAuth.getUid();
+        seller.setUID(sellerUID);
         db.collection("venditore").document(sellerUID).set(seller).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {

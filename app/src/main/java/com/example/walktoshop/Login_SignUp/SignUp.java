@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentManager;
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.Seller;
 import com.example.walktoshop.Seller.SellerView;
+import com.example.walktoshop.User.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -47,6 +48,7 @@ public class SignUp extends AppCompatActivity {
     String stringPassword=null;
     String stringUsername=null;
     Seller seller=new Seller();
+    private User user=new User();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,13 +78,11 @@ public class SignUp extends AppCompatActivity {
                         createSeller();
                     }else{
                         //lato utente
-                        username.setVisibility(View.INVISIBLE);
-                        password.setVisibility(View.INVISIBLE);
-                        email.setVisibility(View.INVISIBLE);
-                        startFragment();
+                        createUser();
                     }
                 }
             }
+
         });
 
     }
@@ -112,6 +112,33 @@ public class SignUp extends AppCompatActivity {
         goNext.setVisibility(View.GONE);
     }
 
+    private void createUser() {
+        user.setEmail(stringEmail);
+        user.setPassword(stringPassword);
+        user.setUsername(stringUsername);
+        mAuth.createUserWithEmailAndPassword(user.getEmail(),user.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if(task.isSuccessful()){
+                    username.setVisibility(View.INVISIBLE);
+                    password.setVisibility(View.INVISIBLE);
+                    email.setVisibility(View.INVISIBLE);
+                    startFragment();
+                }else{
+                    try
+                    {
+                        throw task.getException();
+                    }catch (FirebaseAuthUserCollisionException existEmail) {
+                        email.setError(getResources().getString(R.string.emailExists));
+                        email.requestFocus();
+                    }catch(Exception e ){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
     private void createSeller() {
         seller.setEmail(stringEmail);
         seller.setPassword(stringPassword);
@@ -126,8 +153,8 @@ public class SignUp extends AppCompatActivity {
                     {
                         throw task.getException();
                     }catch (FirebaseAuthUserCollisionException existEmail) {
-                        //controlla che il seller non esista gia
-                        Log.d("g","gia registrato");
+                        email.setError(getResources().getString(R.string.emailExists));
+                        email.requestFocus();
                     }catch(Exception e ){
                         e.printStackTrace();
                     }
@@ -178,7 +205,7 @@ public class SignUp extends AppCompatActivity {
             this.password.requestFocus();
             return false;
         }else if(stringPassword.length()<6 || stringPassword.length()>20 || !PASSWORD_PATTERN.matcher(stringPassword).matches()){
-            Toast toast = Toast.makeText(this,"Inserire almeno: una lettera minuscola[a-z], un carattere speciale[!,@,#,$] e due numeri[0,9]",Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this,"La password deve essere lunga almeno 8 caratteri e nserire almeno: una lettera minuscola[a-z], un carattere speciale[!,@,#,$] e due numeri[0,9]",Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             this.password.setError(getResources().getString(R.string.InvalidPassword));

@@ -20,6 +20,8 @@
     <string name="InvalidPassword">Password non valida</string>
     <string name="InvalidEmail">Email non valida</string>
     <string name="InvalidUsername">Password non valida</string>
+    <string name="emailExists">Email già esistente</string>
+    <string name="usernameExists">Username già esistente</string>
     <string name="weight">Peso</string>
     <string name="height">Altezza</string>
     <string name="InvalidWeight">formato peso errato</string>

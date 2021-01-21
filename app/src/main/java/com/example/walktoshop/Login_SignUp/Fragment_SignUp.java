@@ -62,26 +62,9 @@ public class Fragment_SignUp extends Fragment {
             @Override
             public void onClick(View view) {
                 if(checkInfo() && getArguments()!=null){
-                    mAuth.createUserWithEmailAndPassword(user.getEmail(),user.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()){
-                                fragmentSignUpprogressBar.setVisibility(View.VISIBLE);
-                                uploadUser();
-                                fragmentSignUpprogressBar.setVisibility(View.INVISIBLE);
-                            }else{
-                                try
-                                {
-                                    throw task.getException();
-                                }catch (FirebaseAuthUserCollisionException existEmail) {
-                                    //controlla che il seller non esista gia
-                                    Log.d("g","gia registrato");
-                                }catch(Exception e ){
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    });
+                    fragmentSignUpprogressBar.setVisibility(View.VISIBLE);
+                    uploadUser();
+                    fragmentSignUpprogressBar.setVisibility(View.INVISIBLE);
                 }
             }
         });

@@ -42,8 +42,6 @@ public class SellerViewAdapter extends ArrayAdapter {
     private ArrayList<String> businessUID;
     private String usage;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
-
-
     public SellerViewAdapter(Context context, ArrayList<Discount> discounts, String UID,ArrayList businessUID,String usage) {
         super(context, R.layout.activity_sellerviewadapter);
         this.context=context;
@@ -82,35 +80,44 @@ public class SellerViewAdapter extends ArrayAdapter {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater layoutInflater=(LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View activity_business = layoutInflater.inflate(R.layout.activity_sellerviewadapter,parent,false);
+        final View activity = layoutInflater.inflate(R.layout.activity_sellerviewadapter,parent,false);
         //caratteristiche card di sconto
-        TextView myTitle = activity_business.findViewById(R.id.text);
-
-        TextView myDescription = activity_business.findViewById(R.id.description);
+        TextView disocuntDescription= activity.findViewById(R.id.disocuntDescription);
+        TextView date=activity.findViewById(R.id.date);
         //bottone eliminazione
-        Button deletebusiness = activity_business.findViewById(R.id.deletebusiness);
+        Button deleteBusiness =activity.findViewById(R.id.deletebusiness);
+        //modifica
+        Button editBusiness= activity.findViewById(R.id.editBusiness);
         //bottone attivazione contapassi
 
         //bottone abilitazione
-
         if(this.discounts.get(position) != null && position>=0 && !discounts.isEmpty()){
             Discount d=this.discounts.get(position);
-            Log.d("nome",discounts.get(position).getDescription() + position);
-            myTitle.setText(d.getDescription());
+            //settare tutti gli attributi xml
+
+            date.setText("Scadenza: "+d.millisecondsToDate(d.getExpiringDate()));
+            disocuntDescription.setText(d.getDescription());
+            //description.setText(d.getDescription());
             //myDescription.setText("vuota");
-            deletebusiness.setVisibility(View.GONE);
+
+            //visibility
+            deleteBusiness.setVisibility(View.GONE);
+            editBusiness.setVisibility(View.GONE);
             if(this.usage=="sellerHome"){
-                deletebusiness.setVisibility(View.VISIBLE);
-                deletebusiness.setOnClickListener(new View.OnClickListener() {
+                deleteBusiness.setVisibility(View.VISIBLE);
+                editBusiness.setVisibility(View.VISIBLE);
+                deleteBusiness.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Log.d("p",discounts.get(position).getUID()+" ");
                         getBusiness(position);
                     }
                 });
+            }else if(this.usage=="userHome"){
+
             }
         }
-        return activity_business;
+        return activity;
     }
 
     private void deleteDiscount(int position){

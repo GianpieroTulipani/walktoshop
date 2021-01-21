@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -68,6 +69,16 @@ public class Fragment_SignUp extends Fragment {
                                 fragmentSignUpprogressBar.setVisibility(View.VISIBLE);
                                 uploadUser();
                                 fragmentSignUpprogressBar.setVisibility(View.INVISIBLE);
+                            }else{
+                                try
+                                {
+                                    throw task.getException();
+                                }catch (FirebaseAuthUserCollisionException existEmail) {
+                                    //controlla che il seller non esista gia
+                                    Log.d("g","gia registrato");
+                                }catch(Exception e ){
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     });

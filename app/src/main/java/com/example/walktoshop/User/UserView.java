@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 
 import com.example.walktoshop.Login_SignUp.LogIn;
@@ -32,6 +33,8 @@ import com.example.walktoshop.Login_SignUp.SignUp;
 import com.example.walktoshop.R;
 
 import com.example.walktoshop.Seller.Discount;
+import com.example.walktoshop.Seller.SellerView;
+import com.example.walktoshop.Seller.SellerViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -53,6 +56,7 @@ public class UserView extends AppCompatActivity {
     LocationListener locationListener;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
     private boolean statusOfGPS = false;
+    private TextView alert;
     private ListView homeListview;
     double longitude;
     double latitude;
@@ -63,6 +67,8 @@ public class UserView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_view);
+        alert=findViewById(R.id.alert);
+        alert.setVisibility(View.GONE);
         homeListview= findViewById(R.id.homeListView);
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -110,30 +116,36 @@ public class UserView extends AppCompatActivity {
         });
     }
     private void getMyDiscounts(ArrayList discountUID){
-        Iterator it =discountUID.iterator();
-        while(it.hasNext()){
-            String uid= (String) it.next();
-            db.collection("sconti").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful()){
-                        DocumentSnapshot document= task.getResult();
-                        Discount discount=new Discount();
-                        discount.setExpiringDate(document.getString("expiringDate"));
-                        discount.setBusinessUID(document.getString("businessUID"));
-                        discount.setState(document.getString("state"));
-                        discount.setDescription(document.getString("description"));
-                        discount.setStepNumber(document.getString("stepNumber"));
-                        discount.setBusinessUID(document.getString("businessUID"));
-                        myDiscounts.add(discount);
+        if(!discountUID.isEmpty()){
+            Iterator it =discountUID.iterator();
+            while(it.hasNext()){
+                String uid= (String) it.next();
+                db.collection("sconti").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()){
+                            DocumentSnapshot document= task.getResult();
+                            Discount discount=new Discount();
+                            discount.setExpiringDate(document.getString("expiringDate"));
+                            discount.setBusinessUID(document.getString("businessUID"));
+                            discount.setState(document.getString("state"));
+                            discount.setDescription(document.getString("description"));
+                            discount.setStepNumber(document.getString("stepNumber"));
+                            discount.setBusinessUID(document.getString("businessUID"));
+                            myDiscounts.add(discount);
+                        }
                     }
-                }
-            }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    //Log.d("myDiscounts",myDiscounts.get(0).getDescription());
-                }
-            });
+                }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        final SellerViewAdapter adapter=new SellerViewAdapter(UserView.this,myDiscounts, userUID,null,"userHome");
+                        homeListview.setAdapter(adapter);
+                    }
+                });
+            }
+        }else{
+            alert.setVisibility(View.VISIBLE);
+            alert.setText("Nessuno sconto attivato");
         }
     }
     private void getUserPosition() {

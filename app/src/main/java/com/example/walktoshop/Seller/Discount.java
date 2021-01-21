@@ -1,5 +1,11 @@
 package com.example.walktoshop.Seller;
 
+import android.util.Log;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class Discount {
     private String UID;
     private String businessUID;
@@ -84,5 +90,16 @@ public class Discount {
 
     public String getDiscountsQuantity() {
         return discountsQuantity;
+    }
+    //riconversione data
+    public String millisecondsToDate(String milliseconds){
+        if(milliseconds!=null){
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            long longMilliSeconds= Long.parseLong(milliseconds);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(longMilliSeconds);
+            return formatter.format(calendar.getTime());
+        }
+        return "";
     }
 }

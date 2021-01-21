@@ -27,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Pattern;
@@ -120,6 +121,16 @@ public class SignUp extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     uploadSeller();
+                }else{
+                    try
+                    {
+                        throw task.getException();
+                    }catch (FirebaseAuthUserCollisionException existEmail) {
+                        //controlla che il seller non esista gia
+                        Log.d("g","gia registrato");
+                    }catch(Exception e ){
+                        e.printStackTrace();
+                    }
                 }
             }
         });

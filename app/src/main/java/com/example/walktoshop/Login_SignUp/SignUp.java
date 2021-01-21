@@ -130,11 +130,13 @@ public class SignUp extends AppCompatActivity {
         db.collection("venditore").document(seller.getUID()).set(seller).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
+                Log.d("SUCCESSO","successoo");
                 goSellerViewActivity();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                Log.d("FALLIMENTO","fallito");
 
             }
         });

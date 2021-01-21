@@ -22,6 +22,8 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 
 import com.example.walktoshop.Login_SignUp.LogIn;
@@ -84,12 +86,12 @@ public class UserView extends AppCompatActivity {
         }
     }
 
-    @Override
+  @Override
     protected void onStart() {
         super.onStart();
         getUserDiscounts();
-
     }
+
     private void getUserDiscounts(){
         db.collection("utente").document(userUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -209,11 +211,12 @@ public class UserView extends AppCompatActivity {
         intent.putExtra("latitude", latitude);
         intent.putExtra("longitude", longitude);
         intent.putExtra("city", city );
+        intent.putExtra("UID", this.userUID);
         startActivity(intent);
 
     }
 
-    public void goHome() {
+    private void goHome() {
         final Intent intent = new Intent(this, UserView.class);
         startActivity(intent);
     }

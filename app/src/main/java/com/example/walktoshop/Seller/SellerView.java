@@ -22,12 +22,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.walktoshop.Login_SignUp.Fragment_SignUp;
+import com.example.walktoshop.Login_SignUp.LogIn;
 import com.example.walktoshop.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -80,8 +82,12 @@ public class SellerView extends AppCompatActivity {
         }else if(discountUID.isEmpty()){
             Log.d("bi",discountUID.toString());
             addActivityButton.setVisibility(View.INVISIBLE);
-        }else
-        {
+            if(businessUID.size()<= 0){
+                Log.d("Busi", String.valueOf(businessUID.size()));
+                addActivityButton.setVisibility(View.VISIBLE);
+
+            }
+        }else{
             //editext con su scritto non hai alcuno sconto disponibile
         }
     }
@@ -100,6 +106,7 @@ public class SellerView extends AppCompatActivity {
             case R.id.action_search:
                 break;
             case R.id.action_exit:
+                logOut();
                 break;
             case R.id.action_settings:
                 break;
@@ -115,7 +122,7 @@ public class SellerView extends AppCompatActivity {
                         DocumentSnapshot document= task.getResult();
                         businessUID= (ArrayList) document.get("businessUID");
                         //se ha delle attività le recupera
-                        //Log.d("businessUID",businessUID.toString());
+                        Log.d("businessUID", String.valueOf(businessUID.size()));
                         if(businessUID!=null){
                             progressBar.setVisibility(View.VISIBLE);
                             getBusiness();
@@ -131,6 +138,7 @@ public class SellerView extends AppCompatActivity {
     }
     private void getBusiness(){
         if(businessUID!=null && !businessUID.isEmpty()){
+            addActivityButton.setVisibility(View.INVISIBLE);
             for(int i=0;i<businessUID.size();i++){
                 String b=businessUID.get(i);
                 Log.d("b",b);
@@ -218,6 +226,13 @@ public class SellerView extends AppCompatActivity {
         intent.putExtra("businessUID",businessUID.get(0));
         //Log.d("u",businessUID.get(0).toString());
         startActivity(intent);
+    }
+
+    private void logOut(){
+        FirebaseAuth.getInstance().signOut();
+        final Intent intent = new Intent(this, LogIn.class);
+        startActivity(intent);
+        finish();
     }
 }
 

@@ -12,7 +12,7 @@ android:layout_height="match_parent">
     android:layout_width="91dp"
     android:layout_height="81dp"
     android:layout_marginLeft="160dp"
-    android:layout_marginTop="350dp"
+    android:layout_marginTop="250dp"
     android:visibility="gone"/>
 
 

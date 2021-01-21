@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 
 
@@ -52,6 +53,7 @@ public class UserView extends AppCompatActivity {
     LocationListener locationListener;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
     private boolean statusOfGPS = false;
+    private ListView homeListview;
     double longitude;
     double latitude;
     String city;
@@ -61,6 +63,7 @@ public class UserView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_view);
+        homeListview= findViewById(R.id.homeListView);
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -86,7 +89,7 @@ public class UserView extends AppCompatActivity {
         }
     }
 
-  @Override
+    @Override
     protected void onStart() {
         super.onStart();
         getUserDiscounts();
@@ -128,7 +131,7 @@ public class UserView extends AppCompatActivity {
             }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    Log.d("myDiscounts",myDiscounts.get(0).getDescription());
+                    //Log.d("myDiscounts",myDiscounts.get(0).getDescription());
                 }
             });
         }

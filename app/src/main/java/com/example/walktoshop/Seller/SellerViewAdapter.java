@@ -39,14 +39,16 @@ public class SellerViewAdapter extends ArrayAdapter {
     private ArrayList<Discount> discounts;
     private String UID;
     private ArrayList<String> businessUID;
+    private String usage;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
 
 
-    public SellerViewAdapter(Context context, ArrayList<Discount> discounts, String UID,ArrayList businessUID) {
+    public SellerViewAdapter(Context context, ArrayList<Discount> discounts, String UID,ArrayList businessUID,String usage) {
         super(context, R.layout.activity_sellerviewadapter);
         this.context=context;
         this.discounts=discounts;
         this.UID = UID;
+        this.usage= usage;
         this.businessUID = businessUID;
     }
     @Override
@@ -95,15 +97,17 @@ public class SellerViewAdapter extends ArrayAdapter {
             Log.d("nome",discounts.get(position).getDescription() + position);
             myTitle.setText(d.getDescription());
             myDescription.setText("vuota");
-            deletebusiness.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.d("p",discounts.get(position).getUID()+" ");
+            deletebusiness.setVisibility(View.GONE);
+            if(this.usage=="sellerHome"){
+                deletebusiness.setVisibility(View.VISIBLE);
+                deletebusiness.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d("p",discounts.get(position).getUID()+" ");
                         getBusiness(position);
-                }
-            });
-        }else{
-            Log.d("else","else");
+                    }
+                });
+            }
         }
         return activity_business;
     }

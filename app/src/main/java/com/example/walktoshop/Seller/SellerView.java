@@ -154,7 +154,7 @@ public class SellerView extends AppCompatActivity {
                                 if(discountUID!=null && !discountUID.isEmpty()){
                                     getDiscounts();
                                 }else{
-                                    final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,discountArray, UID,businessUID);
+                                    final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
                                     listView.setAdapter(adapter);
                                 }
                             } else {
@@ -193,7 +193,7 @@ public class SellerView extends AppCompatActivity {
                         for(int i=0;i<discountArray.size();i++){
                             Log.d("array",discountArray.get(i).getDescription()+" ");
                         }
-                        final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,discountArray, UID,businessUID);
+                        final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
                         listView.setAdapter(adapter);
                     }
                 });

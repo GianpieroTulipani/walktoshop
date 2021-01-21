@@ -41,7 +41,6 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_x"
                 android:layout_gravity="end"/>
-
         </LinearLayout>
 
         <!--Qui dentro va il contenuto del backdrop. puoi aggiungere una qulasiasi ViewGroup (LinearLayout, RelativeLayout, SwipeRefreshLayout, ConstraintLayout, etc.)-->
@@ -52,6 +51,11 @@
             android:background="@color/white">
 
             <!--Il contenuto del corpo va qui-->
+            <ListView
+                android:id="@+id/backdropListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </ListView>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>

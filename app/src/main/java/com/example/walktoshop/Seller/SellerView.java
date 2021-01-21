@@ -195,9 +195,6 @@ public class SellerView extends AppCompatActivity {
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        for(int i=0;i<discountArray.size();i++){
-                            Log.d("array",discountArray.get(i).getDescription()+" ");
-                        }
                         final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
                         listView.setAdapter(adapter);
                     }

@@ -114,7 +114,9 @@ public class SellerViewAdapter extends ArrayAdapter {
                     }
                 });
             }else if(this.usage=="userHome"){
-
+                //qui si devono inserire elementi grafici tipici della vista in cui è chiamato
+            }else if(this.usage=="backdropList"){
+                //qui si devono inserire elementi grafici tipici della vista in cui è chiamato
             }
         }
         return activity;

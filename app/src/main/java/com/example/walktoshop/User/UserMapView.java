@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +34,7 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
     GoogleMap mMap;
     ProgressBar progressBar;
     List<LatLng> latLngs = new ArrayList<LatLng>();
+
     double latitude;
     double longitude;
     String city;
@@ -127,8 +129,27 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        LatLng position= marker.getPosition();
+        double latitude= position.latitude;
+        double longitude= position.longitude;
+        FragmentUserMapBackDrop fragment=new FragmentUserMapBackDrop();
+        Bundle bundle=new Bundle();
+        String businessUID=calculateMyBusinessCustomUID(latitude,longitude);
+        bundle.putString("businessUID",businessUID);
+        bundle.putString("UID",UID);
+        fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, new FragmentUserMapBackDrop()).commit();
+                .add(R.id.container, fragment).commit();
         return false;
+    }
+    private String calculateMyBusinessCustomUID(Double latitude,Double longitude){
+        if(latitude!=null && longitude!=null){
+            String customUID=null;
+            customUID= String.valueOf(latitude+longitude);
+            customUID =customUID.replaceAll("[^0-9]", "");
+            return customUID;
+        }else{
+            return null;
+        }
     }
 }

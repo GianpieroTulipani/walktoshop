@@ -38,11 +38,13 @@
         <activity android:name=".Login_SignUp.LogIn"
             android:theme="@style/FullScreen">
 
+
         </activity>
+
         <activity android:name=".Seller.ManageDiscount">
 
-
         </activity>
+
     </application>
 
 </manifest>

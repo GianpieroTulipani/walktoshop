@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -96,7 +97,7 @@ public class SellerViewAdapter extends ArrayAdapter {
             Discount d=this.discounts.get(position);
             Log.d("nome",discounts.get(position).getDescription() + position);
             myTitle.setText(d.getDescription());
-            myDescription.setText("vuota");
+            //myDescription.setText("vuota");
             deletebusiness.setVisibility(View.GONE);
             if(this.usage=="sellerHome"){
                 deletebusiness.setVisibility(View.VISIBLE);

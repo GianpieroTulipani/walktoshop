@@ -8,6 +8,7 @@
     android:layout_height="match_parent"
     android:background="@color/white_ice">
 
+
     <TextView
         android:id="@+id/banner"
         android:layout_width="match_parent"
@@ -18,10 +19,9 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.139"
+        app:layout_constraintVertical_bias="0.048"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp" />
-
 
     <EditText
         android:id="@+id/email"
@@ -52,10 +52,11 @@
         android:textColor="#f8f8ff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.851"
+        app:layout_constraintHorizontal_bias="0.838"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.795" />
+        app:layout_constraintVertical_bias="0.955" />
+
 
     <TextView
         android:id="@+id/already_registered"
@@ -69,7 +70,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.864"
+        app:layout_constraintVertical_bias="0.958"
         tools:ignore="MissingConstraints" />
 
     <EditText
@@ -91,7 +92,6 @@
         app:layout_constraintVertical_bias="0.085" />
 
 
-
     <Switch
         android:id="@+id/switch1"
         android:layout_width="139dp"
@@ -101,7 +101,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.258" />
+        app:layout_constraintVertical_bias="0.287" />
 
     <EditText
         android:id="@+id/username"

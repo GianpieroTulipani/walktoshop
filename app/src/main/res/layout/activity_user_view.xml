@@ -67,18 +67,6 @@ android:layout_height="match_parent">
     </LinearLayout>
 </androidx.cardview.widget.CardView>
 
-<com.google.android.material.floatingactionbutton.FloatingActionButton
-    android:id="@+id/fab"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="bottom|right"
-    android:layout_marginRight="@dimen/material_bottom_margin"
-    android:layout_marginBottom="@dimen/material_botton_margin"
-    android:src="@drawable/baseline_add_black_18dp"
-    app:backgroundTint="@color/verde_maggio"
-    app:backgroundTintMode="src_over"
-    app:fabSize="normal"
-    app:rippleColor="#00FF00" />
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"

@@ -82,9 +82,13 @@ public class SellerView extends AppCompatActivity {
         }else if(discountUID.isEmpty()){
             Log.d("bi",discountUID.toString());
             addActivityButton.setVisibility(View.INVISIBLE);
-            if(businessUID.size()<= 0){
+            if(businessUID==null){
+
+            }
+            else if(businessUID.size()<= 0){
                 Log.d("Busi", String.valueOf(businessUID.size()));
                 addActivityButton.setVisibility(View.VISIBLE);
+                mFab.setVisibility(View.GONE);
 
             }
         }else{
@@ -122,7 +126,7 @@ public class SellerView extends AppCompatActivity {
                         DocumentSnapshot document= task.getResult();
                         businessUID= (ArrayList) document.get("businessUID");
                         //se ha delle attività le recupera
-                        Log.d("businessUID", String.valueOf(businessUID.size()));
+                        //Log.d("businessUID", String.valueOf(businessUID.size()));
                         if(businessUID!=null){
                             progressBar.setVisibility(View.VISIBLE);
                             getBusiness();
@@ -139,6 +143,7 @@ public class SellerView extends AppCompatActivity {
     private void getBusiness(){
         if(businessUID!=null && !businessUID.isEmpty()){
             addActivityButton.setVisibility(View.INVISIBLE);
+            mFab.setVisibility(View.VISIBLE);
             for(int i=0;i<businessUID.size();i++){
                 String b=businessUID.get(i);
                 Log.d("b",b);

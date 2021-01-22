@@ -6,6 +6,7 @@
     android:padding="16dp"
     android:id="@+id/itemPage"
     android:background="@color/white_ice">
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cards"
         android:layout_width="match_parent"

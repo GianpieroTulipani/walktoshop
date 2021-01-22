@@ -2,9 +2,7 @@ package com.example.walktoshop.User;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -23,17 +21,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
 import com.example.walktoshop.Login_SignUp.LogIn;
-import com.example.walktoshop.Login_SignUp.SignUp;
 import com.example.walktoshop.R;
 
 import com.example.walktoshop.Seller.Discount;
-import com.example.walktoshop.Seller.SellerView;
 import com.example.walktoshop.Seller.SellerViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -43,19 +39,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.IOException;
-import java.text.BreakIterator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 
 public class UserView extends AppCompatActivity {
     LocationManager service;
     LocationListener locationListener;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
-    private boolean statusOfGPS = false;
     private TextView alert;
     private ListView homeListview;
     double longitude;
@@ -63,13 +55,25 @@ public class UserView extends AppCompatActivity {
     String city;
     private String userUID=null;
     private ArrayList<Discount> myDiscounts= new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_view);
+
         alert=findViewById(R.id.alert);
         alert.setVisibility(View.GONE);
         homeListview= findViewById(R.id.homeListView);
+
+        AdapterView adapterView = (AdapterView) findViewById(R.id.homeListView);
+        adapterView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               final Intent intent = new Intent(UserView.this, CardView.class);
+               startActivity(intent);
+            }
+        });
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

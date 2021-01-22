@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,6 +26,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.walktoshop.R;
+import com.example.walktoshop.User.UserView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -57,6 +59,8 @@ public class ManageDiscount extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_managediscount);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         Intent intent=getIntent();
         if(intent.hasExtra("businessUID")){
             this.businessUID=intent.getStringExtra("businessUID");
@@ -116,7 +120,16 @@ public class ManageDiscount extends AppCompatActivity {
             }
         });
     }
-    private void addDiscount(String customDiscountUID,Discount discount){
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void addDiscount(String customDiscountUID, Discount discount){
         db.collection("sconti").document(customDiscountUID).set(discount).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

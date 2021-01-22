@@ -1,7 +1,10 @@
 package com.example.walktoshop.User;
 
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -19,10 +22,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -83,7 +90,7 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
         });
     }
 
-    public void goHome() {
+    private void goHome() {
         final Intent intent = new Intent(this, UserView.class);
         User user = new User();
         intent.putExtra("UID", UID);
@@ -137,7 +144,7 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
         bundle.putString("UID",UID);
         fragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.container, fragment).commit();
+                .add(R.id.coordinator, fragment).commit();
         return false;
     }
     private String calculateMyBusinessCustomUID(Double latitude,Double longitude){

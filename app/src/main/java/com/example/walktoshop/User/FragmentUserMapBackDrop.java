@@ -39,7 +39,7 @@ public class FragmentUserMapBackDrop extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View coordinatorLayout = (CoordinatorLayout)inflater.inflate(R.layout.fragment_map_backdrop, container, false);
-        backdropListview=coordinatorLayout.findViewById(R.id.backdropListView);
+        backdropListview = coordinatorLayout.findViewById(R.id.backdropListView);
         ImageView filterIcon = coordinatorLayout.findViewById(R.id.filterIcon);
         LinearLayout contentLayout = coordinatorLayout.findViewById(R.id.contentLayout);
         //vengono prese le informazioni passate cliccando sul marker

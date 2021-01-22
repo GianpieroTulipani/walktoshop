@@ -2,12 +2,21 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+    <item
+        android:id="@+id/stepcounter"
+        android:title="@string/action_stepcounter"
+        android:onClick="OnItemSelected"
+        android:icon="@android:drawable/ic_menu_upload_you_tube"
+        android:orderInCategory="100"
+        app:showAsAction="always"/>
     <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"
         android:orderInCategory="100"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always"
+        android:visible="false"
         android:onClick="OnItemSelected"
         android:title="@string/action_search" />
     <item

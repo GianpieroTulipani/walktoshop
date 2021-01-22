@@ -37,6 +37,13 @@
         android:layout_margin="8dp"
         android:orientation="vertical">
 
+        <ImageButton
+            style="?attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_condividi"
+            android:layout_gravity="top|right"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,7 +77,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="201dp"
+                android:layout_height="132dp"
                 android:background="#f8f8ff"
                 android:orientation="vertical"
                 android:padding="16dp">
@@ -94,6 +101,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linearCard1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -105,16 +113,9 @@
                     android:backgroundTint="@color/verde_maggio"
                     android:background="@drawable/card_shape"
                     android:text="ABILITA SCONTO">
-
                 </Button>
-
-                <ImageButton
-                    style="?attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_condividi"
-                    android:visibility="gone" />
             </LinearLayout>
+
 
         </LinearLayout>
 

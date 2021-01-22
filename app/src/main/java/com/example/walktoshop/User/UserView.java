@@ -6,6 +6,8 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -53,6 +55,7 @@ public class UserView extends AppCompatActivity {
     double longitude;
     double latitude;
     String city;
+    private static final String CHANNEL_ID="StepCounter_notification_channel";
     private String userUID=null;
     private ArrayList<Discount> myDiscounts= new ArrayList<>();
 
@@ -64,7 +67,8 @@ public class UserView extends AppCompatActivity {
         alert=findViewById(R.id.alert);
         alert.setVisibility(View.GONE);
         homeListview= findViewById(R.id.homeListView);
-
+        //setting del channel per quando partirà il service
+        createNotificationChannel();
         AdapterView adapterView = (AdapterView) findViewById(R.id.homeListView);
         adapterView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -248,9 +252,17 @@ public class UserView extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         return super.onOptionsItemSelected(item);
     }
+    private  void startStepCounter(){
+        if(userUID!=null ){
+            Intent intent =new Intent(this,StepCounter.class);
+            intent.putExtra("UID",userUID);
+            startService(intent);
+        }
+    }
     public void OnItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case R.id.action_search:
+            case R.id.stepcounter:
+                startStepCounter();
                 break;
             case R.id.action_exit:
                 logOut();
@@ -265,5 +277,15 @@ public class UserView extends AppCompatActivity {
         final Intent intent = new Intent(this, LogIn.class);
         startActivity(intent);
         finish();
+    }
+    private void createNotificationChannel(){
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel serviceChannel = new NotificationChannel(
+                    CHANNEL_ID,
+                    "StepCounter_notification_channel",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager =getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
     }
 }

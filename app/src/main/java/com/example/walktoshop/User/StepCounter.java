@@ -55,23 +55,17 @@ public class StepCounter extends Service implements Runnable{
             }
         });*/
     }
-    /*
-    @Override
-    protected void onStart() {
-        super.onStart();
-        new Thread(this).start();
-    }*/
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent.hasExtra("UID")){
             this.UID=intent.getStringExtra("UID");
+                //function
+                Log.d("d",this.UID);
+                makeNotificationIntent();
+                //crea un thread separato e fa partire il contapassi
+                new Thread(this).start();
         }
-        //function
-        Log.d("d",this.UID);
-        makeNotificationIntent();
-        //crea un thread separato e fa partire il contapassi
-        new Thread(this).start();
         return START_NOT_STICKY;
     }
     @Override
@@ -90,10 +84,10 @@ public class StepCounter extends Service implements Runnable{
 
                 if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
                     Log.d("Step Counter Detected"," "+ value);
-                } else if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
+                } /*else if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
                     // For test only. Only allowed value is 1.0 i.e. for step taken
                     Log.d("Step Detector Detected"," " + value);
-                }
+                }*/
             }
 
             @Override
@@ -118,5 +112,16 @@ public class StepCounter extends Service implements Runnable{
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("des","destroy");
+        if(eventListener!=null){
+            mSensorManager.unregisterListener(eventListener, mStepCounterSensor);
+            mSensorManager.unregisterListener(eventListener, mStepDetectorSensor);
+        }
+        new Thread(worker).interrupt();
     }
 }

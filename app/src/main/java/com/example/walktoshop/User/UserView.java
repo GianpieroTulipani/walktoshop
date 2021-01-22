@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,12 +22,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.walktoshop.Login_SignUp.LogIn;
@@ -253,10 +257,16 @@ public class UserView extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     private  void startStepCounter(){
-        if(userUID!=null ){
+        if(userUID!=null  ){
             Intent intent =new Intent(this,StepCounter.class);
-            intent.putExtra("UID",userUID);
-            startService(intent);
+            if(isMyServiceRunning(StepCounter.class) == false){
+                Toast.makeText(this,"Contapassi attivato",Toast.LENGTH_SHORT).show();
+                intent.putExtra("UID",userUID);
+                startService(intent);
+            }else{
+                Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();
+                stopService(intent);
+            }
         }
     }
     public void OnItemSelected(MenuItem item) {
@@ -287,5 +297,14 @@ public class UserView extends AppCompatActivity {
             NotificationManager manager =getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
         }
+    }
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

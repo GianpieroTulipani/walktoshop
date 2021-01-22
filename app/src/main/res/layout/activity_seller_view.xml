@@ -50,7 +50,7 @@
         android:layout_gravity="bottom|right"
         android:layout_marginRight="@dimen/material_bottom_margin"
         android:layout_marginBottom="@dimen/material_botton_margin"
-        android:src="@drawable/baseline_add_black_18dp"
+        android:src="@drawable/ic_add"
         app:backgroundTint="@color/verde_maggio"
         app:backgroundTintMode="src_over"
         app:fabSize="normal"

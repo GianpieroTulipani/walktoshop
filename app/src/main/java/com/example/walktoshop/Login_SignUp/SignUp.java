@@ -144,7 +144,7 @@ public class SignUp extends AppCompatActivity {
         user.setHeight(stringHeight);
         user.setWeight(stringWeight);
         user.setUID(mAuth.getUid());
-        user.setWalkUID(new ArrayList<>());
+        user.setWalk(new ArrayList<String>());
         user.setDisocuntUID(new ArrayList<>());
 
         db.collection("utente").document(user.getUID()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {

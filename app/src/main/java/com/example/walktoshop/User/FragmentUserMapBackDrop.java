@@ -1,5 +1,7 @@
 package com.example.walktoshop.User;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -136,6 +139,28 @@ public class FragmentUserMapBackDrop extends Fragment {
         } else {
             sheetBehavior.setHideable(true);
             sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        }
+    }
+    //killa il service se attivo
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        killServiceIfRunning();
+    }
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private void killServiceIfRunning(){
+        if(isMyServiceRunning(StepCounter.class) == true){
+            Intent intent =new Intent(getActivity(),StepCounter.class);
+            Toast.makeText(getActivity(),"Contapassi disattivato",Toast.LENGTH_SHORT).show();
+            getActivity().stopService(intent);
         }
     }
 }

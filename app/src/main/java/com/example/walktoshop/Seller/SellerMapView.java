@@ -83,10 +83,7 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                         mMap.addMarker(new MarkerOptions().position(place).title(location));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place,10));
                         //inizalizzazione oggetto da scrivere
-                        /*
-                            nome esatto della citta
-                            in setName inserire res[0] e provare
-                         */
+
                         if(SellerMapView.this.location.contains(",")){
                             String[] res = SellerMapView.this.location.split("[,]", 0);
                             SellerMapView.this.location = res[0];

@@ -11,8 +11,8 @@ public class User {
     private String longitude;
     private String height;//cm
     private String weight;//kg
-    private int falcata;
-    private ArrayList<String> walkUID;
+    private String lastWalkDate;
+    private ArrayList<String> walk;
     private ArrayList<String> disocuntUID;
     /*
    o	UID
@@ -61,12 +61,13 @@ o	ScontiUID[]
     public void setWeight(String weight) {
         this.weight = weight;
     }
-    public void setFalcata(int falcata) {
-        this.falcata = falcata;
+
+    public void setLastWalkDate(String lastWalkDate) {
+        this.lastWalkDate = lastWalkDate;
     }
 
-    public void setWalkUID(ArrayList<String> walkUID) {
-        this.walkUID = walkUID;
+    public void setWalk(ArrayList walk) {
+        this.walk = walk;
     }
 
     public void setDisocuntUID(ArrayList<String> disocuntUID) {
@@ -106,12 +107,12 @@ o	ScontiUID[]
         return weight;
     }
 
-    public int getFalcata() {
-        return falcata;
+    public String getLastWalkDate() {
+        return lastWalkDate;
     }
 
-    public ArrayList<String> getWalkUID() {
-        return walkUID;
+    public ArrayList getWalk() {
+        return walk;
     }
 
     public ArrayList<String> getDisocuntUID() {

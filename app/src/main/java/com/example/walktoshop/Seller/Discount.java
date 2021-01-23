@@ -11,6 +11,7 @@ public class Discount {
     private String businessUID;
     private String state;
     private String expiringDate;
+    private String startDiscountDate;
     private String stepNumber;
     private String percentage;
     private String description;
@@ -41,6 +42,10 @@ public class Discount {
 
     public void setExpiringDate(String expiringDate) {
         this.expiringDate = expiringDate;
+    }
+
+    public void setStartDiscountDate(String startDiscountDate) {
+        this.startDiscountDate = startDiscountDate;
     }
 
     public void setStepNumber(String stepNumber) {
@@ -101,5 +106,9 @@ public class Discount {
             return formatter.format(calendar.getTime());
         }
         return "";
+    }
+
+    public String getStartDiscountDate() {
+        return startDiscountDate;
     }
 }

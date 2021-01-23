@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.example.walktoshop.R;
 import com.example.walktoshop.User.User;
 import com.example.walktoshop.User.UserView;
+import com.example.walktoshop.User.Walk;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -81,7 +82,7 @@ public class Fragment_SignUp extends Fragment {
     private void uploadUser()
     {
         user.setUID(mAuth.getUid());
-        user.setWalkUID(new ArrayList<>());
+        user.setWalk(new ArrayList<String>());
         user.setDisocuntUID(new ArrayList<>());
         db.collection("utente").document(user.getUID()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

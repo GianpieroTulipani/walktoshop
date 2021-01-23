@@ -17,18 +17,28 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+
 public class StepCounter extends Service implements Runnable{
     //definisco manager sensori, counter e detector
+    FirebaseFirestore db=FirebaseFirestore.getInstance();
+    private String today=null;
     private SensorManager mSensorManager;
     private Sensor mStepCounterSensor;
     private Sensor mStepDetectorSensor;
-    private Button start;
-    private Button finish;
-    private Runnable worker;
+    private int mySteps=0;
     private SensorEventListener eventListener;
     private String UID=null;
     private static final String CHANNEL_ID="StepCounter_notification_channel";
@@ -39,21 +49,9 @@ public class StepCounter extends Service implements Runnable{
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mStepCounterSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         mStepDetectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+        this.today=getTodayInMills();
         Log.d("thread", String.valueOf(Looper.myLooper() == Looper.getMainLooper()));
         //ottengo riferimento al servizio SENSOR_SERVICE
-        //spegnimento da background service
-        /*
-        finish.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(eventListener!=null){
-                    Log.d("ok","ok");
-                    mSensorManager.unregisterListener(eventListener, mStepCounterSensor);
-                    mSensorManager.unregisterListener(eventListener, mStepDetectorSensor);
-                }
-                new Thread(worker).interrupt();
-            }
-        });*/
     }
 
     @Override
@@ -61,7 +59,7 @@ public class StepCounter extends Service implements Runnable{
         if(intent.hasExtra("UID")){
             this.UID=intent.getStringExtra("UID");
                 //function
-                Log.d("d",this.UID);
+
                 makeNotificationIntent();
                 //crea un thread separato e fa partire il contapassi
                 new Thread(this).start();
@@ -81,13 +79,16 @@ public class StepCounter extends Service implements Runnable{
                 if (values.length > 0) {
                     value = (int) values[0];
                 }
-
+                /*
                 if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
                     Log.d("Step Counter Detected"," "+ value);
-                } /*else if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
+                } else*/
+                //controllare da che versione c'è il TYPE STEP DETECTOR
+                if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
                     // For test only. Only allowed value is 1.0 i.e. for step taken
-                    Log.d("Step Detector Detected"," " + value);
-                }*/
+                    StepCounter.this.mySteps++;
+                    Log.d("Step Detector Detected"," " + StepCounter.this.mySteps);
+                }
             }
 
             @Override
@@ -117,11 +118,118 @@ public class StepCounter extends Service implements Runnable{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        //spegnimento da background service
         Log.d("des","destroy");
+        getUserWalkArray();
+        /*
         if(eventListener!=null){
             mSensorManager.unregisterListener(eventListener, mStepCounterSensor);
             mSensorManager.unregisterListener(eventListener, mStepDetectorSensor);
         }
-        new Thread(worker).interrupt();
+        new Thread(this).interrupt();
+         */
+    }
+    private String getTodayInMills(){
+        Calendar cal = Calendar.getInstance();
+        int year  = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date  = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
+        long todayMillis2 = cal.getTimeInMillis();
+        return String.valueOf(todayMillis2);
+    }
+    //query
+    private void getUserWalkArray(){
+        db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document=task.getResult();
+                    ArrayList<String> walksArray= (ArrayList) document.get("walk");
+                    if(walksArray!=null){
+                        for(int i=0;i<walksArray.size();i++){
+                            Log.d("walksArray",walksArray.get(i));
+                        }
+                       checkIfNewWalk(walksArray);
+                    }
+                }
+            }
+        });
+    }
+    //verifica che quando effettuato l'ultima registrazione e quindi se sovrascrivere le informazioni o aggiungere in un altro oggetto da salvare
+    private void checkIfNewWalk(ArrayList<String> walksArray){
+        db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document= task.getResult();
+                    String lastWalkDate=document.getString("lastWalkDate");
+                    String todayPlusSteps=today + ","+String.valueOf(StepCounter.this.mySteps);
+                    if(lastWalkDate!=null){
+                        //funzione per l'upload delle camminate
+                        long lastWalkDateLong= Long.parseLong(lastWalkDate);
+                        long todayLong= Long.parseLong(StepCounter.this.today);
+                        Log.d("diff",todayLong + " "+lastWalkDateLong);
+                        //l'ha fatta oggi?
+                        if(lastWalkDateLong>=todayLong){
+                            int lastWalkIndex;
+                            if(walksArray.size()>0){
+                                lastWalkIndex =walksArray.size()-1;
+                            }else{
+                                lastWalkIndex =0;
+                            }
+                            Log.d("last", String.valueOf(lastWalkIndex));
+                            String oldWalkInfo= walksArray.get(lastWalkIndex);
+                            //funzione sconcatena
+                            Walk oldWalk=getWalkInfoFromString(oldWalkInfo);
+                            String oldSteps=oldWalk.getNumberOfSteps();
+                            //Log.d("oldsteps",oldSteps);
+                            int updatedSteps=StepCounter.this.mySteps+ Integer.parseInt(oldSteps);
+                            Log.d("updatedsteps",updatedSteps+"");
+                            String todayPlusUpdatedSteps=today + ","+updatedSteps;
+                            walksArray.set(lastWalkIndex,todayPlusUpdatedSteps);
+                        }else{
+                            walksArray.add(todayPlusSteps);
+                        }
+                    }else{
+                        Log.d("newWalk",todayPlusSteps);
+                        walksArray.add(todayPlusSteps);
+                    }
+                    updateWalk(walksArray);
+                }
+            }
+        });
+    }
+    private void updateWalk(ArrayList<String> walksArray){
+        for(int i=0;i<walksArray.size();i++){
+            Log.d("walksarray",walksArray.get(i));
+        }
+        db.collection("utente").document(UID).update("walk",walksArray).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                setLastWalkDate();
+            }
+        });
+    }
+    private void setLastWalkDate(){
+        db.collection("utente").document(UID).update("lastWalkDate",today).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                //forse qui va lo spegnimento e l'unregistering fare una funzione
+                if(eventListener!=null){
+                    mSensorManager.unregisterListener(eventListener, mStepCounterSensor);
+                    mSensorManager.unregisterListener(eventListener, mStepDetectorSensor);
+                }
+                new Thread(StepCounter.this).interrupt();
+            }
+        });
+    }
+    private Walk getWalkInfoFromString(String info){
+        String[] todayAndSteps =info.split(",");
+        Walk walk =new Walk();
+        walk.setDate(todayAndSteps[0]);
+        walk.setNumberOfSteps(todayAndSteps[1]);
+        return walk;
     }
 }

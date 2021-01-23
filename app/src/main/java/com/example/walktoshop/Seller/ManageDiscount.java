@@ -48,10 +48,10 @@ public class ManageDiscount extends AppCompatActivity {
     private Button add;
     private Button addDate;
     int date;
-    long timeInMillis;
+    long expiringDateInMillis;
     String stringedPercentage;
     String stringedDescription;
-    String stringedExpiringDate;
+    String todayInMills;
     String stringedQuantity;
     //DatePickerDialog.OnDateSetListener listener;
 
@@ -73,6 +73,8 @@ public class ManageDiscount extends AppCompatActivity {
         quantity=(EditText)findViewById(R.id.disocuntsQuantity);
         add=(Button)findViewById(R.id.add);
         //setting date picker
+        this.todayInMills=getTodayInMills();
+        //
         addDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,7 +92,7 @@ public class ManageDiscount extends AppCompatActivity {
                             String dateFormat=date+"-"+months[month]+"-"+year;
                             Log.d("data",dateFormat);
                             expiringDate.setText(dateFormat);
-                            ManageDiscount.this.timeInMillis = cal.getTimeInMillis();
+                            ManageDiscount.this.expiringDateInMillis = cal.getTimeInMillis();
                         }
                     },year,month,date);
                     datePickerDialog.show();
@@ -107,14 +109,15 @@ public class ManageDiscount extends AppCompatActivity {
             public void onClick(View view) {
                 if(checkInfo()){
                     Discount discount= new Discount();
-                    String customDiscountUID=calculateMyCustomDiscountUID(businessUID,timeInMillis);
+                    String customDiscountUID=calculateMyCustomDiscountUID(businessUID,expiringDateInMillis);
                     discount.setUID(customDiscountUID);
                     discount.setBusinessUID(businessUID);
-                    discount.setExpiringDate(String.valueOf(timeInMillis));
+                    discount.setExpiringDate(String.valueOf(expiringDateInMillis));
                     discount.setState("");
                     discount.setDescription(stringedDescription);
                     discount.setDiscountsQuantity(stringedQuantity);
                     discount.setPercentage(stringedPercentage);
+                    discount.setStartDiscountDate(todayInMills);
                     addDiscount(customDiscountUID,discount);
                 }
             }
@@ -211,5 +214,15 @@ public class ManageDiscount extends AppCompatActivity {
         }else{
             return null;
         }
+    }
+    private String getTodayInMills(){
+        Calendar cal = Calendar.getInstance();
+        int year  = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int date  = cal.get(Calendar.DATE);
+        cal.clear();
+        cal.set(year, month, date);
+        long todayMillis2 = cal.getTimeInMillis();
+        return String.valueOf(todayMillis2);
     }
 }

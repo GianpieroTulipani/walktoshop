@@ -308,4 +308,14 @@ public class UserView extends AppCompatActivity {
         }
         return false;
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(isMyServiceRunning(StepCounter.class) == true){
+            Intent intent =new Intent(this,StepCounter.class);
+            Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();
+            stopService(intent);
+        }
+    }
 }

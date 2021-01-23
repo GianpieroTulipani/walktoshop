@@ -117,6 +117,7 @@ public class SellerViewAdapter extends ArrayAdapter {
             deleteBusiness.setVisibility(View.GONE);
             editBusiness.setVisibility(View.GONE);
             if(this.usage=="sellerHome"){
+                cardView.setVisibility(View.GONE);
                 deleteBusiness.setVisibility(View.VISIBLE);
                 editBusiness.setVisibility(View.VISIBLE);
                 deleteBusiness.setOnClickListener(new View.OnClickListener() {

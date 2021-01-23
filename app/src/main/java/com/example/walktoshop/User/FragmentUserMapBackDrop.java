@@ -112,7 +112,6 @@ public class FragmentUserMapBackDrop extends Fragment {
                         discount.setState(document.getString("state"));
                         discount.setExpiringDate(document.getString("expiringDate"));
                         discount.setStepNumber(document.getString("stepNumber"));
-                        discount.setPercentage(document.getString("percentage"));
                         discount.setDescription(document.getString("description"));
                         discount.setDiscountsQuantity(document.getString("discountsQuantity"));
                         discountArray.add(discount);

@@ -27,8 +27,10 @@
     <string name="InvalidWeight">formato peso errato</string>
     <string name="InvalidHeight">formato altezza errato</string>
     <string name="title_activity_seller_maps_view">Map</string>
+    <string name="numStepsNotValid">Numero passi non valido</string>
+    <string name="InvalidDescription">Descrizione non valida</string>
     //framgent_manageDiscount
-    <string name="disocuntsQuantity">Quantità</string>
+    <string name="disocuntsQuantity">Passi da compiere per lo sconto</string>
     <string name="percentage">Percentuale</string>
     <string name="description">Descrizione</string>
     <string name="expiringDate">Data di scadenza</string>

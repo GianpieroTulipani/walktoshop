@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,7 +43,6 @@ import java.util.Calendar;
 public class ManageDiscount extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private String businessUID=null;
-    private EditText percentage;
     private EditText description;
     private EditText quantity;
     private TextView expiringDate;
@@ -49,7 +50,6 @@ public class ManageDiscount extends AppCompatActivity {
     private Button addDate;
     int date;
     long expiringDateInMillis;
-    String stringedPercentage;
     String stringedDescription;
     String todayInMills;
     String stringedQuantity;
@@ -69,7 +69,6 @@ public class ManageDiscount extends AppCompatActivity {
         addDate=(Button)findViewById(R.id.addDate);
         expiringDate=(TextView) findViewById(R.id.expiringDate);
         description=(EditText)findViewById(R.id.description);
-        percentage=(EditText)findViewById(R.id.percentage);
         quantity=(EditText)findViewById(R.id.disocuntsQuantity);
         add=(Button)findViewById(R.id.add);
         //setting date picker
@@ -116,7 +115,6 @@ public class ManageDiscount extends AppCompatActivity {
                     discount.setState("");
                     discount.setDescription(stringedDescription);
                     discount.setDiscountsQuantity(stringedQuantity);
-                    discount.setPercentage(stringedPercentage);
                     discount.setStartDiscountDate(todayInMills);
                     addDiscount(customDiscountUID,discount);
                 }
@@ -179,28 +177,29 @@ public class ManageDiscount extends AppCompatActivity {
 
     private boolean checkInfo(){
         stringedDescription=this.description.getText().toString().trim();
-        stringedPercentage =this.percentage.getText().toString().trim();
         stringedQuantity=this.quantity.getText().toString().trim();
-        if(!stringedPercentage.isEmpty()){
+        if(!stringedQuantity.isEmpty()){
             try {
-                int num = Integer.parseInt(stringedPercentage);
+                int num = Integer.parseInt(stringedQuantity);
                 Log.i("",num+" is a number");
             } catch (NumberFormatException e) {
-                Log.i("",stringedPercentage+" is not a number");
-                percentage.setError("Percentuale non valida ");
+                Log.i("",stringedQuantity+" is not a number");
+                this.quantity.setError( getResources().getString(R.string.numStepsNotValid));
+                this.quantity.requestFocus();
                 return false;
+            }finally {
+                if(Integer.parseInt(stringedQuantity) < 2000|| Integer.parseInt(stringedQuantity) > 100000){
+                    Toast toast = Toast.makeText(this,"inserire un numero passi che sia compreso tra 2000 e 100000",Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    this.quantity.setError( getResources().getString(R.string.numStepsNotValid));
+                    this.quantity.requestFocus();
+                    return false;
+                }
             }
-        }else if(!stringedQuantity.isEmpty()){
-            try {
-                int num = Integer.parseInt(stringedPercentage);
-                Log.i("",num+" is a number");
-            } catch (NumberFormatException e) {
-                Log.i("",stringedPercentage+" is not a number");
-                percentage.setError("Percentuale non valida ");
-                return false;
-            }
-        }else if(!stringedDescription.isEmpty() && stringedDescription.length()<25){
-            description.setError("Nome non valido");
+        }else if(stringedDescription.isEmpty() || stringedDescription.length()>50){
+            this.description.setError( getResources().getString(R.string.InvalidDescription));
+            this.description.requestFocus();
             return false;
         }
         return true;

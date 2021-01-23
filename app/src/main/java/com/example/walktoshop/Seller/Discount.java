@@ -13,7 +13,6 @@ public class Discount {
     private String expiringDate;
     private String startDiscountDate;
     private String stepNumber;
-    private String percentage;
     private String description;
     private String discountsQuantity;
     //private Date expiring date
@@ -52,9 +51,6 @@ public class Discount {
         this.stepNumber = stepNumber;
     }
 
-    public void setPercentage(String percentage) {
-        this.percentage = percentage;
-    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -89,9 +85,6 @@ public class Discount {
         return description;
     }
 
-    public String getPercentage() {
-        return percentage;
-    }
 
     public String getDiscountsQuantity() {
         return discountsQuantity;

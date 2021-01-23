@@ -231,7 +231,7 @@ public class SignUp extends AppCompatActivity {
             this.email.setError(getResources().getString(R.string.InvalidEmail));
             this.email.requestFocus();
             return false;
-        } else if(stringPassword.isEmpty()){
+        }else if(stringPassword.isEmpty()){
             this.password.setError(getResources().getString(R.string.passwordEmpty));
             this.password.requestFocus();
             return false;
@@ -242,21 +242,49 @@ public class SignUp extends AppCompatActivity {
             this.password.setError(getResources().getString(R.string.InvalidPassword));
             this.password.requestFocus();
             return false;
-        } else if(stringHeight.isEmpty() && !isSeller){
+        }else if(!stringHeight.isEmpty() && !isSeller ){
             try {
                 int num = Integer.parseInt(stringHeight);
+
             } catch (NumberFormatException e) {
+                Toast toast = Toast.makeText(this,"inserire un'altezza compresa tra 62cm e 278cm",Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
                 this.height.setError( getResources().getString(R.string.InvalidHeight));
                 this.height.requestFocus();
                 return false;
+            }finally {
+                if(Integer.parseInt(stringHeight) < 62 || Integer.parseInt(stringHeight) > 278){
+                    Toast toast = Toast.makeText(this,"inserire un'altezza compresa tra 62cm e 278cm",Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    this.height.setError( getResources().getString(R.string.InvalidHeight));
+                    this.height.requestFocus();
+                    return false;
+                }
+
             }
-        } else if(stringWeight.isEmpty() && !isSeller){
+        }else if(!stringWeight.isEmpty() && !isSeller){
+            //DA FINIRE!!
             try {
-                int num = Integer.parseInt(stringWeight);
+                 int num = Integer.parseInt(stringWeight);
+                 Log.d("weight",stringWeight);
             } catch (NumberFormatException e) {
+                Toast toast = Toast.makeText(this,"inserire un peso che sia compreso tra 40kg e 250kg",Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
                 this.weight.setError( getResources().getString(R.string.InvalidWeight));
                 this.weight.requestFocus();
                 return false;
+            }finally {
+                if(Integer.parseInt(stringWeight) < 40 || Integer.parseInt(stringWeight) > 250){
+                    Toast toast = Toast.makeText(this,"inserire un peso che sia compreso tra 40kg e 250kg",Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    this.weight.setError( getResources().getString(R.string.InvalidWeight));
+                    this.weight.requestFocus();
+                    return false;
+                }
             }
         }
         return true;

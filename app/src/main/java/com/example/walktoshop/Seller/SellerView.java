@@ -9,8 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +31,7 @@ import java.util.ArrayList;
 
 public class SellerView extends AppCompatActivity {
     private ListView listView;
+    private TextView alert;
     private String UID=null;
     private ProgressBar progressBar;
     private Button addActivityButton;
@@ -41,6 +44,7 @@ public class SellerView extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_view);
+        alert = (TextView) findViewById(R.id.alertSeller);
         //View coordinatorLayout = findViewById(android.R.id.content);
         addActivityButton=(Button)findViewById(R.id.addActivityButton);
         addActivityButton.setOnClickListener(new View.OnClickListener() {
@@ -74,17 +78,15 @@ public class SellerView extends AppCompatActivity {
         }else if(discountUID.isEmpty()){
             Log.d("bi",discountUID.toString());
             addActivityButton.setVisibility(View.INVISIBLE);
-            if(businessUID==null){
-
-            }
-            else if(businessUID.size()<= 0){
+            if(businessUID.size()<= 0){
                 Log.d("Busi", String.valueOf(businessUID.size()));
                 addActivityButton.setVisibility(View.VISIBLE);
                 mFab.setVisibility(View.GONE);
-
+                alert.setVisibility(View.GONE);
             }
         }else{
             //editext con su scritto non hai alcuno sconto disponibile
+
         }
     }
 
@@ -151,6 +153,8 @@ public class SellerView extends AppCompatActivity {
                                 if(discountUID!=null && !discountUID.isEmpty()){
                                     getDiscounts();
                                 }else{
+                                    alert.setText("Nessuno sconto disponibile");
+                                    alert.setVisibility(View.VISIBLE);
                                     final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
                                     listView.setAdapter(adapter);
                                 }
@@ -183,6 +187,8 @@ public class SellerView extends AppCompatActivity {
                             discount.setDescription(document.getString("description"));
                             discount.setDiscountsQuantity(document.getString("discountsQuantity"));
                             discountArray.add(discount);
+                        }else{
+
                         }
                     }
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {

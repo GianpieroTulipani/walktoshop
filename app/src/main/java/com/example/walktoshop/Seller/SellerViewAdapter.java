@@ -53,6 +53,7 @@ public class SellerViewAdapter extends ArrayAdapter {
         this.UID = UID;
         this.usage= usage;
         this.businessUID = businessUID;
+
     }
     @Override
     public int getCount() {

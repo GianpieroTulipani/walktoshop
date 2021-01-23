@@ -26,7 +26,14 @@
         android:layout_marginBottom="-5dp"
         android:clickable="false"
         android:focusable="false">
+
     </ListView>
+
+    <TextView
+        android:id="@+id/alertSeller"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/addActivityButton"
         android:layout_width="wrap_content"

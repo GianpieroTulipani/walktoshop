@@ -1,125 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/signUpLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
+    android:id="@+id/itemPage"
+    android:orientation="vertical"
     android:background="@color/white_ice">
 
-    <TextView
-        android:id="@+id/banner"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="WalkToShop"
-        android:textAlignment="center"
-        android:textSize="60sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.139"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="0dp" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/banner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="WalkToShop"
+            android:textAlignment="center"
+            android:textSize="60sp"
+            android:textStyle="bold"
+            android:layout_marginVertical="50dp"
+            android:layout_gravity="center"/>
 
 
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="317dp"
-        android:layout_height="54dp"
-        android:background="@drawable/ic_text_box"
-        android:drawableStart="@drawable/ic_email"
-        android:ems="10"
-        android:drawablePadding="4dp"
-        android:elevation="6dp"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
-        android:paddingStart="6dp"
-        android:paddingLeft="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username"
-        app:layout_constraintVertical_bias="0.058" />
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="139dp"
+            android:layout_height="53dp"
+            android:text="Utente"
+            android:layout_below="@id/banner"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="1dp"/>
+
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="317dp"
+            android:layout_height="54dp"
+            android:background="@drawable/ic_text_box"
+            android:drawableStart="@drawable/ic_user"
+            android:drawablePadding="4dp"
+            android:elevation="6dp"
+            android:hint="UserName"
+            android:inputType="textEmailAddress"
+            android:paddingStart="6dp"
+            android:layout_below="@id/banner"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="60dp" />
 
 
-    <Button
-        android:id="@+id/nextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/verde_maggio"
-        android:text="Avanti"
-        android:textColor="#f8f8ff"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.851"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.795" />
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="317dp"
+            android:layout_height="54dp"
+            android:background="@drawable/ic_text_box"
+            android:drawableStart="@drawable/ic_email"
+            android:ems="10"
+            android:drawablePadding="4dp"
+            android:elevation="6dp"
+            android:hint="@string/email"
+            android:inputType="textEmailAddress"
+            android:paddingStart="6dp"
+            android:layout_below="@id/banner"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="130dp"/>
 
-    <TextView
-        android:id="@+id/already_registered"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Sei già registrato? Clicca qui!"
-        android:textColor="#7081DF"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.864"
-        tools:ignore="MissingConstraints" />
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="317dp"
-        android:layout_height="54dp"
-        android:background="@drawable/ic_text_box"
-        android:drawableStart="@drawable/ic_psw"
-        android:drawablePadding="4dp"
-        android:elevation="6dp"
-        android:paddingStart="6dp"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/email"
-        app:layout_constraintVertical_bias="0.085" />
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="317dp"
+            android:layout_height="54dp"
+            android:background="@drawable/ic_text_box"
+            android:drawableStart="@drawable/ic_psw"
+            android:drawablePadding="4dp"
+            android:elevation="6dp"
+            android:paddingStart="6dp"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:layout_below="@id/banner"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="200dp"/>
 
 
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_button"
+            android:text="Avanti"
+            android:layout_below="@id/username"
+            android:layout_alignRight="@id/username"
+            android:layout_marginVertical="110dp"
+            android:textColor="@color/white_ice" />
 
-    <Switch
-        android:id="@+id/switch1"
-        android:layout_width="139dp"
-        android:layout_height="53dp"
-        android:text="Utente"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.258" />
-
-    <EditText
-        android:id="@+id/username"
-        android:layout_width="317dp"
-        android:layout_height="54dp"
-        android:background="@drawable/ic_text_box"
-        android:drawableStart="@drawable/ic_user"
-        android:drawablePadding="4dp"
-        android:elevation="6dp"
-        android:ems="10"
-        android:hint="UserName"
-        android:inputType="textEmailAddress"
-        android:paddingStart="6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.478" />
+        <TextView
+            android:id="@+id/already_registered"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sei già registrato? Clicca qui!"
+            android:textColor="#7081DF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_below="@id/banner"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="360dp"/>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

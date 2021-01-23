@@ -50,7 +50,6 @@ public class SignUp extends AppCompatActivity {
     String stringHeight=null;
     String stringWeight=null;
     Seller seller=new Seller();
-    boolean isSeller;
     private User user=new User();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,11 +77,9 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(switchButton.isChecked()){
-                    isSeller = true;
                     weight.setVisibility(View.GONE);
                     height.setVisibility(View.GONE);
                 } else {
-                    isSeller = false;
                     weight.setVisibility(View.VISIBLE);
                     height.setVisibility(View.VISIBLE);
                 }
@@ -235,6 +232,14 @@ public class SignUp extends AppCompatActivity {
             this.password.setError(getResources().getString(R.string.passwordEmpty));
             this.password.requestFocus();
             return false;
+        }else if(stringHeight.isEmpty()){
+            this.height.setError( getResources().getString(R.string.heightEmpty));
+            this.height.requestFocus();
+            return false;
+        }else if(stringWeight.isEmpty()) {
+            this.weight.setError(getResources().getString(R.string.weightEmpty));
+            this.weight.requestFocus();
+            return false;
         }else if(stringPassword.length()<6 || stringPassword.length()>20 || !PASSWORD_PATTERN.matcher(stringPassword).matches()){
             Toast toast = Toast.makeText(this,"La password deve essere lunga almeno 8 caratteri e nserire almeno: una lettera minuscola[a-z], un carattere speciale[!,@,#,$] e due numeri[0,9]",Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
@@ -242,50 +247,20 @@ public class SignUp extends AppCompatActivity {
             this.password.setError(getResources().getString(R.string.InvalidPassword));
             this.password.requestFocus();
             return false;
-        }else if(!stringHeight.isEmpty() && !isSeller ){
-            try {
-                int num = Integer.parseInt(stringHeight);
-
-            } catch (NumberFormatException e) {
-                Toast toast = Toast.makeText(this,"inserire un'altezza compresa tra 62cm e 278cm",Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-                this.height.setError( getResources().getString(R.string.InvalidHeight));
-                this.height.requestFocus();
-                return false;
-            }finally {
-                if(Integer.parseInt(stringHeight) < 62 || Integer.parseInt(stringHeight) > 278){
-                    Toast toast = Toast.makeText(this,"inserire un'altezza compresa tra 62cm e 278cm",Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    this.height.setError( getResources().getString(R.string.InvalidHeight));
-                    this.height.requestFocus();
-                    return false;
-                }
-
-            }
-        }else if(!stringWeight.isEmpty() && !isSeller){
-            //DA FINIRE!!
-            try {
-                 int num = Integer.parseInt(stringWeight);
-                 Log.d("weight",stringWeight);
-            } catch (NumberFormatException e) {
-                Toast toast = Toast.makeText(this,"inserire un peso che sia compreso tra 40kg e 250kg",Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-                this.weight.setError( getResources().getString(R.string.InvalidWeight));
-                this.weight.requestFocus();
-                return false;
-            }finally {
-                if(Integer.parseInt(stringWeight) < 40 || Integer.parseInt(stringWeight) > 250){
-                    Toast toast = Toast.makeText(this,"inserire un peso che sia compreso tra 40kg e 250kg",Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    this.weight.setError( getResources().getString(R.string.InvalidWeight));
-                    this.weight.requestFocus();
-                    return false;
-                }
-            }
+        }else  if(Integer.parseInt(stringHeight) < 62 || Integer.parseInt(stringHeight) > 278){
+            Toast toast = Toast.makeText(this,"inserire un'altezza compresa tra 62cm e 278cm",Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            this.height.setError( getResources().getString(R.string.InvalidHeight));
+            this.height.requestFocus();
+            return false;
+        }else if(Integer.parseInt(stringWeight) < 40 || Integer.parseInt(stringWeight) > 250){
+            Toast toast = Toast.makeText(this,"inserire un peso che sia compreso tra 40kg e 250kg",Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            this.weight.setError(getResources().getString(R.string.InvalidWeight));
+            this.weight.requestFocus();
+            return false;
         }
         return true;
     }

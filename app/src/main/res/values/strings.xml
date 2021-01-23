@@ -17,6 +17,9 @@
     <string name="emailEmpty">Inserire email</string>
     <string name="passwordEmpty">Inserire password</string>
     <string name="usernameEmpty">Inserire username</string>
+    <string name="heightEmpty">Inserire altezza</string>
+    <string name="weightEmpty">Inserire peso</string>
+    <string name="numStepsEmpty">Inserire numero passi</string>
     <string name="InvalidPassword">Password non valida</string>
     <string name="InvalidEmail">Email non valida</string>
     <string name="InvalidUsername">Password non valida</string>

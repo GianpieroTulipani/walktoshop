@@ -178,28 +178,20 @@ public class ManageDiscount extends AppCompatActivity {
     private boolean checkInfo(){
         stringedDescription=this.description.getText().toString().trim();
         stringedQuantity=this.quantity.getText().toString().trim();
-        if(!stringedQuantity.isEmpty()){
-            try {
-                int num = Integer.parseInt(stringedQuantity);
-                Log.i("",num+" is a number");
-            } catch (NumberFormatException e) {
-                Log.i("",stringedQuantity+" is not a number");
-                this.quantity.setError( getResources().getString(R.string.numStepsNotValid));
-                this.quantity.requestFocus();
-                return false;
-            }finally {
-                if(Integer.parseInt(stringedQuantity) < 2000|| Integer.parseInt(stringedQuantity) > 100000){
-                    Toast toast = Toast.makeText(this,"inserire un numero passi che sia compreso tra 2000 e 100000",Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    this.quantity.setError( getResources().getString(R.string.numStepsNotValid));
-                    this.quantity.requestFocus();
-                    return false;
-                }
-            }
-        }else if(stringedDescription.isEmpty() || stringedDescription.length()>50){
+        if(stringedDescription.isEmpty() || stringedDescription.length()>50){
             this.description.setError( getResources().getString(R.string.InvalidDescription));
             this.description.requestFocus();
+            return false;
+        }else if(stringedQuantity.isEmpty()){
+            this.quantity.setError( getResources().getString(R.string.numStepsEmpty));
+            this.quantity.requestFocus();
+            return false;
+        }else if(Integer.parseInt(stringedQuantity) < 2000|| Integer.parseInt(stringedQuantity) > 100000){
+            Toast toast = Toast.makeText(this,"inserire un numero passi che sia compreso tra 2000 e 100000",Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            this.quantity.setError( getResources().getString(R.string.numStepsNotValid));
+            this.quantity.requestFocus();
             return false;
         }
         return true;

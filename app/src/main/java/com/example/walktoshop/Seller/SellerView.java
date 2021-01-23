@@ -73,6 +73,9 @@ public class SellerView extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         getSellerBusinessUID();
+        if(businessUID == null){
+            businessUID = new ArrayList<String>();
+        }
         if(discountUID==null){
             addActivityButton.setVisibility(View.INVISIBLE);
         }else if(discountUID.isEmpty()){
@@ -84,9 +87,6 @@ public class SellerView extends AppCompatActivity {
                 mFab.setVisibility(View.GONE);
                 alert.setVisibility(View.GONE);
             }
-        }else{
-            //editext con su scritto non hai alcuno sconto disponibile
-
         }
     }
 

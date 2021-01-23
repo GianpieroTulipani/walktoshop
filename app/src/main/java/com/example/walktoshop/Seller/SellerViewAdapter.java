@@ -93,7 +93,7 @@ public class SellerViewAdapter extends ArrayAdapter {
         ImageButton deleteBusiness =activity.findViewById(R.id.deletebusiness);
         //modifica
         ImageButton editBusiness= activity.findViewById(R.id.editBusiness);
-
+        TextView difficulty=activity.findViewById(R.id.difficulty);
         ImageButton cardView = (ImageButton) activity.findViewById(R.id.frecciaCardView);
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +107,6 @@ public class SellerViewAdapter extends ArrayAdapter {
         if(this.discounts.get(position) != null && position>=0 && !discounts.isEmpty()){
             Discount d=this.discounts.get(position);
             //settare tutti gli attributi xml
-
             date.setText("Scadenza: "+d.millisecondsToDate(d.getExpiringDate()));
             disocuntDescription.setText(d.getDescription());
             //description.setText(d.getDescription());
@@ -128,6 +127,15 @@ public class SellerViewAdapter extends ArrayAdapter {
                     }
                 });
             }else if(this.usage=="userHome"){
+                int goal= Integer.parseInt(d.getDiscountsQuantity());
+                if(goal<5000){
+                    //easy
+                }else if(goal>=5000 && goal<=20000){
+                    //medium
+                }else if(goal>20000){
+                    //difficult
+                }
+                difficulty.setText("Difficulty:");
                 //qui si devono inserire elementi grafici tipici della vista in cui è chiamato
             }else if(this.usage=="backdropList"){
                 //qui si devono inserire elementi grafici tipici della vista in cui è chiamato

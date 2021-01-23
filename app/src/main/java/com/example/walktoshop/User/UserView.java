@@ -293,6 +293,19 @@ public class UserView extends AppCompatActivity {
             manager.createNotificationChannel(serviceChannel);
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        killServiceIfRunning();
+    }
+    private void killServiceIfRunning(){
+        if(isMyServiceRunning(StepCounter.class) == true){
+            Intent intent =new Intent(this,StepCounter.class);
+            Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();
+            stopService(intent);
+        }
+    }
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -301,15 +314,5 @@ public class UserView extends AppCompatActivity {
             }
         }
         return false;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(isMyServiceRunning(StepCounter.class) == true){
-            Intent intent =new Intent(this,StepCounter.class);
-            Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();
-            stopService(intent);
-        }
     }
 }

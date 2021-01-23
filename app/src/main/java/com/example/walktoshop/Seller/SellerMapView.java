@@ -72,6 +72,10 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                     Geocoder geocoder=new Geocoder(SellerMapView.this);
                     try{
                         addresses=geocoder.getFromLocationName(location,1);
+                        if(addresses.isEmpty()){
+                            dialog();
+                        }
+                        Log.d("ADDRESS", String.valueOf(addresses));
                     }catch(Exception e){
                         e.printStackTrace();
                         dialog();
@@ -83,10 +87,7 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                         mMap.addMarker(new MarkerOptions().position(place).title(location));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place,10));
                         //inizalizzazione oggetto da scrivere
-                        /*
-                            nome esatto della citta
-                            in setName inserire res[0] e provare
-                         */
+
                         if(SellerMapView.this.location.contains(",")){
                             String[] res = SellerMapView.this.location.split("[,]", 0);
                             SellerMapView.this.location = res[0];

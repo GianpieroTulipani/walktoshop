@@ -63,12 +63,11 @@
                 android:background="#f8f8ff">
 
                 <TextView
-                    android:id="@+id/text"
+                    android:id="@+id/difficulty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:textColor="@color/black"
-                    android:text="è uno sconto del 20% relativo ad una pizzeria per ottenere una cena per due al prezzo di 1 ti consiglio di sfruttarlo."
                     android:textSize="15dp"/>
             </LinearLayout>
 

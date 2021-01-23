@@ -1,5 +1,7 @@
 package com.example.walktoshop.User;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -9,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -157,4 +161,27 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
             return null;
         }
     }
+    //killa il service se attivo
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        killServiceIfRunning();
+    }
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private void killServiceIfRunning(){
+        if(isMyServiceRunning(StepCounter.class) == true){
+            Intent intent =new Intent(this,StepCounter.class);
+            Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();
+            stopService(intent);
+        }
+    }
+
 }

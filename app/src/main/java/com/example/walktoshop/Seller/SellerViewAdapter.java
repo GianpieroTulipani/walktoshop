@@ -10,15 +10,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.Business;
+import com.example.walktoshop.User.CardView;
+import com.example.walktoshop.User.UserView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -85,11 +89,19 @@ public class SellerViewAdapter extends ArrayAdapter {
         TextView disocuntDescription= activity.findViewById(R.id.disocuntDescription);
         TextView date=activity.findViewById(R.id.date);
         //bottone eliminazione
-        Button deleteBusiness =activity.findViewById(R.id.deletebusiness);
+        ImageButton deleteBusiness =activity.findViewById(R.id.deletebusiness);
         //modifica
-        Button editBusiness= activity.findViewById(R.id.editBusiness);
-        //bottone attivazione contapassi
+        ImageButton editBusiness= activity.findViewById(R.id.editBusiness);
 
+        ImageButton cardView = (ImageButton) activity.findViewById(R.id.frecciaCardView);
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent intent = new Intent(getContext(), CardView.class);
+                context.startActivity(intent);
+            }
+        });
+        //bottone attivazione contapassi
         //bottone abilitazione
         if(this.discounts.get(position) != null && position>=0 && !discounts.isEmpty()){
             Discount d=this.discounts.get(position);

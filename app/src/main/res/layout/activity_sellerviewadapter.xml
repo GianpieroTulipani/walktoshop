@@ -1,108 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp"
+    android:layout_height="wrap_content"
     android:id="@+id/itemPage"
-    android:background="@color/white_ice">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/card_shape"
+    android:orientation="vertical">
+
     <androidx.cardview.widget.CardView
-        android:id="@+id/cards"
         android:layout_width="match_parent"
-        android:layout_height="187dp"
-        android:layout_margin="0dp">
+        android:layout_height="wrap_content">
+
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:backgroundTint="#f8f8ff"
-            android:backgroundTintMode="src_in"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:background="@drawable/backdrop_shape"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:backgroundTint="@color/verde_maggio"
-                android:backgroundTintMode="src_over"
-                android:orientation="horizontal">
+                android:background="@drawable/backdrop_shape">
 
-                <ImageView
-                    android:id="@+id/filterIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_sconti" />
-
-                <TextView
-                    android:id="@+id/disocuntDescription"
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/FabIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="18dp"
+                    android:layout_marginLeft="15dp"
+                    android:backgroundTint="@color/white"
+                    android:src="@drawable/ic_sconti"
+                    android:theme="@style/MyMaterialTheme"
+                    android:tint="#FFFFFF"
+                    app:fabSize="mini" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/disocuntDescription"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:text="Sconto del 20%"
-                    android:textSize="25dp"
-                    android:textColor="#f8f8ff"
-                    app:icon="@mipmap/ic_launcher_round">
+                    android:textColor="@color/white"
+                    android:textSize="25dp" />
 
-                </TextView>
-
+                <ImageButton
+                    android:id="@+id/frecciaCardView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center"
+                    android:background="@color/verde_maggio"
+                    android:src="@drawable/ic_freccia" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="59dp"
-                android:background="#f8f8ff"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:layout_gravity="left"
-                    >
-                </TextView>
+                android:layout_height="wrap_content"
+                android:background="#f8f8ff">
+
                 <TextView
                     android:id="@+id/text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
-                    android:layout_marginTop="20dp"
-                    android:text="Questo sconto è applicabile a saggi scientifici e a romanzi erotici."
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary"
-                    android:textSize="15dp" />
-
+                    android:layout_gravity="center"
+                    android:textColor="@color/black"
+                    android:text="è uno sconto del 20% relativo ad una pizzeria per ottenere una cena per due al prezzo di 1 ti consiglio di sfruttarlo."
+                    android:textSize="15dp"/>
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_margin="8dp"
-                android:orientation="horizontal">
+                android:background="@drawable/card_shape">
 
-                <Button
-                    style="?attr/borderlessButtonStyle"
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/ovale"
+                    android:text="scadenza: 27/01/2021"/>
+
+
+                <ImageButton
                     android:id="@+id/editBusiness"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    app:icon="@android:drawable/ic_menu_edit" />
-
-                <Button
-                    style="?attr/borderlessButtonStyle"
+                    android:layout_marginLeft="140dp"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:background="#f8f8ff"
+                    android:tint="@color/verde_maggio" />
+                <ImageButton
                     android:id="@+id/deletebusiness"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:icon="@android:drawable/ic_menu_delete" />
+                    android:layout_marginLeft="20dp"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:background="#f8f8ff"
+                    android:tint="@color/verde_maggio" />
+
             </LinearLayout>
+
         </LinearLayout>
+
 
     </androidx.cardview.widget.CardView>
 
 
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>
+
+
+

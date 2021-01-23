@@ -54,30 +54,47 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
                 <ProgressBar
                     android:id="@+id/progerssBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="400dp"
                     style="@style/CircularDeterminateprogressBar"
-                    tools:progress="0"
+                    android:layout_width="match_parent"
+                    android:layout_height="420dp"
                     android:layout_gravity="center"
-                    tools:ignore="MissingConstraints" />
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:ignore="MissingConstraints"
+                    tools:progress="0" />
+
+                <ImageView
+                    android:layout_width="121dp"
+                    android:layout_height="113dp"
+                    android:src="@drawable/icons8_esercizio_96"
+                    app:layout_constraintBottom_toBottomOf="@+id/progerssBar"
+                    app:layout_constraintEnd_toEndOf="@+id/progerssBar"
+                    app:layout_constraintStart_toStartOf="@+id/progerssBar"
+                    app:layout_constraintTop_toTopOf="@+id/progerssBar" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2000"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                     android:textSize="40dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:typeface="monospace"
+                    app:layout_constraintBottom_toBottomOf="@+id/progerssBar"
                     app:layout_constraintEnd_toEndOf="@+id/progerssBar"
-                    app:layout_constraintHorizontal_bias="0.498"
+                    app:layout_constraintHorizontal_bias="0.491"
                     app:layout_constraintStart_toStartOf="@+id/progerssBar"
-                    app:layout_constraintTop_toTopOf="@+id/progerssBar" />
+                    app:layout_constraintTop_toTopOf="@+id/progerssBar"
+                    app:layout_constraintVertical_bias="0.964" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="132dp"
+                android:layout_height="wrap_content"
                 android:background="#f8f8ff"
                 android:orientation="vertical"
                 android:padding="16dp">
@@ -105,15 +122,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_gravity="end">
+                android:layout_gravity="center">
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/ovale"
                     android:backgroundTint="@color/verde_maggio"
-                    android:background="@drawable/card_shape"
-                    android:text="ABILITA SCONTO">
-                </Button>
+                    android:text="ABILITA SCONTO"/>
             </LinearLayout>
 
 

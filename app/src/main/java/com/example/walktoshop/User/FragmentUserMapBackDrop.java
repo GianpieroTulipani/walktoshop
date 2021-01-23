@@ -42,13 +42,13 @@ public class FragmentUserMapBackDrop extends Fragment {
 
         View coordinatorLayout = (CoordinatorLayout)inflater.inflate(R.layout.fragment_map_backdrop, container, false);
         backdropListview = coordinatorLayout.findViewById(R.id.backdropListView);
-        backdropListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       /* backdropListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final Intent intent = new Intent(getActivity(), CardView.class);
                 startActivity(intent);
             }
-        });
+        });*/
         ImageView filterIcon = coordinatorLayout.findViewById(R.id.filterIcon);
         LinearLayout contentLayout = coordinatorLayout.findViewById(R.id.contentLayout);
         //vengono prese le informazioni passate cliccando sul marker

@@ -5,11 +5,11 @@
 
     <item
         android:id="@+id/stepcounter"
-        android:title="@string/action_stepcounter"
         android:onClick="OnItemSelected"
-        android:icon="@android:drawable/ic_menu_upload_you_tube"
         android:orderInCategory="100"
-        app:showAsAction="always"/>
+        android:textColor="@color/white"
+        android:title="@string/action_stepcounter"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_search"
         android:icon="@android:drawable/ic_menu_search"

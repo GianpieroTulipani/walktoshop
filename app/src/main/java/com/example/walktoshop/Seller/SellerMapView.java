@@ -72,6 +72,10 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                     Geocoder geocoder=new Geocoder(SellerMapView.this);
                     try{
                         addresses=geocoder.getFromLocationName(location,1);
+                        if(addresses.isEmpty()){
+                            dialog();
+                        }
+                        Log.d("ADDRESS", String.valueOf(addresses));
                     }catch(Exception e){
                         e.printStackTrace();
                         dialog();

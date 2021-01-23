@@ -52,6 +52,7 @@ public class SignUp extends AppCompatActivity {
     Seller seller=new Seller();
     boolean isSeller;
     private User user=new User();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

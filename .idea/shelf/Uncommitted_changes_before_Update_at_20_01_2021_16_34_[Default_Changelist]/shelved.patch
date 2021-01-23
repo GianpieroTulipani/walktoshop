@@ -1,0 +1,191 @@
+Index: app/src/main/java/com/example/walktoshop/User/UserView.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.walktoshop.User;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.appcompat.widget.Toolbar;\r\nimport androidx.core.app.ActivityCompat;\r\nimport androidx.core.content.ContextCompat;\r\n\r\nimport android.Manifest;\r\nimport android.app.AlertDialog;\r\nimport android.content.DialogInterface;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Address;\r\nimport android.location.Geocoder;\r\nimport android.location.Location;\r\nimport android.location.LocationListener;\r\nimport android.location.LocationManager;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.os.Looper;\r\nimport android.provider.Settings;\r\nimport android.util.Log;\r\nimport android.view.Menu;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.Toast;\r\n\r\n\r\nimport com.example.walktoshop.R;\r\nimport com.google.android.gms.common.api.ApiException;\r\nimport com.google.android.gms.location.FusedLocationProviderClient;\r\nimport com.google.android.gms.location.LocationCallback;\r\nimport com.google.android.gms.location.LocationRequest;\r\nimport com.google.android.gms.location.LocationResult;\r\nimport com.google.android.gms.location.LocationServices;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.android.libraries.places.api.model.Place;\r\nimport com.google.android.libraries.places.api.model.PlaceLikelihood;\r\nimport com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;\r\nimport com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;\r\nimport com.google.android.libraries.places.api.net.PlacesClient;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\n\r\nimport java.io.IOException;\r\nimport java.text.BreakIterator;\r\nimport java.util.ArrayList;\r\nimport java.util.Collections;\r\nimport java.util.List;\r\nimport java.util.Locale;\r\n\r\n\r\npublic class UserView extends AppCompatActivity {\r\n    LocationManager service;\r\n    LocationListener locationListener;\r\n    private boolean statusOfGPS = false;\r\n    double longitude;\r\n    double latitude;\r\n    String city;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_user_view);\r\n        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);\r\n        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {\r\n            @Override\r\n            public boolean onNavigationItemSelected(@NonNull MenuItem item) {\r\n                switch (item.getItemId()) {\r\n                    case R.id.action_home:\r\n                        goHome();\r\n                        break;\r\n                    case R.id.action_map:\r\n                        askGPSpermission();\r\n                        break;\r\n                    case R.id.action_statistics:\r\n                        break;\r\n                    case R.id.action_notification:\r\n                        break;\r\n                }\r\n                return true;\r\n            }\r\n        });\r\n    }\r\n\r\n    private void getUserPosition() {\r\n        service = (LocationManager) getSystemService(LOCATION_SERVICE);\r\n        locationListener = new LocationListener() {\r\n            @Override\r\n            public void onLocationChanged(@NonNull Location location) {\r\n                latitude=location.getLatitude();\r\n                longitude=location.getLongitude();\r\n                Log.d(\"coordinates\",latitude+\"\\n\"+longitude);\r\n                try {\r\n                    Geocoder geocoder=new Geocoder(UserView.this);\r\n                    List<Address> addresses=new ArrayList<>();\r\n                    addresses=geocoder.getFromLocation(latitude,longitude,1);\r\n                    String country=addresses.get(0).getCountryName();\r\n                    city=addresses.get(0).getLocality();\r\n                    goToUserViewMap();\r\n                    //Log.d(\"city\",city);\r\n                } catch (IOException e) {\r\n                    e.printStackTrace();\r\n                }\r\n            }\r\n\r\n            @Override\r\n            public void onProviderEnabled(@NonNull String provider) {\r\n\r\n            }\r\n\r\n            @Override\r\n            public void onProviderDisabled(@NonNull String provider) {\r\n                new AlertDialog.Builder(UserView.this).setTitle(\"GPS dialog\").setMessage(\"Do you want to turn on gps?\")\r\n                        .setPositiveButton(\"Yes\", new DialogInterface.OnClickListener() {\r\n                            @Override\r\n                            public void onClick(DialogInterface dialogInterface, int i) {\r\n                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);\r\n                                startActivity(intent);\r\n                            }\r\n                        }).setNegativeButton(\"Go Back\", null).show();\r\n            }\r\n        };\r\n\r\n    }\r\n\r\n    private void askGPSpermission() {\r\n        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {\r\n            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {\r\n                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.INTERNET},10);\r\n            }\r\n            return;\r\n        }\r\n        getUserPosition();\r\n        service.requestLocationUpdates(\"gps\", 500, 1000, locationListener);\r\n    }\r\n\r\n    @Override\r\n    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {\r\n        super.onRequestPermissionsResult(requestCode, permissions, grantResults);\r\n        switch(requestCode){\r\n            case 10:\r\n                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){\r\n\r\n                }else if(grantResults[0]==PackageManager.PERMISSION_DENIED){\r\n                    if(ActivityCompat.shouldShowRequestPermissionRationale(UserView.this,Manifest.permission.ACCESS_FINE_LOCATION)){\r\n                        //dialog in cui spiego\r\n                        new AlertDialog.Builder(UserView.this)\r\n                                .setTitle(\"Permission\")\r\n                                .setMessage(\"Denying permission you can't use geo-localization\")\r\n                                .setNeutralButton(\"ok\",null)\r\n                                .show();\r\n                    }\r\n                }\r\n                return;\r\n        }\r\n    }\r\n\r\n    private void goToUserViewMap() {\r\n        final Intent intent = new Intent(UserView.this, UserMapView.class);\r\n        intent.putExtra(\"latitude\", latitude);\r\n        intent.putExtra(\"longitude\", longitude);\r\n        intent.putExtra(\"city\", city );\r\n        startActivity(intent);\r\n\r\n    }\r\n\r\n    public void goHome() {\r\n        final Intent intent = new Intent(this, UserView.class);\r\n        startActivity(intent);\r\n    }\r\n\r\n    public boolean onCreateOptionsMenu(Menu menu){\r\n        getMenuInflater().inflate(R.menu.menu_action_bar, menu);\r\n        return true;\r\n    }\r\n\r\n    public boolean onOptionsItemSelected(MenuItem item){\r\n        return super.onOptionsItemSelected(item);\r\n    }\r\n    public void OnItemSelected(MenuItem item) {\r\n        switch (item.getItemId()){\r\n            case R.id.action_search:\r\n                break;\r\n            case R.id.action_exit:\r\n                break;\r\n            case R.id.action_settings:\r\n                break;\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/walktoshop/User/UserView.java	(revision f46bcd3e467c54f71d37bafbbf7f4bfa3ce1745c)
++++ app/src/main/java/com/example/walktoshop/User/UserView.java	(date 1611154990527)
+@@ -24,6 +24,7 @@
+ import android.view.Menu;
+ import android.view.MenuItem;
+ import android.view.View;
++import android.widget.ProgressBar;
+ import android.widget.Toast;
+ 
+ 
+@@ -56,6 +57,7 @@
+ public class UserView extends AppCompatActivity {
+     LocationManager service;
+     LocationListener locationListener;
++    ProgressBar progressBar;
+     private boolean statusOfGPS = false;
+     double longitude;
+     double latitude;
+@@ -74,6 +76,8 @@
+                         goHome();
+                         break;
+                     case R.id.action_map:
++                        progressBar = (ProgressBar) findViewById(R.id.sellerViewProgressBar);
++                        progressBar.setVisibility(View.VISIBLE);
+                         askGPSpermission();
+                         break;
+                     case R.id.action_statistics:
+Index: app/src/main/java/com/example/walktoshop/User/UserMapView.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.walktoshop.User;\r\n\r\nimport android.Manifest;\r\nimport android.annotation.SuppressLint;\r\nimport android.app.AlertDialog;\r\nimport android.content.DialogInterface;\r\nimport android.content.Intent;\r\nimport android.content.pm.PackageManager;\r\nimport android.location.Address;\r\nimport android.location.Geocoder;\r\nimport android.location.Location;\r\nimport android.location.LocationListener;\r\nimport android.location.LocationManager;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.Menu;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.ProgressBar;\r\n\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.app.ActivityCompat;\r\n\r\n\r\nimport com.example.walktoshop.R;\r\nimport com.google.android.gms.location.FusedLocationProviderClient;\r\nimport com.google.android.gms.location.LocationServices;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.Marker;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\nimport com.google.firebase.FirebaseApp;\r\nimport com.google.firebase.firestore.DocumentSnapshot;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\nimport com.google.firebase.firestore.QueryDocumentSnapshot;\r\nimport com.google.firebase.firestore.QuerySnapshot;\r\n\r\nimport java.io.IOException;\r\nimport java.util.ArrayList;\r\nimport java.util.Iterator;\r\nimport java.util.List;\r\nimport java.util.ListIterator;\r\n\r\n\r\npublic class UserMapView extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {\r\n    GoogleMap mMap;\r\n    ProgressBar progressBar;\r\n    List<LatLng> latLngs = new ArrayList<LatLng>();\r\n    LocationManager service;\r\n    LocationListener locationListener;\r\n    double latitude;\r\n    double longitude;\r\n    String city;\r\n    FirebaseFirestore db =FirebaseFirestore.getInstance();\r\n\r\n    @Override\r\n    protected void onCreate(@Nullable Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_user_map_view);\r\n        Intent intent = getIntent();\r\n        latitude = intent.getDoubleExtra(\"latitude\", 0.0f);\r\n        longitude = intent.getDoubleExtra(\"longitude\", 0.0f);\r\n        city = intent.getStringExtra(\"city\");\r\n        Log.d(\"city\",city);\r\n        getBusinessOnMap();\r\n        Log.d(\"Dimension\", String.valueOf(latLngs.size()));\r\n        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()\r\n                .findFragmentById(R.id.map);\r\n        mapFragment.getMapAsync(UserMapView.this);\r\n\r\n        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);\r\n        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {\r\n            @Override\r\n            public boolean onNavigationItemSelected(@NonNull MenuItem item) {\r\n                switch (item.getItemId()) {\r\n                    case R.id.action_home:\r\n                        goHome();\r\n                        break;\r\n                    case R.id.action_statistics:\r\n                        break;\r\n                    case R.id.action_notification:\r\n                        break;\r\n                }\r\n                return true;\r\n            }\r\n        });\r\n    }\r\n\r\n    //peppe devi fare qui le query per riempire l'ArrayList, usa l'iterator\r\n    @Override\r\n    protected void onStart() {\r\n        super.onStart();\r\n\r\n    }\r\n    private void getBusinessOnMap(){\r\n        db.collection(\"attivita\").whereEqualTo(\"locality\", city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<QuerySnapshot> task) {\r\n                if(task.isSuccessful()){\r\n                    for (QueryDocumentSnapshot document : task.getResult()){\r\n                        double lat = Double.parseDouble(document.getString(\"latitude\"));\r\n                        Log.d(\"latitude\", String.valueOf(lat));\r\n                        double longt = Double.parseDouble(document.getString(\"longitude\"));\r\n                        Log.d(\"longitude\", String.valueOf(longt));\r\n                        latLngs.add(new LatLng(lat, longt));\r\n                        Log.d(\"LatLng\", String.valueOf(latLngs));\r\n                        Log.d(\"Attività\", String.valueOf(document.getData()));\r\n                    }\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    public void goHome() {\r\n        final Intent intent = new Intent(this, UserView.class);\r\n        startActivity(intent);\r\n    }\r\n\r\n    public boolean onCreateOptionsMenu(Menu menu) {\r\n        getMenuInflater().inflate(R.menu.menu_action_bar, menu);\r\n        return true;\r\n    }\r\n\r\n    public boolean onOptionsItemSelected(MenuItem item) {\r\n        return super.onOptionsItemSelected(item);\r\n    }\r\n\r\n    public void OnItemSelected(MenuItem item) {\r\n        switch (item.getItemId()) {\r\n            case R.id.action_search:\r\n                break;\r\n            case R.id.action_exit:\r\n                break;\r\n            case R.id.action_settings:\r\n                break;\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public void onMapReady(GoogleMap googleMap) {\r\n        mMap = googleMap;\r\n        Iterator<LatLng> iterator = latLngs.listIterator();\r\n        while(iterator.hasNext()){\r\n            Log.d(\"Iterator\", String.valueOf(iterator.next().latitude)+\"-\"+iterator.next().longitude);\r\n            mMap.addMarker(new MarkerOptions().position(iterator.next()));\r\n        }\r\n        LatLng myPlace = new LatLng(latitude, longitude);\r\n        //mMap.addMarker(new MarkerOptions().position(italy).title(\"I'm here\"));\r\n       // mMap.moveCamera(CameraUpdateFactory.newLatLng(italy));\r\n        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace, 15));\r\n        mMap.setOnMarkerClickListener(this);\r\n\r\n    }\r\n\r\n    @Override\r\n    public boolean onMarkerClick(Marker marker) {\r\n        getSupportFragmentManager().beginTransaction()\r\n                .add(R.id.container, new FragmentUserMapBackDrop()).commit();\r\n        return false;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/walktoshop/User/UserMapView.java	(revision f46bcd3e467c54f71d37bafbbf7f4bfa3ce1745c)
++++ app/src/main/java/com/example/walktoshop/User/UserMapView.java	(date 1611154464126)
+@@ -1,33 +1,14 @@
+ package com.example.walktoshop.User;
+ 
+-import android.Manifest;
+-import android.annotation.SuppressLint;
+-import android.app.AlertDialog;
+-import android.content.DialogInterface;
++
+ import android.content.Intent;
+-import android.content.pm.PackageManager;
+-import android.location.Address;
+-import android.location.Geocoder;
+-import android.location.Location;
+-import android.location.LocationListener;
+-import android.location.LocationManager;
+ import android.os.Bundle;
+-import android.util.Log;
+ import android.view.Menu;
+ import android.view.MenuItem;
+-import android.view.View;
+-import android.widget.ProgressBar;
+-
+-
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.appcompat.app.AppCompatActivity;
+-import androidx.core.app.ActivityCompat;
+-
+-
+ import com.example.walktoshop.R;
+-import com.google.android.gms.location.FusedLocationProviderClient;
+-import com.google.android.gms.location.LocationServices;
+ import com.google.android.gms.maps.CameraUpdateFactory;
+ import com.google.android.gms.maps.GoogleMap;
+ import com.google.android.gms.maps.OnMapReadyCallback;
+@@ -36,47 +17,55 @@
+ import com.google.android.gms.maps.model.Marker;
+ import com.google.android.gms.maps.model.MarkerOptions;
+ import com.google.android.gms.tasks.OnCompleteListener;
+-import com.google.android.gms.tasks.OnSuccessListener;
+ import com.google.android.gms.tasks.Task;
+ import com.google.android.material.bottomnavigation.BottomNavigationView;
+-import com.google.firebase.FirebaseApp;
+-import com.google.firebase.firestore.DocumentSnapshot;
+ import com.google.firebase.firestore.FirebaseFirestore;
+ import com.google.firebase.firestore.QueryDocumentSnapshot;
+ import com.google.firebase.firestore.QuerySnapshot;
+-
+-import java.io.IOException;
+ import java.util.ArrayList;
+-import java.util.Iterator;
+ import java.util.List;
+ import java.util.ListIterator;
+ 
+ 
+ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+     GoogleMap mMap;
+-    ProgressBar progressBar;
+-    List<LatLng> latLngs = new ArrayList<LatLng>();
+-    LocationManager service;
+-    LocationListener locationListener;
+     double latitude;
+     double longitude;
+     String city;
++    List<LatLng> latLngs = new ArrayList<LatLng>();
+     FirebaseFirestore db =FirebaseFirestore.getInstance();
+ 
+     @Override
+     protected void onCreate(@Nullable Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_user_map_view);
++
+         Intent intent = getIntent();
+         latitude = intent.getDoubleExtra("latitude", 0.0f);
+         longitude = intent.getDoubleExtra("longitude", 0.0f);
+         city = intent.getStringExtra("city");
+-        Log.d("city",city);
+-        getBusinessOnMap();
+-        Log.d("Dimension", String.valueOf(latLngs.size()));
++
+         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                 .findFragmentById(R.id.map);
+-        mapFragment.getMapAsync(UserMapView.this);
++        /*
++         *Viene effettuata una query tarmite firebase per ottenere tutte le attività corrispondenti alla città geolocalizzata ed ottenuta tarmite l'intent dall'activity UserView.
++         * successivamente se la query viene completata con successo viene eseguito un ciclo for per scandire tutte le attività sul database e prelevare latitudine e longitudine che poi
++         * vengono successivamente inserite in una Lista di tipo LatLng e poi successivamnete una volta caricata richiamiamo il metodo di callback getMapAsync che ci consente di inizializzare
++         * l'oggetto mappa ospitato dal fragment ed ottenerne un riferimento.
++         */
++        db.collection("attivita").whereEqualTo("locality", city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
++            @Override
++            public void onComplete(@NonNull Task<QuerySnapshot> task) {
++                if(task.isSuccessful()){
++                    for (QueryDocumentSnapshot document : task.getResult()){
++                        double lat = Double.parseDouble(document.getString("latitude"));
++                        double longt = Double.parseDouble(document.getString("longitude"));
++                        latLngs.add(new LatLng(lat, longt));
++                    }
++                    mapFragment.getMapAsync(UserMapView.this);
++                }
++            }
++        });
+ 
+         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+@@ -96,31 +85,6 @@
+         });
+     }
+ 
+-    //peppe devi fare qui le query per riempire l'ArrayList, usa l'iterator
+-    @Override
+-    protected void onStart() {
+-        super.onStart();
+-
+-    }
+-    private void getBusinessOnMap(){
+-        db.collection("attivita").whereEqualTo("locality", city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+-            @Override
+-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+-                if(task.isSuccessful()){
+-                    for (QueryDocumentSnapshot document : task.getResult()){
+-                        double lat = Double.parseDouble(document.getString("latitude"));
+-                        Log.d("latitude", String.valueOf(lat));
+-                        double longt = Double.parseDouble(document.getString("longitude"));
+-                        Log.d("longitude", String.valueOf(longt));
+-                        latLngs.add(new LatLng(lat, longt));
+-                        Log.d("LatLng", String.valueOf(latLngs));
+-                        Log.d("Attività", String.valueOf(document.getData()));
+-                    }
+-                }
+-            }
+-        });
+-    }
+-
+     public void goHome() {
+         final Intent intent = new Intent(this, UserView.class);
+         startActivity(intent);
+@@ -149,9 +113,8 @@
+     @Override
+     public void onMapReady(GoogleMap googleMap) {
+         mMap = googleMap;
+-        Iterator<LatLng> iterator = latLngs.listIterator();
++        ListIterator<LatLng> iterator = latLngs.listIterator();
+         while(iterator.hasNext()){
+-            Log.d("Iterator", String.valueOf(iterator.next().latitude)+"-"+iterator.next().longitude);
+             mMap.addMarker(new MarkerOptions().position(iterator.next()));
+         }
+         LatLng myPlace = new LatLng(latitude, longitude);

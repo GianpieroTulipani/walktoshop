@@ -7,21 +7,19 @@ import android.util.Patterns;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.Seller;
 import com.example.walktoshop.Seller.SellerView;
 import com.example.walktoshop.User.User;
+import com.example.walktoshop.User.UserView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -30,7 +28,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.firestore.FirebaseFirestore;
-
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 
@@ -44,10 +42,15 @@ public class SignUp extends AppCompatActivity {
     private Switch switchButton;
     private Button goNext;
     private TextView already_registered;
+    private EditText height;
+    private EditText weight;
     String stringEmail=null;
     String stringPassword=null;
     String stringUsername=null;
+    String stringHeight=null;
+    String stringWeight=null;
     Seller seller=new Seller();
+    boolean isSeller;
     private User user=new User();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +61,8 @@ public class SignUp extends AppCompatActivity {
         email=(EditText) findViewById(R.id.email);
         switchButton=(Switch)findViewById(R.id.switch1);
         goNext=(Button)findViewById(R.id.nextButton);
+        height = (EditText) findViewById(R.id.height);
+        weight = (EditText) findViewById(R.id.weight);
         already_registered = (TextView) findViewById(R.id.already_registered);
         goNext.setVisibility(View.VISIBLE);
         seller.setUID(mAuth.getUid());
@@ -69,9 +74,24 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
+        switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(switchButton.isChecked()){
+                    isSeller = true;
+                    weight.setVisibility(View.GONE);
+                    height.setVisibility(View.GONE);
+                } else {
+                    isSeller = false;
+                    weight.setVisibility(View.VISIBLE);
+                    height.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         goNext.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 if(checkUserInfo()){
                     if(switchButton.isChecked()){
                         //crea e carica il negoziante
@@ -82,9 +102,7 @@ public class SignUp extends AppCompatActivity {
                     }
                 }
             }
-
         });
-
     }
 
     private void goSellerViewActivity(){
@@ -98,32 +116,14 @@ public class SignUp extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void startFragment()
-    {
-        Bundle bundle = new Bundle();
-        bundle.putString("email", stringEmail.toString());
-        bundle.putString("password", stringPassword.toString());
-        bundle.putString("username", stringUsername.toString());
-        FragmentManager fm=getSupportFragmentManager();
-        Fragment_SignUp fragment_signup =new Fragment_SignUp();
-        //addaniamtion
-        fragment_signup.setArguments(bundle);
-        fm.beginTransaction().addToBackStack(null).replace(R.id.signUpLayout,fragment_signup).commit();
-        goNext.setVisibility(View.GONE);
-    }
-
     private void createUser() {
         user.setEmail(stringEmail);
         user.setPassword(stringPassword);
-        user.setUsername(stringUsername);
         mAuth.createUserWithEmailAndPassword(user.getEmail(),user.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    username.setVisibility(View.INVISIBLE);
-                    password.setVisibility(View.INVISIBLE);
-                    email.setVisibility(View.INVISIBLE);
-                    startFragment();
+                    uploadUser();
                 }else{
                     try
                     {
@@ -139,10 +139,37 @@ public class SignUp extends AppCompatActivity {
         });
     }
 
+    private void uploadUser() {
+        user.setUsername(stringUsername);
+        user.setHeight(stringHeight);
+        user.setWeight(stringWeight);
+        user.setUID(mAuth.getUid());
+        user.setWalkUID(new ArrayList<>());
+        user.setDisocuntUID(new ArrayList<>());
+
+        db.collection("utente").document(user.getUID()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                goHomeActivity();
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    public void goHomeActivity() {
+        final Intent intent = new Intent(SignUp.this, UserView.class);
+        intent.putExtra("UID",user.getUID());
+        startActivity(intent);
+    }
+
     private void createSeller() {
         seller.setEmail(stringEmail);
         seller.setPassword(stringPassword);
-        seller.setUsername(stringUsername);
         mAuth.createUserWithEmailAndPassword(seller.getEmail(),seller.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -164,6 +191,7 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void uploadSeller() {
+        seller.setUsername(stringUsername);
         String sellerUID=mAuth.getUid();
         seller.setUID(sellerUID);
         db.collection("venditore").document(sellerUID).set(seller).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -176,7 +204,6 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d("FALLIMENTO","fallito");
-
             }
         });
     }
@@ -185,6 +212,9 @@ public class SignUp extends AppCompatActivity {
         stringEmail=this.email.getText().toString().trim();
         stringPassword= this.password.getText().toString().trim();
         stringUsername=this.username.getText().toString().trim();
+        stringHeight = this.height.getText().toString().trim();
+        stringWeight = this.weight.getText().toString().trim();
+
         Pattern PASSWORD_PATTERN
                 = Pattern.compile(
                 "[a-zA-Z0-9\\!\\@\\#\\$]{8,24}");
@@ -212,6 +242,22 @@ public class SignUp extends AppCompatActivity {
             this.password.setError(getResources().getString(R.string.InvalidPassword));
             this.password.requestFocus();
             return false;
+        } else if(stringHeight.isEmpty() && !isSeller){
+            try {
+                int num = Integer.parseInt(stringHeight);
+            } catch (NumberFormatException e) {
+                this.height.setError( getResources().getString(R.string.InvalidHeight));
+                this.height.requestFocus();
+                return false;
+            }
+        } else if(stringWeight.isEmpty() && !isSeller){
+            try {
+                int num = Integer.parseInt(stringWeight);
+            } catch (NumberFormatException e) {
+                this.weight.setError( getResources().getString(R.string.InvalidWeight));
+                this.weight.requestFocus();
+                return false;
+            }
         }
         return true;
     }

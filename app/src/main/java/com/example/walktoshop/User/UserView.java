@@ -27,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -74,23 +75,20 @@ public class UserView extends AppCompatActivity {
         homeListview= findViewById(R.id.homeListView);
         //setting del channel per quando partirà il service
         createNotificationChannel();
-        AdapterView adapterView = (AdapterView) findViewById(R.id.homeListView);
+       /* AdapterView adapterView = (AdapterView) findViewById(R.id.homeListView);
         adapterView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                final Intent intent = new Intent(UserView.this, CardView.class);
                startActivity(intent);
             }
-        });
+        });*/
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.action_home:
-                        goHome();
-                        break;
                     case R.id.action_map:
                         askGPSpermission();
                         break;
@@ -133,6 +131,7 @@ public class UserView extends AppCompatActivity {
             Iterator it =discountUID.iterator();
             while(it.hasNext()){
                 String uid= (String) it.next();
+                myDiscounts.clear();
                 db.collection("sconti").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -242,11 +241,6 @@ public class UserView extends AppCompatActivity {
         intent.putExtra("UID", this.userUID);
         startActivity(intent);
 
-    }
-
-    private void goHome() {
-        final Intent intent = new Intent(this, UserView.class);
-        startActivity(intent);
     }
 
     public boolean onCreateOptionsMenu(Menu menu){

@@ -39,5 +39,5 @@
     <string name="ok">Ok</string>
     <string name="businessNotFound">Ci spiace!Località non trovata.Riprovare</string>
     <string name="emptyBusiness">Non possiedi attività.Vuoi registrarne una?</string>
-    <string name="action_stepcounter">contapassi</string>
+    <string name="action_stepcounter">Pedometro</string>
 </resources>

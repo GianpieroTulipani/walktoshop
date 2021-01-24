@@ -147,6 +147,7 @@ public class UserView extends AppCompatActivity {
                             discount.setExpiringDate(document.getString("expiringDate"));
                             discount.setBusinessUID(document.getString("businessUID"));
                             discount.setDiscountsQuantity(document.getString("discountsQuantity"));
+                            discount.setStartDiscountDate(document.getString("startDiscountDate"));
                             discount.setState(document.getString("state"));
                             discount.setDescription(document.getString("description"));
                             discount.setStepNumber(document.getString("stepNumber"));

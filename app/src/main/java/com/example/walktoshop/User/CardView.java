@@ -24,12 +24,19 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class CardView extends AppCompatActivity {
     private ProgressBar progressBar;
     private Discount d;
     private String UID=null;
+    private long totalSteps=0;
+    private int kilometers;
+    private int kcal;
+    int percentage=0;
     FirebaseFirestore db=FirebaseFirestore.getInstance();
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +44,7 @@ public class CardView extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         progressBar = (ProgressBar) findViewById(R.id.progerssBar);
-        progressBar.setProgress(70);
+        //progressBar.setProgress(70);
         Intent intent=getIntent();
         if(intent.hasExtra("discount") && intent.hasExtra("UID")){
             Log.d("s","ecco");
@@ -49,6 +56,16 @@ public class CardView extends AppCompatActivity {
 
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        long goal= Long.parseLong(d.getDiscountsQuantity());
+        long beginDiscountDate= Long.parseLong(d.getStartDiscountDate());
+        long expiringDiscountDate= Long.parseLong(d.getExpiringDate());
+        getUserWalkInATimeRange(beginDiscountDate,expiringDiscountDate,goal);
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == android.R.id.home){
@@ -56,7 +73,40 @@ public class CardView extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
+    private void getUserWalkInATimeRange(long beginDiscountDate,long expiringDiscountDate,long goal){
+        db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document=task.getResult();
+                    ArrayList<String> myStringedWalks= (ArrayList<String>) document.get("walk");
+                    Log.d("size",myStringedWalks.size()+"");
+                    if(myStringedWalks==null){
+                        myStringedWalks=new ArrayList<>();
+                    }
+                    Iterator it=myStringedWalks.iterator();
+                    while(it.hasNext()){
+                        String dateAndSteps= (String) it.next();
+                        Walk walk=getWalkInfoFromString(dateAndSteps);
+                        long date= Long.parseLong(walk.getDate());
+                        Log.d("date", String.valueOf(date >= beginDiscountDate));
+                        Log.d("date", String.valueOf(date <= expiringDiscountDate));
+                        if(date>=beginDiscountDate && date<=expiringDiscountDate){
+                            long walkSteps= Long.parseLong(walk.getNumberOfSteps());
+                            totalSteps=totalSteps + walkSteps;
+                            //dailykcal
+                            //dailykm
+                        }
+                    }
+                    if(totalSteps!=0 && goal!=0){
+                        percentage=Math.round((float)(totalSteps*100)/goal) ;
+                        //Log.d("percentage", percentage+"");
+                        progressBar.setProgress((int)percentage);
+                    }
+                }
+            }
+        });
+    }
 
     @Override
     protected void onDestroy() {
@@ -78,6 +128,13 @@ public class CardView extends AppCompatActivity {
             }
         }
         return false;
+    }
+    private Walk getWalkInfoFromString(String info){
+        String[] todayAndSteps =info.split(",");
+        Walk walk =new Walk();
+        walk.setDate(todayAndSteps[0]);
+        walk.setNumberOfSteps(todayAndSteps[1]);
+        return walk;
     }
 
 }

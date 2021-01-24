@@ -44,6 +44,7 @@ public class SignUp extends AppCompatActivity {
     private TextView already_registered;
     private EditText height;
     private EditText weight;
+    private boolean isSeller;
     String stringEmail=null;
     String stringPassword=null;
     String stringUsername=null;
@@ -93,9 +94,11 @@ public class SignUp extends AppCompatActivity {
                 if(checkUserInfo()){
                     if(switchButton.isChecked()){
                         //crea e carica il negoziante
+                        isSeller = true;
                         createSeller();
                     }else{
                         //lato utente
+                        isSeller = false;
                         createUser();
                     }
                 }
@@ -233,11 +236,11 @@ public class SignUp extends AppCompatActivity {
             this.password.setError(getResources().getString(R.string.passwordEmpty));
             this.password.requestFocus();
             return false;
-        }else if(stringHeight.isEmpty()){
+        }else if(stringHeight.isEmpty() && !isSeller){
             this.height.setError( getResources().getString(R.string.heightEmpty));
             this.height.requestFocus();
             return false;
-        }else if(stringWeight.isEmpty()) {
+        }else if(stringWeight.isEmpty() && !isSeller) {
             this.weight.setError(getResources().getString(R.string.weightEmpty));
             this.weight.requestFocus();
             return false;
@@ -248,14 +251,14 @@ public class SignUp extends AppCompatActivity {
             this.password.setError(getResources().getString(R.string.InvalidPassword));
             this.password.requestFocus();
             return false;
-        }else  if(Integer.parseInt(stringHeight) < 62 || Integer.parseInt(stringHeight) > 278){
+        }else  if((Integer.parseInt(stringHeight) < 62 || Integer.parseInt(stringHeight) > 278) && !isSeller){
             Toast toast = Toast.makeText(this,"inserire un'altezza compresa tra 62cm e 278cm",Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             this.height.setError( getResources().getString(R.string.InvalidHeight));
             this.height.requestFocus();
             return false;
-        }else if(Integer.parseInt(stringWeight) < 40 || Integer.parseInt(stringWeight) > 250){
+        }else if((Integer.parseInt(stringWeight) < 40 || Integer.parseInt(stringWeight) > 250) && !isSeller){
             Toast toast = Toast.makeText(this,"inserire un peso che sia compreso tra 40kg e 250kg",Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();

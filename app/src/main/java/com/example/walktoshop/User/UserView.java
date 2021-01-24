@@ -118,9 +118,15 @@ public class UserView extends AppCompatActivity {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
                     DocumentSnapshot document= task.getResult();
-                    ArrayList<String> discountUID = (ArrayList) document.get("disocuntUID");
+                    ArrayList<String> discountUID = (ArrayList) document.get("discountUID");
                     if(discountUID!=null){
                         getMyDiscounts(discountUID);
+                    }else  if(discountUID==null){
+                        alert.setVisibility(View.VISIBLE);
+                        alert.setText("Nessuno sconto attivato");
+                    }else if(discountUID.isEmpty()){
+                        alert.setVisibility(View.VISIBLE);
+                        alert.setText("Nessuno sconto attivato");
                     }
                 }
             }
@@ -140,6 +146,7 @@ public class UserView extends AppCompatActivity {
                             Discount discount=new Discount();
                             discount.setExpiringDate(document.getString("expiringDate"));
                             discount.setBusinessUID(document.getString("businessUID"));
+                            discount.setDiscountsQuantity(document.getString("discountsQuantity"));
                             discount.setState(document.getString("state"));
                             discount.setDescription(document.getString("description"));
                             discount.setStepNumber(document.getString("stepNumber"));
@@ -155,9 +162,6 @@ public class UserView extends AppCompatActivity {
                     }
                 });
             }
-        }else{
-            alert.setVisibility(View.VISIBLE);
-            alert.setText("Nessuno sconto attivato");
         }
     }
     private void getUserPosition() {

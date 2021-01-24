@@ -4,7 +4,10 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -13,9 +16,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walktoshop.R;
+import com.example.walktoshop.Seller.Discount;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 public class CardView extends AppCompatActivity {
     private ProgressBar progressBar;
+    private Discount d;
+    private String UID=null;
+    FirebaseFirestore db=FirebaseFirestore.getInstance();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,8 +38,17 @@ public class CardView extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         progressBar = (ProgressBar) findViewById(R.id.progerssBar);
         progressBar.setProgress(70);
-    }
+        Intent intent=getIntent();
+        if(intent.hasExtra("discount") && intent.hasExtra("UID")){
+            Log.d("s","ecco");
+            Gson gson = new Gson();
+            String jsonDiscount=intent.getStringExtra("discount");
+            this.d= gson.fromJson(jsonDiscount, Discount.class);
+            this.UID = intent.getStringExtra("UID");
+        }
 
+
+    }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == android.R.id.home){
@@ -33,6 +56,8 @@ public class CardView extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -54,4 +79,5 @@ public class CardView extends AppCompatActivity {
         }
         return false;
     }
+
 }

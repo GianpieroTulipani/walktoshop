@@ -32,6 +32,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -94,14 +95,8 @@ public class SellerViewAdapter extends ArrayAdapter {
         //modifica
         ImageButton editBusiness= activity.findViewById(R.id.editBusiness);
         TextView difficulty=activity.findViewById(R.id.difficulty);
-        ImageButton cardView = (ImageButton) activity.findViewById(R.id.frecciaCardView);
-        cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Intent intent = new Intent(getContext(), CardView.class);
-                context.startActivity(intent);
-            }
-        });
+        ImageButton arrow = (ImageButton) activity.findViewById(R.id.frecciaCardView);
+
         //bottone attivazione contapassi
         //bottone abilitazione
         if(this.discounts.get(position) != null && position>=0 && !discounts.isEmpty()){
@@ -109,14 +104,25 @@ public class SellerViewAdapter extends ArrayAdapter {
             //settare tutti gli attributi xml
             date.setText("Scadenza: "+d.millisecondsToDate(d.getExpiringDate()));
             disocuntDescription.setText(d.getDescription());
-            //description.setText(d.getDescription());
-            //myDescription.setText("vuota");
+            String stringedGoal=d.getDiscountsQuantity();
+            Log.d("string",stringedGoal+"");
 
+
+            /*
+            int goal= Integer.parseInt(stringedGoal);
+            if(goal<5000){
+                //easy
+            }else if(goal>=5000 && goal<=20000){
+                //medium
+            }else if(goal>20000){
+                //difficult
+            }
+            difficulty.setText("Difficulty:");*/
             //visibility
             deleteBusiness.setVisibility(View.GONE);
             editBusiness.setVisibility(View.GONE);
             if(this.usage=="sellerHome"){
-                cardView.setVisibility(View.GONE);
+                arrow.setVisibility(View.GONE);
                 deleteBusiness.setVisibility(View.VISIBLE);
                 editBusiness.setVisibility(View.VISIBLE);
                 deleteBusiness.setOnClickListener(new View.OnClickListener() {
@@ -127,17 +133,28 @@ public class SellerViewAdapter extends ArrayAdapter {
                     }
                 });
             }else if(this.usage=="userHome"){
-                int goal= Integer.parseInt(d.getDiscountsQuantity());
-                if(goal<5000){
-                    //easy
-                }else if(goal>=5000 && goal<=20000){
-                    //medium
-                }else if(goal>20000){
-                    //difficult
-                }
-                difficulty.setText("Difficulty:");
+                arrow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Intent intent = new Intent(getContext(), CardView.class);
+                        Gson gson = new Gson();
+                        String jsonDiscount = gson.toJson(d);
+                        intent.putExtra("discount",jsonDiscount);
+                        Log.d("json",jsonDiscount);
+                        intent.putExtra("UID",UID);
+                        context.startActivity(intent);
+                    }
+                });
                 //qui si devono inserire elementi grafici tipici della vista in cui è chiamato
             }else if(this.usage=="backdropList"){
+                arrow.setVisibility(View.GONE);
+                editBusiness.setVisibility(View.VISIBLE);
+                editBusiness.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        addDiscounts(d.getUID());
+                    }
+                });
                 //qui si devono inserire elementi grafici tipici della vista in cui è chiamato
             }
         }
@@ -198,6 +215,27 @@ public class SellerViewAdapter extends ArrayAdapter {
                 }
             }
         });
+    }
+
+    //query di aggiunta sconto
+    private void addDiscounts(String discountuid){
+        db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document=task.getResult();
+                    ArrayList<String> discountUID= (ArrayList<String>) document.get("discountUID");
+                    if(discountUID==null){
+                        discountUID=new ArrayList<>();
+                    }
+                    discountUID.add(discountuid);
+                    updateUserDiscounts(discountUID);
+                }
+            }
+        });
+    }
+    private void updateUserDiscounts(ArrayList<String> discountUID){
+        db.collection("utente").document(UID).update("discountUID",discountUID);
     }
 
 }

@@ -1,88 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:src="@drawable/addimage">
-            </ImageView>
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="240dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="center">
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/addimage">
+                </ImageView>
+
+                <LinearLayout
+                    android:layout_width="240dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/difficulty"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20dp"
+                            android:layout_marginVertical="8dp"
+                            android:textColor="@color/black"
+                            android:text="Easy Difficult" />
+                        <ImageView
+                            android:id="@+id/difficultyColor"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_green"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/disocuntDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="17dp"
+                        android:text="questa è una entuale descrizione da inserire all'interno dello sconto">
+                    </TextView>
+
+                </LinearLayout>
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20dp"
-                        android:layout_marginVertical="8dp"
-                        android:textColor="@color/black"
-                        android:text="Easy Difficult" />
+                    android:layout_gravity="center">
                     <ImageView
+                        android:id="@+id/arrow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_green"/>
+                        android:src="@drawable/ic_freccia1">
+
+                    </ImageView>
                 </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:textSize="17dp"
-                    android:text="questa è una entuale descrizione da inserire all'interno dello sconto">
-                </TextView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:layout_gravity="end"
-                    android:text="27/01/2021">
-
-                </TextView>
-
             </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
-                <ImageView
+                android:layout_gravity="bottom|end"
+                >
+
+                <TextView
+                    android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_freccia1">
+                    android:layout_gravity="center"
+                    android:layout_marginRight="200dp"
+                    android:text="27/01/2021"
+                    android:textColor="@color/black">
 
-                </ImageView>
+                </TextView>
+
+                <Button
+                    android:id="@+id/addButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:text="aggiungi">
+                </Button>
+
+                <ImageButton
+                    android:id="@+id/editBusiness"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:layout_marginRight="20dp"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:tint="@color/verde_maggio"
+                    android:visibility="visible"/>
+                <ImageButton
+                    android:id="@+id/deletebusiness"
+                    android:layout_width="wrap_content"
+                    android:background="@color/white"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="20dp"
+                    android:src="@android:drawable/ic_menu_delete"
+                    android:tint="@color/verde_maggio"
+                    android:visibility="visible"/>
+
             </LinearLayout>
+
         </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            >
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text="aggiungi">
-
-            </Button>
-        </LinearLayout>
-
 
     </androidx.cardview.widget.CardView>
 

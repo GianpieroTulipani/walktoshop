@@ -1,119 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/itemPage"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/card_shape"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:backgroundTint="@color/verde_maggio"
-                android:background="@drawable/backdrop_shape">
+                android:orientation="horizontal">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/FabIcon"
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:src="@drawable/addimage">
+                </ImageView>
+
+                <LinearLayout
+                    android:layout_width="230dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/difficulty"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="20dp"
+                            android:layout_marginVertical="8dp"
+                            android:textColor="@color/black"
+                            android:text="Easy Difficult" />
+
+                        <ImageView
+                            android:id="@+id/difficultyColor"
+                            android:layout_width="24dp"
+                            android:layout_height="26dp"
+                            android:layout_marginTop="1dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_green" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/disocuntDescription"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="17dp"
+                        android:text="questa è una entuale descrizione da inserire all'interno dello sconto">
+                    </TextView>
+
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="15dp"
-                    android:backgroundTint="@color/white"
-                    android:src="@drawable/ic_sconti"
-                    android:theme="@style/MyMaterialTheme"
-                    android:tint="#FFFFFF"
-                    app:fabSize="mini" />
+                    android:layout_gravity="center">
+                    <ImageButton
+                        android:id="@+id/arrow"
+                        android:background="@color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_freccia1">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/disocuntDescription"
-                    android:layout_width="300dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Sconto del 20%"
-                    android:textColor="@color/white"
-                    android:textSize="25dp" />
-
-                <ImageButton
-                    android:id="@+id/frecciaCardView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center"
-                    android:background="@color/verde_maggio"
-                    android:src="@drawable/ic_freccia" />
-
+                    </ImageButton>
+                </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="#f8f8ff">
-
-                <TextView
-                    android:id="@+id/difficulty"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textColor="@color/black"
-                    android:textSize="15dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/card_shape">
+                android:layout_gravity="bottom|end"
+                >
 
                 <TextView
                     android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textColor="@color/white"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="180dp"
+                    android:text="27/01/2021"
+                    android:textColor="@color/black">
+
+                </TextView>
+
+                <Button
+                    android:id="@+id/addButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/ovale"
-                    android:text="scadenza: 27/01/2021"/>
-
+                    android:visibility="visible"
+                    android:textColor="@color/white"
+                    android:layout_marginRight="20dp"
+                    android:text="AGGIUNGI">
+                </Button>
 
                 <ImageButton
-                    android:id="@+id/editBusiness"
+                    android:id="@+id/editDiscount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="140dp"
+                    android:background="@color/white"
+                    android:layout_marginRight="20dp"
                     android:src="@android:drawable/ic_menu_edit"
-                    android:background="#f8f8ff"
-                    android:tint="@color/verde_maggio" />
+                    android:tint="@color/verde_maggio"
+                    android:visibility="gone"/>
                 <ImageButton
-                    android:id="@+id/deletebusiness"
+                    android:id="@+id/deleteDiscount"
                     android:layout_width="wrap_content"
+                    android:background="@color/white"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
                     android:src="@android:drawable/ic_menu_delete"
-                    android:background="#f8f8ff"
-                    android:tint="@color/verde_maggio" />
+                    android:tint="@color/verde_maggio"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
-
     </androidx.cardview.widget.CardView>
 
-
-
 </LinearLayout>
-
-
-

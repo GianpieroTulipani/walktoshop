@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,6 +36,8 @@ public class SellerView extends AppCompatActivity {
     private String UID=null;
     private ProgressBar progressBar;
     private Button addActivityButton;
+    private ImageButton editDiscount;
+    private ImageButton deleteDiscount;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
     private ArrayList<Discount> discountArray=new ArrayList<>();
     private ArrayList<String> businessUID =new ArrayList<>();
@@ -44,6 +47,7 @@ public class SellerView extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_view);
+
         alert = (TextView) findViewById(R.id.alertSeller);
         //View coordinatorLayout = findViewById(android.R.id.content);
         addActivityButton=(Button)findViewById(R.id.addActivityButton);

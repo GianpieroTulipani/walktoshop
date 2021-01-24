@@ -12,6 +12,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.Toast;
 
 
@@ -36,7 +37,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SellerMapView extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener  {
+public class SellerMapView extends FragmentActivity implements OnMapReadyCallback {
 
     FirebaseFirestore db=FirebaseFirestore.getInstance();
     private GoogleMap mMap;
@@ -78,27 +79,32 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                         Log.d("ADDRESS", String.valueOf(addresses));
                     }catch(Exception e){
                         e.printStackTrace();
-                        dialog();
                     }
                     if (addresses!=null && !addresses.isEmpty()){
                         Address addr=addresses.get(0);
                         Log.d("place",addr.getLatitude()+"--"+addr.getLongitude()+"--"+addr.getLocality());
                         LatLng place=new LatLng(addr.getLatitude(),addr.getLongitude());
                         mMap.addMarker(new MarkerOptions().position(place).title(location));
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place,10));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place,15));
+                        addBusinessDialog();
+                        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                            @Override
+                            public boolean onMarkerClick(Marker marker) {
+                                if(SellerMapView.this.location.contains(",")){
+                                    String[] res = SellerMapView.this.location.split("[,]", 0);
+                                    SellerMapView.this.location = res[0];
+                                }
+                                SellerMapView.this.business.setName(SellerMapView.this.location);
+                                SellerMapView.this.business.setLongitude(String.valueOf(addr.getLongitude()));
+                                SellerMapView.this.business.setLatitude(String.valueOf(addr.getLatitude()));
+                                SellerMapView.this.business.setLocality(addr.getLocality());
+                                SellerMapView.this.business.setUID(calculateMyBusinessCustomUID(addr.getLatitude(),addr.getLongitude()));
+                                Log.d("customuid",SellerMapView.this.business.getUID());
+                                setBusiness(SellerMapView.this.business);
+                                return false;
+                            }
+                        });
                         //inizalizzazione oggetto da scrivere
-
-                        if(SellerMapView.this.location.contains(",")){
-                            String[] res = SellerMapView.this.location.split("[,]", 0);
-                            SellerMapView.this.location = res[0];
-                        }
-                        SellerMapView.this.business.setName(SellerMapView.this.location);
-                        SellerMapView.this.business.setLongitude(String.valueOf(addr.getLongitude()));
-                        SellerMapView.this.business.setLatitude(String.valueOf(addr.getLatitude()));
-                        SellerMapView.this.business.setLocality(addr.getLocality());
-                        SellerMapView.this.business.setUID(calculateMyBusinessCustomUID(addr.getLatitude(),addr.getLongitude()));
-                        Log.d("customuid",SellerMapView.this.business.getUID());
-                        setBusiness(SellerMapView.this.business);
                     }
 
                 }
@@ -119,18 +125,10 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.setOnMarkerClickListener(this);
+        LatLng italy = new LatLng(43.06103001266056, 12.882105287940128);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(italy));
     }
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        Log.d("Info",marker.getPosition().toString()+marker.getTitle().toString());
-        Toast.makeText(this,marker.getPosition().toString()+marker.getTitle().toString(), Toast.LENGTH_SHORT).show();
-        return false;
-    }
     private void setBusiness(Business business){
 
         db.collection("attivita").document(business.getUID()).set(this.business).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -180,6 +178,17 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
 
             }
         }).setMessage(R.string.businessNotFound);
+        // Set other d
+        builder.show();
+    }
+    private void addBusinessDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(SellerMapView.this);
+        // Add the buttons
+        builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        }).setMessage(R.string.addBusinessDialog);
         // Set other d
         builder.show();
     }

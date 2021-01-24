@@ -1,5 +1,6 @@
 package com.example.walktoshop.Seller;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -91,18 +92,18 @@ public class SellerViewAdapter extends ArrayAdapter {
         TextView disocuntDescription= activity.findViewById(R.id.disocuntDescription);
         TextView date=activity.findViewById(R.id.date);
         //bottone eliminazione
-        ImageButton deleteBusiness =activity.findViewById(R.id.deletebusiness);
+        ImageButton deleteDiscount =activity.findViewById(R.id.deleteDiscount);
         //modifica
-        ImageButton editBusiness= activity.findViewById(R.id.editBusiness);
+        ImageButton editDiscount= activity.findViewById(R.id.editDiscount);
         TextView difficulty=activity.findViewById(R.id.difficulty);
-        ImageButton arrow = (ImageButton) activity.findViewById(R.id.frecciaCardView);
+        ImageButton arrow = (ImageButton) activity.findViewById(R.id.arrow);
 
         //bottone attivazione contapassi
         //bottone abilitazione
         if(this.discounts.get(position) != null && position>=0 && !discounts.isEmpty()){
             Discount d=this.discounts.get(position);
             //settare tutti gli attributi xml
-            date.setText("Scadenza: "+d.millisecondsToDate(d.getExpiringDate()));
+            date.setText(d.millisecondsToDate(d.getExpiringDate()));
             disocuntDescription.setText(d.getDescription());
             String stringedGoal=d.getDiscountsQuantity();
             Log.d("string",stringedGoal+"");
@@ -119,13 +120,13 @@ public class SellerViewAdapter extends ArrayAdapter {
             }
             difficulty.setText("Difficulty:");*/
             //visibility
-            deleteBusiness.setVisibility(View.GONE);
-            editBusiness.setVisibility(View.GONE);
+            deleteDiscount.setVisibility(View.GONE);
+            editDiscount.setVisibility(View.GONE);
             if(this.usage=="sellerHome"){
                 arrow.setVisibility(View.GONE);
-                deleteBusiness.setVisibility(View.VISIBLE);
-                editBusiness.setVisibility(View.VISIBLE);
-                deleteBusiness.setOnClickListener(new View.OnClickListener() {
+                deleteDiscount.setVisibility(View.VISIBLE);
+                editDiscount.setVisibility(View.VISIBLE);
+                deleteDiscount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Log.d("p",discounts.get(position).getUID()+" ");
@@ -148,8 +149,9 @@ public class SellerViewAdapter extends ArrayAdapter {
                 //qui si devono inserire elementi grafici tipici della vista in cui è chiamato
             }else if(this.usage=="backdropList"){
                 arrow.setVisibility(View.GONE);
-                editBusiness.setVisibility(View.VISIBLE);
-                editBusiness.setOnClickListener(new View.OnClickListener() {
+                Button addDiscount = (Button) activity.findViewById(R.id.addButton);
+                addDiscount.setVisibility(View.VISIBLE);
+                addDiscount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         addDiscounts(d.getUID());

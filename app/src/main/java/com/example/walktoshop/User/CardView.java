@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,8 +32,12 @@ public class CardView extends AppCompatActivity {
     private Discount d;
     private String UID=null;
     private long totalSteps=0;
-    private int kilometers;
-    private int kcal;
+    private TextView goalStepRatio;
+    private TextView kcal;
+    private TextView kilometers;
+    private TextView code;
+    private String userWeight=null;
+    private String userHeight=null;
     int percentage=0;
     FirebaseFirestore db=FirebaseFirestore.getInstance();
 
@@ -44,13 +49,18 @@ public class CardView extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         progressBar = (ProgressBar) findViewById(R.id.progerssBar);
-        //progressBar.setProgress(70);
+        goalStepRatio= findViewById(R.id.goalStepsRatio);
+        kcal=findViewById(R.id.kcal);
+        code=findViewById(R.id.code);
+        kilometers = findViewById(R.id.kilometers);
+
         Intent intent=getIntent();
         if(intent.hasExtra("discount") && intent.hasExtra("UID")){
-            Log.d("s","ecco");
             Gson gson = new Gson();
             String jsonDiscount=intent.getStringExtra("discount");
-            this.d= gson.fromJson(jsonDiscount, Discount.class);
+            Log.d("d",jsonDiscount);
+            this.d = gson.fromJson(jsonDiscount, Discount.class);
+
             this.UID = intent.getStringExtra("UID");
         }
 
@@ -63,6 +73,7 @@ public class CardView extends AppCompatActivity {
         long goal= Long.parseLong(d.getDiscountsQuantity());
         long beginDiscountDate= Long.parseLong(d.getStartDiscountDate());
         long expiringDiscountDate= Long.parseLong(d.getExpiringDate());
+        getUserInfo();
         getUserWalkInATimeRange(beginDiscountDate,expiringDiscountDate,goal);
     }
 
@@ -72,6 +83,18 @@ public class CardView extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+    private void getUserInfo(){
+        db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document= task.getResult();
+                    CardView.this.userWeight=document.getString("weight");
+                    CardView.this.userHeight=document.getString("height");
+                }
+            }
+        });
     }
     private void getUserWalkInATimeRange(long beginDiscountDate,long expiringDiscountDate,long goal){
         db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -99,9 +122,16 @@ public class CardView extends AppCompatActivity {
                         }
                     }
                     if(totalSteps!=0 && goal!=0){
-                        percentage=Math.round((float)(totalSteps*100)/goal) ;
-                        //Log.d("percentage", percentage+"");
+                        percentage=Math.round((float)(totalSteps*100)/goal);
+                        if(percentage>=100){
+                            code.setText("Ecco il tuo codice sconto: "+UID+d.getUID());
+                        }
                         progressBar.setProgress((int)percentage);
+                        goalStepRatio.setText(totalSteps+"/"+goal);
+                        float km=calculateKilometers(Integer.parseInt(CardView.this.userHeight),totalSteps);
+                        kilometers.setText(km+" Km");
+                        int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),totalSteps);
+                        kcal.setText(calories+" Kcal");
                     }
                 }
             }
@@ -135,6 +165,24 @@ public class CardView extends AppCompatActivity {
         walk.setDate(todayAndSteps[0]);
         walk.setNumberOfSteps(todayAndSteps[1]);
         return walk;
+    }
+    private float calculateKilometers(int height,long steps){
+        float meters;
+        if(height<170){
+            meters=Math.round((float)600*steps/1000);
+        }else{
+            meters=Math.round((float)700*steps/1000);
+        }
+        float kilometers=meters/1000;
+        Log.d("km",kilometers+"");
+        return kilometers;
+    }
+    private int calculateKcal(int weight,long steps){
+        int kcal;
+        Log.d("weight",weight+"");
+        kcal= (int) Math.round((float)weight*0.0005*steps);
+        Log.d("kcal",kcal+"");
+        return kcal;
     }
 
 }

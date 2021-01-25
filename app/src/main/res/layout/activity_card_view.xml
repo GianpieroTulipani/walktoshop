@@ -85,12 +85,14 @@
                 android:layout_gravity="center"
                 android:orientation="vertical">
                 <TextView
+                    android:id="@+id/goalStepsRatio"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2000/5000"
                     android:textSize="30dp"
                     android:textColor="@color/black"/>
                 <TextView
+                    android:id="@+id/kcal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
@@ -99,6 +101,7 @@
                     android:textSize="30dp"
                     android:textColor="@color/black"/>
                 <TextView
+                    android:id="@+id/kilometers"
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="20dp"
                     android:layout_width="wrap_content"
@@ -116,6 +119,7 @@
                 android:padding="16dp">
 
                 <TextView
+                    android:id="@+id/code"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"

@@ -238,9 +238,10 @@ public class StepCounter extends Service implements Runnable{
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 //forse qui va lo spegnimento e l'unregistering fare una funzione
-                if(eventListener!=null){
-                    mSensorManager.unregisterListener(eventListener, mStepCounterSensor);
+                if(eventListener!=null && mStepDetectorSensor!=null){
                     mSensorManager.unregisterListener(eventListener, mStepDetectorSensor);
+                }else if(eventListener!=null && mStepDetectorSensor==null){
+                    mSensorManager.unregisterListener(eventListener, accel);
                 }
                 new Thread(StepCounter.this).interrupt();
             }

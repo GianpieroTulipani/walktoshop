@@ -3,6 +3,7 @@ package com.example.walktoshop.User;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 
 public class UserMapView extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -54,15 +56,16 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_map_view);
+
         Intent intent = getIntent();
         latitude = intent.getDoubleExtra("latitude", 0.0f);
         longitude = intent.getDoubleExtra("longitude", 0.0f);
         city = intent.getStringExtra("city");
         UID = intent.getStringExtra("UID");
+       
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-
-        db.collection("attivita").whereEqualTo("locality", city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("attivita").whereEqualTo("locality",city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
@@ -131,7 +134,7 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
         LatLng myPlace = new LatLng(latitude, longitude);
         //mMap.addMarker(new MarkerOptions().position(italy).title("I'm here"));
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(italy));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace, 15));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace, 10));
         mMap.setOnMarkerClickListener(this);
 
     }

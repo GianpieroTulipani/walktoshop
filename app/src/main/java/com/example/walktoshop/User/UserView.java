@@ -135,6 +135,7 @@ public class UserView extends AppCompatActivity {
                         if(task.isSuccessful()){
                             DocumentSnapshot document= task.getResult();
                             Discount discount=new Discount();
+                            discount.setUID(document.getString("uid"));
                             discount.setExpiringDate(document.getString("expiringDate"));
                             discount.setBusinessUID(document.getString("businessUID"));
                             discount.setDiscountsQuantity(document.getString("discountsQuantity"));

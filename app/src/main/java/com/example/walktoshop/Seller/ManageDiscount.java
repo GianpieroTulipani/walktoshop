@@ -3,42 +3,33 @@ package com.example.walktoshop.Seller;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Pair;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
 import com.example.walktoshop.R;
-import com.example.walktoshop.User.UserView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class ManageDiscount extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -47,12 +38,14 @@ public class ManageDiscount extends AppCompatActivity {
     private EditText quantity;
     private TextView expiringDate;
     private Button add;
-    private Button addDate;
+    private ImageButton addDate;
+    private Calendar cal;
     int date;
     long expiringDateInMillis;
     String stringedDescription;
     String todayInMills;
     String stringedQuantity;
+
     //DatePickerDialog.OnDateSetListener listener;
 
     @Override
@@ -66,19 +59,19 @@ public class ManageDiscount extends AppCompatActivity {
             this.businessUID=intent.getStringExtra("businessUID");
         }
         //inizializzazione variabli
-        addDate=(Button)findViewById(R.id.addDate);
+        addDate=(ImageButton)findViewById(R.id.addDate);
         expiringDate=(TextView) findViewById(R.id.expiringDate);
         description=(EditText)findViewById(R.id.description);
         quantity=(EditText)findViewById(R.id.disocuntsQuantity);
         add=(Button)findViewById(R.id.add);
         //setting date picker
+        cal=Calendar.getInstance();
         this.todayInMills=getTodayInMills();
         //
         addDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //metodo set datepicker
-                final Calendar cal=Calendar.getInstance();
                 date=cal.get(Calendar.DATE);
                 int month=cal.get(Calendar.MONTH);
                 Log.d("month", String.valueOf(month));
@@ -87,11 +80,33 @@ public class ManageDiscount extends AppCompatActivity {
                     DatePickerDialog datePickerDialog=new DatePickerDialog(ManageDiscount.this, android.R.style.Theme_DeviceDefault_Dialog, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int month, int date) {
-                            String months[]={"Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"};
-                            String dateFormat=date+"-"+months[month]+"-"+year;
+                            month = month + 1;
+                            String dateFormat = null;
+                            if(month < 10 ){
+                                if (date < 10){
+                                    dateFormat="0"+date+"/"+"0"+month+"/"+year;
+                                } else {
+                                    dateFormat=date+"/"+"0"+month+"/"+year;
+                                }
+
+                            } else {
+                                if (date < 10){
+                                    dateFormat = "0"+date+"/"+month+"/"+year;
+                                } else{
+                                    dateFormat = date+"/"+month+"/"+year;
+                                }
+                            }
+
+                            Date date1 = null;
+                            try {
+                                date1 = new SimpleDateFormat("dd/MM/yyyy").parse(dateFormat);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
                             Log.d("data",dateFormat);
                             expiringDate.setText(dateFormat);
-                            ManageDiscount.this.expiringDateInMillis = cal.getTimeInMillis();
+
+                            ManageDiscount.this.expiringDateInMillis =  date1.getTime();
                         }
                     },year,month,date);
                     datePickerDialog.show();
@@ -178,6 +193,8 @@ public class ManageDiscount extends AppCompatActivity {
     private boolean checkInfo(){
         stringedDescription=this.description.getText().toString().trim();
         stringedQuantity=this.quantity.getText().toString().trim();
+       // Log.d("MILLIS", String.valueOf(expiringDateInMillis));
+        //Log.d("MILLIS", String.valueOf(cal.getTimeInMillis()));
 
         if(stringedDescription.isEmpty() || stringedDescription.length()>50){
             this.description.setError( getResources().getString(R.string.InvalidDescription));
@@ -193,6 +210,11 @@ public class ManageDiscount extends AppCompatActivity {
             toast.show();
             this.quantity.setError( getResources().getString(R.string.numStepsNotValid));
             this.quantity.requestFocus();
+            return false;
+        } else if ( expiringDateInMillis < cal.getTimeInMillis() || expiringDateInMillis == 0){
+            //mettere un avviso che indica di inserire correttamente la data
+            this.expiringDate.setError("Data non valida");
+            this.expiringDate.requestFocus();
             return false;
         }
         return true;

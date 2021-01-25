@@ -80,7 +80,7 @@ public class CardView extends AppCompatActivity {
                 if(task.isSuccessful()){
                     DocumentSnapshot document=task.getResult();
                     ArrayList<String> myStringedWalks= (ArrayList<String>) document.get("walk");
-                    Log.d("size",myStringedWalks.size()+"");
+                    //Log.d("size",myStringedWalks.size()+"");
                     if(myStringedWalks==null){
                         myStringedWalks=new ArrayList<>();
                     }

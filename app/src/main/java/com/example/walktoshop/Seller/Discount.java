@@ -60,6 +60,7 @@ public class Discount {
         this.discountsQuantity = discountsQuantity;
     }
 
+
     //getters
     public String getUID() {
         return UID;

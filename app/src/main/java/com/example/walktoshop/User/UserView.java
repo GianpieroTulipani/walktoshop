@@ -75,15 +75,6 @@ public class UserView extends AppCompatActivity {
         homeListview= findViewById(R.id.homeListView);
         //setting del channel per quando partirà il service
         createNotificationChannel();
-       /* AdapterView adapterView = (AdapterView) findViewById(R.id.homeListView);
-        adapterView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               final Intent intent = new Intent(UserView.this, CardView.class);
-               startActivity(intent);
-            }
-        });*/
-
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

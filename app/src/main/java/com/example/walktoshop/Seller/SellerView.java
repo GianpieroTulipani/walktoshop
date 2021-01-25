@@ -47,7 +47,6 @@ public class SellerView extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_view);
-
         alert = (TextView) findViewById(R.id.alertSeller);
         //View coordinatorLayout = findViewById(android.R.id.content);
         addActivityButton=(Button)findViewById(R.id.addActivityButton);

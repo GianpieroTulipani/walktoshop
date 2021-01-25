@@ -59,7 +59,7 @@
                     android:id="@+id/progerssBar"
                     style="@style/CircularDeterminateprogressBar"
                     android:layout_width="match_parent"
-                    android:layout_height="420dp"
+                    android:layout_height="350dp"
                     android:layout_gravity="center"
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
@@ -77,20 +77,36 @@
                     app:layout_constraintStart_toStartOf="@+id/progerssBar"
                     app:layout_constraintTop_toTopOf="@+id/progerssBar" />
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2000"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                    android:textSize="40dp"
-                    android:typeface="monospace"
-                    app:layout_constraintBottom_toBottomOf="@+id/progerssBar"
-                    app:layout_constraintEnd_toEndOf="@+id/progerssBar"
-                    app:layout_constraintHorizontal_bias="0.491"
-                    app:layout_constraintStart_toStartOf="@+id/progerssBar"
-                    app:layout_constraintTop_toTopOf="@+id/progerssBar"
-                    app:layout_constraintVertical_bias="0.964" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:text="2000/5000"
+                    android:textSize="30dp"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="10dp"
+                    android:text="30 Kcal"
+                    android:textSize="30dp"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="50 km"
+                    android:textSize="30dp"
+                    android:textColor="@color/black"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -98,14 +114,6 @@
                 android:background="#f8f8ff"
                 android:orientation="vertical"
                 android:padding="16dp">
-
-                <!-- Title, secondary and supporting text -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Sconto del 20%"
-                    android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
                     android:layout_width="wrap_content"

@@ -13,7 +13,7 @@ public class User {
     private String weight;//kg
     private String lastWalkDate;
     private ArrayList<String> walk;
-    private ArrayList<String> disocuntUID;
+    private ArrayList<String> discountUID;
     /*
    o	UID
 o	Email
@@ -70,9 +70,9 @@ o	ScontiUID[]
         this.walk = walk;
     }
 
-    public void setDisocuntUID(ArrayList<String> disocuntUID) {
-        this.disocuntUID = disocuntUID;
+    public void setDiscountUID(ArrayList<String> discountUID) { this.discountUID = discountUID;
     }
+
 
     //getters
     public String getUID() {
@@ -115,8 +115,6 @@ o	ScontiUID[]
         return walk;
     }
 
-    public ArrayList<String> getDisocuntUID() {
-        return disocuntUID;
-    }
+    public ArrayList<String> getDiscountUID() { return discountUID; }
 }
 

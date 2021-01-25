@@ -97,12 +97,13 @@ public class SellerViewAdapter extends ArrayAdapter {
         ImageButton editDiscount= activity.findViewById(R.id.editDiscount);
         TextView difficulty=activity.findViewById(R.id.difficulty);
         ImageButton arrow = (ImageButton) activity.findViewById(R.id.arrow);
-
+        Button addDiscount = (Button) activity.findViewById(R.id.addButton);
         //bottone attivazione contapassi
         //bottone abilitazione
         if(this.discounts.get(position) != null && position>=0 && !discounts.isEmpty()){
             Discount d=this.discounts.get(position);
             //settare tutti gli attributi xml
+            Log.d("DATE", d.millisecondsToDate(d.getExpiringDate()));
             date.setText(d.millisecondsToDate(d.getExpiringDate()));
             disocuntDescription.setText(d.getDescription());
             String stringedGoal=d.getDiscountsQuantity();
@@ -124,6 +125,7 @@ public class SellerViewAdapter extends ArrayAdapter {
             editDiscount.setVisibility(View.GONE);
             if(this.usage=="sellerHome"){
                 arrow.setVisibility(View.GONE);
+                addDiscount.setVisibility(View.GONE);
                 deleteDiscount.setVisibility(View.VISIBLE);
                 editDiscount.setVisibility(View.VISIBLE);
                 deleteDiscount.setOnClickListener(new View.OnClickListener() {
@@ -134,6 +136,8 @@ public class SellerViewAdapter extends ArrayAdapter {
                     }
                 });
             }else if(this.usage=="userHome"){
+                arrow.setVisibility(View.VISIBLE);
+                addDiscount.setVisibility(View.GONE);
                 arrow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -149,7 +153,6 @@ public class SellerViewAdapter extends ArrayAdapter {
                 //qui si devono inserire elementi grafici tipici della vista in cui è chiamato
             }else if(this.usage=="backdropList"){
                 arrow.setVisibility(View.GONE);
-                Button addDiscount = (Button) activity.findViewById(R.id.addButton);
                 addDiscount.setVisibility(View.VISIBLE);
                 addDiscount.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -197,7 +200,7 @@ public class SellerViewAdapter extends ArrayAdapter {
                     DocumentSnapshot document = task.getResult();
                     ArrayList<String> discountUID = (ArrayList<String>) document.get("discountUID");
                     discountUID.remove(position);
-                    Log.d("disocuntUID", discountUID.size()+" ");
+                    Log.d("discountUID", discountUID.size()+" ");
                     updateBusiness(discountUID,position);
                 }else{
                     Log.d("non successo","non successo");

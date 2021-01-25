@@ -1,9 +1,6 @@
 package com.example.walktoshop.Seller;
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,12 +10,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.Business;
@@ -90,12 +85,13 @@ public class SellerViewAdapter extends ArrayAdapter {
         final View activity = layoutInflater.inflate(R.layout.activity_sellerviewadapter,parent,false);
         //caratteristiche card di sconto
         TextView disocuntDescription= activity.findViewById(R.id.disocuntDescription);
-        TextView date=activity.findViewById(R.id.date);
+        TextView date = activity.findViewById(R.id.date);
         //bottone eliminazione
         ImageButton deleteDiscount =activity.findViewById(R.id.deleteDiscount);
         //modifica
-        ImageButton editDiscount= activity.findViewById(R.id.editDiscount);
-        TextView difficulty=activity.findViewById(R.id.difficulty);
+        ImageButton editDiscount = activity.findViewById(R.id.editDiscount);
+        TextView difficulty = activity.findViewById(R.id.difficulty);
+        ImageView difficultyColor = activity.findViewById(R.id.difficultyColor);
         ImageButton arrow = (ImageButton) activity.findViewById(R.id.arrow);
         Button addDiscount = (Button) activity.findViewById(R.id.addButton);
         //bottone attivazione contapassi
@@ -104,22 +100,25 @@ public class SellerViewAdapter extends ArrayAdapter {
             Discount d=this.discounts.get(position);
             //settare tutti gli attributi xml
             Log.d("DATE", d.millisecondsToDate(d.getExpiringDate()));
-            date.setText(d.millisecondsToDate(d.getExpiringDate()));
+            date.setText("scadenza: "+d.millisecondsToDate(d.getExpiringDate()));
             disocuntDescription.setText(d.getDescription());
             String stringedGoal=d.getDiscountsQuantity();
             Log.d("string",stringedGoal+"");
 
+            if(stringedGoal != null){
+                int goal= Integer.parseInt(stringedGoal);
 
-            /*
-            int goal= Integer.parseInt(stringedGoal);
-            if(goal<5000){
-                //easy
-            }else if(goal>=5000 && goal<=20000){
-                //medium
-            }else if(goal>20000){
-                //difficult
+                if(goal<5000){
+                    difficulty.setText("Facile");
+
+                }else if(goal>=5000 && goal<=20000){
+                    difficulty.setText("Difficoltà Media");
+                    difficultyColor.setImageResource(R.drawable.ic_yellow);
+                }else if(goal>20000){
+                    difficulty.setText("Difficile");
+                    difficultyColor.setImageResource(R.drawable.ic_red);
+                }
             }
-            difficulty.setText("Difficulty:");*/
             //visibility
             deleteDiscount.setVisibility(View.GONE);
             editDiscount.setVisibility(View.GONE);

@@ -19,13 +19,13 @@
 
                 <ImageView
                     android:id="@+id/imageView"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:src="@drawable/addimage">
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/sconti">
                 </ImageView>
 
                 <LinearLayout
-                    android:layout_width="230dp"
+                    android:layout_width="270dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_gravity="center">
@@ -86,8 +86,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="180dp"
-                    android:text="27/01/2021"
+                    android:layout_marginRight="130dp"
+                    android:text="scadenza: 27/01/2021"
                     android:textColor="@color/black">
 
                 </TextView>

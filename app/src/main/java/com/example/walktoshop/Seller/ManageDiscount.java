@@ -220,7 +220,7 @@ public class ManageDiscount extends AppCompatActivity {
         return true;
     }
     private String calculateMyCustomDiscountUID(String businessUID,long timeInMillis){
-        String stringedTimeInMills= String.valueOf(timeInMillis);
+        String stringedTimeInMills= String.valueOf(System.currentTimeMillis());
         if(businessUID!=null && stringedTimeInMills!=null){
             String customUID=null;
             customUID= businessUID+stringedTimeInMills;

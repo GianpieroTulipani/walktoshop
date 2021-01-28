@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -39,6 +42,7 @@ public class UserView extends AppCompatActivity {
     private ListView homeListview;
     private static final String CHANNEL_ID="StepCounter_notification_channel";
     private String userUID=null;
+    private ImageView userImage;
     private ArrayList<Discount> myDiscounts= new ArrayList<>();
 
     @Override
@@ -49,6 +53,8 @@ public class UserView extends AppCompatActivity {
         alert=findViewById(R.id.alert);
         alert.setVisibility(View.GONE);
         homeListview= findViewById(R.id.homeListView);
+        userImage = (ImageView) findViewById(R.id.sellerImage);
+        Picasso.get().load(R.drawable._0943903).fit().centerInside().into(userImage);
         //setting del channel per quando partirà il service
         createNotificationChannel();
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);

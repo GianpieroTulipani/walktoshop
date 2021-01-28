@@ -8,11 +8,9 @@
     android:background="@color/white_ice">
 
     <ImageView
+        android:id="@+id/discountImage"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:src="@drawable/_0943903"
-        android:scaleType="fitXY"
-        />
+        android:layout_height="200dp"/>
 
 
     <EditText

@@ -1,11 +1,20 @@
 package com.example.walktoshop.User;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,32 +29,164 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class UserStatistics extends AppCompatActivity {
+    FirebaseFirestore db =FirebaseFirestore.getInstance();
     String UID;
     BarChart barChart;
     BottomNavigationView bottomNavigationView;
+    private ArrayList<BarEntry> dailySteps=new ArrayList<>();
+    private ArrayList<BarEntry> dailyKm=new ArrayList<>();
+    private ArrayList<BarEntry> dailyKcal= new ArrayList<>();
+    private ArrayList<String> days = new ArrayList<>();
+    private float stepsAverage = 0;
+    private float kcalAverage = 0;
+    private float kmAverage = 0;
+    private TextView stepsAverageText;
+    private TextView kcalAverageText;
+    private TextView kilometersAverageText;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_statistics);
+        Intent intent = getIntent();
+        if(intent.hasExtra("UID")){
+            this.UID = intent.getStringExtra("UID");
+        }
         barChart = findViewById(R.id.barChart);
+        stepsAverageText =findViewById(R.id.stepsAvg);
+        kcalAverageText= findViewById(R.id.kcalAvg);
+        kilometersAverageText=findViewById(R.id.kilometersAvg);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_home:
+                        goHome();
+                        break;
+                    case R.id.action_map:
+                        goToUserViewMap();
+                        break;
+                    case R.id.action_notification:
+                        break;
+                }
+                return true;
+            }
+        });
+    }
 
-        BarDataSet passiGiornalieri = new BarDataSet(passiGiornalieri(),"Passi giornalieri");
-        passiGiornalieri.setColor(Color.RED);
-        BarDataSet kcalGiornaliere = new BarDataSet(kcalGiornaliere(),"Kcal giornaliere");
-        kcalGiornaliere.setColor(Color.GREEN);
-        BarDataSet kmGiornalieri = new BarDataSet(kmGiornalieri(),"Km giornalieri");
-        kmGiornalieri.setColor(Color.MAGENTA);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getDailyWalk();
 
-        BarData data = new BarData(passiGiornalieri,kcalGiornaliere,kmGiornalieri);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        killServiceIfRunning();
+    }
+    private void killServiceIfRunning(){
+        if(isMyServiceRunning(StepCounter.class) == true){
+            Intent intent =new Intent(this,StepCounter.class);
+            Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();
+            stopService(intent);
+        }
+    }
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void getDailyWalk(){
+        db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document= task.getResult();
+                    ArrayList<String> stringedWalks= (ArrayList<String>) document.get("walk");
+                    int userHeight= Integer.parseInt(document.getString("height"));
+                    int userWeight= Integer.parseInt(document.getString("weight"));
+                    if(stringedWalks!=null){
+                        int numberOfUserWalks=0;
+                        int totalNumberOfUserWalks= stringedWalks.size()-1;
+                        for (int i=0;i<6;i++){
+                            if(totalNumberOfUserWalks-i>=0){
+                                String walkInfo=stringedWalks.get(totalNumberOfUserWalks-i);
+                                Walk walk= getWalkInfoFromString(walkInfo);
+                                UserStatistics.this.days.add(millisecondsToDate(walk.getDate()));
+                                long steps= Long.parseLong((walk.getNumberOfSteps()));
+                                float meters= calculateKilometers(userHeight,steps)*1000;//trasformare in metri per il grafico
+                                int kcal= calculateKcal(userWeight,steps);
+                                Log.d("index",days.get(i)+" "+steps);
+                                stepsAverage= stepsAverage + steps;
+                                kcalAverage= kcalAverage + kcal;
+                                kmAverage =kmAverage + meters;
+                                UserStatistics.this.dailySteps.add(new BarEntry(i,steps));
+                                UserStatistics.this.dailyKm.add(new BarEntry(i,meters));
+                                UserStatistics.this.dailyKcal.add(new BarEntry(i,kcal));
+                                numberOfUserWalks++;
+                            }
+                        }
+                        stepsAverage=Math.round((float) stepsAverage/numberOfUserWalks);
+                        kcalAverage=Math.round((float) kcalAverage/numberOfUserWalks);
+                        kmAverage=(float) (kmAverage/numberOfUserWalks)/1000;//riporto in km
+                        String[] daysArray = new String[UserStatistics.this.days.size()];
+                        daysArray = UserStatistics.this.days.toArray(daysArray);
+                        setBarChart(dailyKm,dailyKcal,dailySteps,daysArray);
+                        //set medie
+                        stepsAverageText.setText("Media Passi:"+(int) stepsAverage);
+                        kcalAverageText.setText("Media calorie:"+(int) kcalAverage);
+                        kilometersAverageText.setText("Media kilometri:"+(int) kmAverage);
+
+                        Log.d("average","walks"+numberOfUserWalks+"steps"+ stepsAverage +"kcal"+kcalAverage+"km"+kmAverage);
+
+                    }
+                }
+            }
+        });
+    }
+
+    private void goHome() {
+        final Intent intent = new Intent(this, UserView.class);
+        User user = new User();
+        intent.putExtra("UID", UID);
+        startActivity(intent);
+    }
+
+    private void goToUserViewMap() {
+        final Intent intent = new Intent(UserStatistics.this, UserMapView.class);
+        intent.putExtra("UID", this.UID);
+        startActivity(intent);
+    }
+    private void setBarChart(ArrayList<BarEntry> dailyKm,ArrayList<BarEntry> dailyKcal,ArrayList<BarEntry> dailySteps, String[] days){
+        BarDataSet steps = new BarDataSet(dailySteps,"Passi giornalieri");
+        steps.setColor(Color.RED);
+        BarDataSet kcal = new BarDataSet(dailyKcal,"Kcal giornaliere");
+        kcal.setColor(Color.GREEN);
+        BarDataSet km = new BarDataSet(dailyKm,"Metri giornalieri");
+        km.setColor(Color.MAGENTA);
+
+        BarData data = new BarData(steps,kcal,km);
         barChart.setData(data);
 
-        String[] days = new String[]{"Domenica","lunedi","martedi","mercoledi","giovedi","venerdi","sabato"};
         XAxis xAxis = barChart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(days));
         xAxis.setCenterAxisLabels(true);
@@ -66,72 +207,63 @@ public class UserStatistics extends AppCompatActivity {
 
         barChart.groupBars(0, groupSpace, barSpace);
         barChart.invalidate();
-
-        Intent intent = getIntent();
-        UID = intent.getStringExtra("UID");
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+    }
+    private Walk getWalkInfoFromString(String info){
+        String[] todayAndSteps =info.split(",");
+        Walk walk =new Walk();
+        walk.setDate(todayAndSteps[0]);
+        walk.setNumberOfSteps(todayAndSteps[1]);
+        return walk;
+    }
+    private float calculateKilometers(int height,long steps){
+        float meters;
+        if(height<170){
+            meters=Math.round((float)600*steps/1000);
+        }else{
+            meters=Math.round((float)700*steps/1000);
+        }
+        float kilometers=meters/1000;
+        Log.d("km",kilometers+"");
+        return kilometers;
+    }
+    private int calculateKcal(int weight,long steps){
+        int kcal;
+        Log.d("weight",weight+"");
+        kcal= (int) Math.round((float)weight*0.0005*steps);
+        Log.d("kcal",kcal+"");
+        return kcal;
+    }
+    private String millisecondsToDate(String milliseconds){
+        if(milliseconds!=null){
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            long longMilliSeconds= Long.parseLong(milliseconds);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(longMilliSeconds);
+            return formatter.format(calendar.getTime());
+        }
+        return "";
+    }
+    //check
+    /*
+    private void connectionDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Connessione internet troppo debole o assente.")
+                .setCancelable(false)
+                .setPositiveButton("Connetti", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                        //restart Activity
+                        finish();
+                        startActivity(getIntent());
+                    }
+                }).setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_home:
-                        goHome();
-                        break;
-                    case R.id.action_map:
-                        goToUserViewMap();
-                        break;
-                    case R.id.action_notification:
-                        break;
-                }
-                return true;
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //restart Activity
+                finish();
+                startActivity(getIntent());
             }
         });
-    }
-
-    private ArrayList<BarEntry> passiGiornalieri(){
-        ArrayList<BarEntry> passiGiornalieri = new ArrayList<BarEntry>();
-        passiGiornalieri.add( new BarEntry(1,800));
-        passiGiornalieri.add( new BarEntry(2,1000));
-        passiGiornalieri.add( new BarEntry(3,800));
-        passiGiornalieri.add( new BarEntry(4,850));
-        passiGiornalieri.add( new BarEntry(5,1600));
-        passiGiornalieri.add( new BarEntry(6,1000));
-        passiGiornalieri.add( new BarEntry(7,950));
-        return passiGiornalieri;
-    }
-    private ArrayList<BarEntry> kcalGiornaliere(){
-        ArrayList<BarEntry> kcalGiornaliere = new ArrayList<BarEntry>();
-        kcalGiornaliere.add( new BarEntry(1,500));
-        kcalGiornaliere.add( new BarEntry(2,1800));
-        kcalGiornaliere.add( new BarEntry(3,200));
-        kcalGiornaliere.add( new BarEntry(4,300));
-        kcalGiornaliere.add( new BarEntry(5,3000));
-        kcalGiornaliere.add( new BarEntry(6,1000));
-        kcalGiornaliere.add( new BarEntry(7,450));
-        return kcalGiornaliere;
-    }
-    private ArrayList<BarEntry> kmGiornalieri(){
-        ArrayList<BarEntry> kmGiornalieri = new ArrayList<BarEntry>();
-        kmGiornalieri.add( new BarEntry(1,5));
-        kmGiornalieri.add( new BarEntry(2,20));
-        kmGiornalieri.add( new BarEntry(3,2));
-        kmGiornalieri.add( new BarEntry(4,4));
-        kmGiornalieri.add( new BarEntry(5,40));
-        kmGiornalieri.add( new BarEntry(6,12));
-        kmGiornalieri.add( new BarEntry(7,3));
-        return kmGiornalieri;
-    }
-
-    private void goHome() {
-        final Intent intent = new Intent(this, UserView.class);
-        User user = new User();
-        intent.putExtra("UID", UID);
-        startActivity(intent);
-    }
-
-    private void goToUserViewMap() {
-        final Intent intent = new Intent(UserStatistics.this, UserMapView.class);
-        intent.putExtra("UID", this.UID);
-        startActivity(intent);
-    }
+    }*/
 }

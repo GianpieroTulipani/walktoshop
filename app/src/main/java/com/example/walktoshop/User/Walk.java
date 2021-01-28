@@ -1,8 +1,7 @@
 package com.example.walktoshop.User;
 
-import java.util.HashMap;
 
-public class Walk extends HashMap {
+public class Walk {
     private String numberOfSteps;
     private String date;
 

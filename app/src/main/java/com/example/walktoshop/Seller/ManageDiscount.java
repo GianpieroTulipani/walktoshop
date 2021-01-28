@@ -204,7 +204,7 @@ public class ManageDiscount extends AppCompatActivity {
             this.quantity.setError( getResources().getString(R.string.numStepsEmpty));
             this.quantity.requestFocus();
             return false;
-        }else if(  Long.parseLong(stringedQuantity) < 2000||  Long.parseLong(stringedQuantity) > 60000){
+        }else if(Long.parseLong(stringedQuantity) < 2000||  Long.parseLong(stringedQuantity) > 60000){
             Toast toast = Toast.makeText(this,"inserire un numero passi che sia compreso tra 2000 e 100000",Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();

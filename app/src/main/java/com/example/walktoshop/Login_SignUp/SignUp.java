@@ -81,7 +81,9 @@ public class SignUp extends AppCompatActivity {
                 if(switchButton.isChecked()){
                     weight.setVisibility(View.GONE);
                     height.setVisibility(View.GONE);
+                    isSeller = true;
                 } else {
+                    isSeller = false;
                     weight.setVisibility(View.VISIBLE);
                     height.setVisibility(View.VISIBLE);
                 }
@@ -94,11 +96,9 @@ public class SignUp extends AppCompatActivity {
                 if(checkUserInfo()){
                     if(switchButton.isChecked()){
                         //crea e carica il negoziante
-                        isSeller = true;
                         createSeller();
                     }else{
                         //lato utente
-                        isSeller = false;
                         createUser();
                     }
                 }
@@ -217,8 +217,7 @@ public class SignUp extends AppCompatActivity {
         stringWeight = this.weight.getText().toString().trim();
 
         Pattern PASSWORD_PATTERN
-                = Pattern.compile(
-                "[a-zA-Z0-9\\!\\@\\#\\$\\?\\-\\_\\/]{8,24}");
+                = Pattern.compile("^" + "(?=.*[0-9])" + "(?=.*[a-z])" + "(?=.*[A-Z])" + "(?=.*[@#$%&?!_])" + "(?=\\S+$)" + ".{8,}" + "$");
 
         if(stringUsername.isEmpty()){
             this.username.setError(getResources().getString(R.string.usernameEmpty));
@@ -236,29 +235,29 @@ public class SignUp extends AppCompatActivity {
             this.password.setError(getResources().getString(R.string.passwordEmpty));
             this.password.requestFocus();
             return false;
-        }else if(stringHeight.isEmpty() && !isSeller){
+        }else if(!isSeller && stringHeight.isEmpty()){
             this.height.setError( getResources().getString(R.string.heightEmpty));
             this.height.requestFocus();
             return false;
-        }else if(stringWeight.isEmpty() && !isSeller) {
+        }else if(!isSeller && stringWeight.isEmpty()) {
             this.weight.setError(getResources().getString(R.string.weightEmpty));
             this.weight.requestFocus();
             return false;
         }else if(!PASSWORD_PATTERN.matcher(stringPassword).matches()){
-            Toast toast = Toast.makeText(this,"La password deve essere lunga almeno 8 caratteri e nserire almeno: una lettera minuscola[a-z], un carattere speciale[!,@,#,$] e due numeri[0,9]",Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this,"La password deve essere lunga almeno 8 caratteri e inserire almeno: una lettera minuscola,una maiuscola, un carattere speciale[@,#,$,%,&,?,!,_] e un numero",Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             this.password.setError(getResources().getString(R.string.InvalidPassword));
             this.password.requestFocus();
             return false;
-        }else  if((Long.parseLong(stringHeight) < 100 || Long.parseLong(stringHeight) > 270) && !isSeller){
-            Toast toast = Toast.makeText(this,"inserire un'altezza compresa tra 62cm e 278cm",Toast.LENGTH_LONG);
+        }else  if(!isSeller && (Long.parseLong(stringHeight) < 100 || Long.parseLong(stringHeight) > 270)){
+            Toast toast = Toast.makeText(this,"inserire un'altezza compresa tra 100cm e 278cm",Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             this.height.setError( getResources().getString(R.string.InvalidHeight));
             this.height.requestFocus();
             return false;
-        }else if((Long.parseLong(stringWeight) < 40 || Long.parseLong(stringWeight) > 250) && !isSeller){
+        }else if(!isSeller && (Long.parseLong(stringWeight) < 40 || Long.parseLong(stringWeight) > 250)){
             Toast toast = Toast.makeText(this,"inserire un peso che sia compreso tra 40kg e 250kg",Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();

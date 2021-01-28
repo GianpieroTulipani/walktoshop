@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import com.google.gson.Gson;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,6 +131,9 @@ public class SellerViewAdapter extends ArrayAdapter {
                 addDiscount.setVisibility(View.GONE);
                 deleteDiscount.setVisibility(View.VISIBLE);
                 editDiscount.setVisibility(View.VISIBLE);
+                if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
+                    date.setText("Scaduto");
+                }
                 deleteDiscount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -139,6 +144,10 @@ public class SellerViewAdapter extends ArrayAdapter {
             }else if(this.usage=="userHome"){
                 arrow.setVisibility(View.VISIBLE);
                 addDiscount.setVisibility(View.GONE);
+                if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
+                    arrow.setVisibility(View.GONE);
+                    date.setText("Scaduto");
+                }
                 arrow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -155,6 +164,9 @@ public class SellerViewAdapter extends ArrayAdapter {
             }else if(this.usage=="backdropList"){
                 arrow.setVisibility(View.GONE);
                 addDiscount.setVisibility(View.VISIBLE);
+                if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
+                    date.setText("Scaduto");
+                }
                 addDiscount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

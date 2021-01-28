@@ -33,6 +33,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -46,6 +47,8 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
     private static final String API_KEY = "AIzaSyBrbjgwm3CB6qBhWaa3cMrRV3Ek9XW0cPc";
     SearchView search;
     String location;
+    boolean isExisting = false;
+    List<LatLng> latLngs = new ArrayList<LatLng>();
     Business business=new Business();
 
     @Override
@@ -83,6 +86,55 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                     }
                     if (addresses!=null && !addresses.isEmpty()){
                         Address addr=addresses.get(0);
+                        verifyBusiness(addr);
+                        Log.d("isExisting", String.valueOf(isExisting));
+
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
+        mapFragment.getMapAsync(this);
+    }
+
+    private void verifyBusiness(Address addr) {
+
+        double latitude = addr.getLatitude();
+        double longitude = addr.getLongitude();
+        LatLng placeLatLng = new LatLng(latitude,longitude);
+        String locality = addr.getLocality();
+        Log.d("PLACE", latitude+"-"+longitude+"-"+locality);
+
+        db.collection("attivita").whereEqualTo("locality", locality).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for (QueryDocumentSnapshot document : task.getResult()){
+                        double lat = Double.parseDouble(document.getString("latitude"));
+                        double longt = Double.parseDouble(document.getString("longitude"));
+                        Log.d("DB-PLACE", lat+"-"+longt);
+                        if(latitude == lat && longitude == longt){
+                            isExisting = true;
+                            break;
+                        }
+                    }
+                    if(isExisting == true){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(SellerMapView.this);
+                        // Add the buttons
+                        builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        }).setMessage("Attività già eistente inseriscine un altra");
+                        // Set other d
+                        builder.show();
+                        isExisting = false;
+                    } else {
                         Log.d("place",addr.getLatitude()+"--"+addr.getLongitude()+"--"+addr.getLocality());
                         LatLng place=new LatLng(addr.getLatitude(),addr.getLongitude());
                         mMap.addMarker(new MarkerOptions().position(place).title(location));
@@ -110,17 +162,9 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                     }
 
                 }
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                return false;
             }
         });
-        mapFragment.getMapAsync(this);
     }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

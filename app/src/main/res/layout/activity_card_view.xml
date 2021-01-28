@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
@@ -39,23 +39,24 @@
         android:layout_gravity="top|right"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <!-- Media -->
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:background="@color/white_ice"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
 
             <ProgressBar
                 android:id="@+id/progerssBar"
                 style="@style/CircularDeterminateprogressBar"
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
                 android:layout_height="300dp"
-                android:layout_gravity="center"
+
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -78,51 +79,76 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/goalStepsRatio"
+            android:orientation="horizontal">
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2000/5000"
-                android:textSize="30dp"
-                android:textColor="@color/black"/>
-            <TextView
-                android:id="@+id/kcal"
-                android:layout_marginLeft="20dp"
+                android:orientation="vertical">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/ic_scarpe"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:src="@drawable/ic_kcal"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/ic_lunghezza"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="30 Kcal"
-                android:textSize="30dp"
-                android:textColor="@color/black"/>
-            <TextView
-                android:id="@+id/kilometers"
-                android:layout_marginTop="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="50 km"
-                android:textSize="30dp"
-                android:textColor="@color/black"/>
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/goalStepsRatio"
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10000/10000"
+                    android:textSize="30dp"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:id="@+id/kcal"
+                    android:layout_marginLeft="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kcal: 30"
+                    android:textSize="30dp"
+                    android:textColor="@color/black"/>
+                <TextView
+                    android:id="@+id/kilometers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:text="Km: 50"
+                    android:textSize="30dp"
+                    android:textColor="@color/black"/>
+
+            </LinearLayout>
+
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/code"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#f8f8ff"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp"
+            android:background="@color/white_ice"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:text="Lo sconto è applicabile solo a determinate tipologie di sconti o applicazioni usarlo con prudenza."
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="?android:attr/textColorSecondary" />
 
-            <TextView
-                android:id="@+id/code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Lo sconto è applicabile solo a determinate tipologie di sconti o applicazioni usarlo con prudenza."
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textColor="?android:attr/textColorSecondary" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/linearCard1"

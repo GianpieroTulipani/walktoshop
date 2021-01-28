@@ -44,6 +44,7 @@ public class SellerView extends AppCompatActivity {
     private ArrayList<String> discountUID = new ArrayList<>();
     private FloatingActionButton mFab;
     private TextView scontiAttivita;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -175,7 +176,6 @@ public class SellerView extends AppCompatActivity {
                 });
             }
         }
-
     }
     private void getDiscounts(){
         discountArray.clear();

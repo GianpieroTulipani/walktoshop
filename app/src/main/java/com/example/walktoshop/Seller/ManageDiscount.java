@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 public class ManageDiscount extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -40,6 +41,9 @@ public class ManageDiscount extends AppCompatActivity {
     private Button add;
     private ImageButton addDate;
     private Calendar cal;
+    private String dateEditText;
+    private String[] separetedDate;
+    private boolean fromEditText;
     int date;
     long expiringDateInMillis;
     String stringedDescription;
@@ -76,7 +80,9 @@ public class ManageDiscount extends AppCompatActivity {
                 int month=cal.get(Calendar.MONTH);
                 Log.d("month", String.valueOf(month));
                 int year=cal.get(Calendar.YEAR);
+                expiringDate.setEnabled(false);
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    fromEditText = false;
                     DatePickerDialog datePickerDialog=new DatePickerDialog(ManageDiscount.this, android.R.style.Theme_DeviceDefault_Dialog, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker datePicker, int year, int month, int date) {
@@ -111,7 +117,12 @@ public class ManageDiscount extends AppCompatActivity {
                     },year,month,date);
                     datePickerDialog.show();
                 }else{
-                    //altro modo per prendere la data
+                    Toast toast = Toast.makeText(ManageDiscount.this,"Inserire la data manualmente, poichè la versione del tuo dispositivo non supporta l'inserimento automatico tramite calendario",Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
+                    expiringDate.setEnabled(true);
+                    expiringDate.setHint("Data di scadenza(gg/mm/aaaa)");
+                    fromEditText = true;
                 }
             }
         });
@@ -156,6 +167,52 @@ public class ManageDiscount extends AppCompatActivity {
             }
         });
     }
+
+    private boolean checkDateFormat(){
+        String stringDate = dateEditText;
+         Pattern DATE_PATTERN = Pattern.compile("([0-9]{2})/([0-9]{2})/([0-9]{4})");
+        separetedDate = stringDate.split("/");
+        Date dateEditText = null;
+
+        try {
+             dateEditText = new SimpleDateFormat("dd/MM/yyyy").parse(stringDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if(stringDate.isEmpty()){
+            this.expiringDate.setError(getResources().getString(R.string.EmptyDate));
+            this.expiringDate.requestFocus();
+            return false;
+        }else if(!DATE_PATTERN.matcher(stringDate).matches()){
+             Toast toast = Toast.makeText(ManageDiscount.this,"Rispettare formato: gg/mm/aaaa",Toast.LENGTH_LONG);
+             toast.setGravity(Gravity.CENTER, 0, 0);
+             toast.show();
+             this.expiringDate.setError(getResources().getString(R.string.InvalidDateFormat));
+             this.expiringDate.requestFocus();
+             return false;
+         }else if(Integer.parseInt(separetedDate[0]) <= 00 || Integer.parseInt(separetedDate[0]) > 31){
+            this.expiringDate.setError(getResources().getString(R.string.NotADay));
+            this.expiringDate.requestFocus();
+            return false;
+        }else if(Integer.parseInt(separetedDate[1]) <= 00 || Integer.parseInt(separetedDate[1]) > 12){
+            this.expiringDate.setError(getResources().getString(R.string.NotAMonth));
+            this.expiringDate.requestFocus();
+            return false;
+        }else if(Integer.parseInt(separetedDate[2]) < Calendar.getInstance().get(Calendar.YEAR)){
+            this.expiringDate.setError(getResources().getString(R.string.NotAYearFree));
+            this.expiringDate.requestFocus();
+            return false;
+        }else if(dateEditText.getTime() <= Calendar.getInstance().getTimeInMillis()){
+            this.expiringDate.setError(getResources().getString(R.string.InvalidDate));
+            this.expiringDate.requestFocus();
+            return false;
+        }
+
+         ManageDiscount.this.expiringDateInMillis =  dateEditText.getTime();
+         return true;
+    }
+
     private void getBusiness(String customDiscountUID){
         db.collection("attivita").document(businessUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -193,6 +250,8 @@ public class ManageDiscount extends AppCompatActivity {
     private boolean checkInfo(){
         stringedDescription=this.description.getText().toString().trim();
         stringedQuantity=this.quantity.getText().toString().trim();
+        if(fromEditText)
+        dateEditText = expiringDate.getText().toString().trim();
        // Log.d("MILLIS", String.valueOf(expiringDateInMillis));
         //Log.d("MILLIS", String.valueOf(cal.getTimeInMillis()));
 
@@ -211,12 +270,16 @@ public class ManageDiscount extends AppCompatActivity {
             this.quantity.setError( getResources().getString(R.string.numStepsNotValid));
             this.quantity.requestFocus();
             return false;
-        } else if ( expiringDateInMillis < cal.getTimeInMillis() || expiringDateInMillis == 0){
+        } else if ((expiringDateInMillis <= cal.getTimeInMillis() || expiringDateInMillis == 0) && !fromEditText){
             //mettere un avviso che indica di inserire correttamente la data
             this.expiringDate.setError("Data non valida");
             this.expiringDate.requestFocus();
             return false;
+        }else if(fromEditText && !checkDateFormat()){
+
+            return false;
         }
+
         return true;
     }
     private String calculateMyCustomDiscountUID(String businessUID,long timeInMillis){

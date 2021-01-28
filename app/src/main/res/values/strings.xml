@@ -32,6 +32,12 @@
     <string name="title_activity_seller_maps_view">Map</string>
     <string name="numStepsNotValid">Numero passi non valido</string>
     <string name="InvalidDescription">Descrizione non valida</string>
+    <string name="InvalidDateFormat">Formato data errato</string>
+    <string name="InvalidDate">Data errata</string>
+    <string name="EmptyDate">Inserire data di scadenza</string>
+    <string name="NotADay">Giorno non esistente</string>
+    <string name="NotAMonth">Mese non esistente</string>
+    <string name="NotAYearFree">Anno errato</string>
     //framgent_manageDiscount
     <string name="disocuntsQuantity">Passi da compiere per lo sconto</string>
     <string name="percentage">Percentuale</string>

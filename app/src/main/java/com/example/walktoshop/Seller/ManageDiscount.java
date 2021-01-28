@@ -19,7 +19,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
+import com.example.walktoshop.User.UserMapView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -146,6 +148,15 @@ public class ManageDiscount extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        NetworkController networkController =new NetworkController();
+        if(!networkController.isConnected(ManageDiscount.this)){
+            networkController.connectionDialog(ManageDiscount.this);
+        }
     }
 
     @Override

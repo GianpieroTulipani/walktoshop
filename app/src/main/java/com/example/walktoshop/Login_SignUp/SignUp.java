@@ -15,10 +15,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.Seller;
 import com.example.walktoshop.Seller.SellerView;
 import com.example.walktoshop.User.User;
+import com.example.walktoshop.User.UserMapView;
 import com.example.walktoshop.User.UserView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -104,6 +107,15 @@ public class SignUp extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        NetworkController networkController =new NetworkController();
+        if(!networkController.isConnected(SignUp.this)){
+            networkController.connectionDialog(SignUp.this);
+        }
     }
 
     private void goSellerViewActivity(){

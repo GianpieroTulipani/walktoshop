@@ -29,6 +29,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -94,6 +95,15 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
                 return true;
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        NetworkController networkController =new NetworkController();
+        if(!networkController.isConnected(UserMapView.this)){
+            networkController.connectionDialog(UserMapView.this);
+        }
     }
 
     private void askGPSpermission() {

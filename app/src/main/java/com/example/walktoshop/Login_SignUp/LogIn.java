@@ -14,8 +14,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.SellerView;
+import com.example.walktoshop.User.UserMapView;
 import com.example.walktoshop.User.UserView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -68,6 +70,10 @@ public class LogIn extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
+        NetworkController networkController =new NetworkController();
+        if(!networkController.isConnected(LogIn.this)){
+            networkController.connectionDialog(LogIn.this);
+        }
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
            Uid = mAuth.getUid();

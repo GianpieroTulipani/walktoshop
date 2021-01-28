@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.Discount;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -70,6 +71,10 @@ public class CardView extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        NetworkController networkController =new NetworkController();
+        if(!networkController.isConnected(CardView.this)){
+            networkController.connectionDialog(CardView.this);
+        }
         long goal= Long.parseLong(d.getDiscountsQuantity());
         long beginDiscountDate= Long.parseLong(d.getStartDiscountDate());
         long expiringDiscountDate= Long.parseLong(d.getExpiringDate());

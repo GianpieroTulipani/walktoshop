@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,7 +21,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walktoshop.Login_SignUp.LogIn;
+import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
+import com.example.walktoshop.User.UserMapView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -78,6 +81,10 @@ public class SellerView extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        NetworkController networkController =new NetworkController();
+        if(!networkController.isConnected(SellerView.this)){
+            networkController.connectionDialog(SellerView.this);
+        }
         getSellerBusinessUID();
         if(businessUID == null){
             businessUID = new ArrayList<String>();

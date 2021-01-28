@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
+import com.example.walktoshop.NetworkController.NetworkController;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -70,7 +71,6 @@ public class StepCounter extends Service implements Runnable{
         if(intent.hasExtra("UID")){
             this.UID=intent.getStringExtra("UID");
             //function
-
             makeNotificationIntent();
             //crea un thread separato e fa partire il contapassi
             new Thread(this).start();

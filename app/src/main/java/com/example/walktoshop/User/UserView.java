@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.walktoshop.Login_SignUp.LogIn;
+import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.Discount;
 import com.example.walktoshop.Seller.SellerViewAdapter;
@@ -82,6 +83,10 @@ public class UserView extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        NetworkController networkController =new NetworkController();
+        if(!networkController.isConnected(UserView.this)){
+            networkController.connectionDialog(UserView.this);
+        }
         getUserDiscounts();
     }
 

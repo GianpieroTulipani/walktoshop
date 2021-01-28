@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -21,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -89,6 +92,11 @@ public class UserStatistics extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        NetworkController networkController =new NetworkController();
+        if(!networkController.isConnected(UserStatistics.this)){
+            networkController.connectionDialog(UserStatistics.this);
+        }
+        Log.d("connection state",networkController.isConnected(UserStatistics.this)+"");
         getDailyWalk();
 
     }
@@ -244,26 +252,5 @@ public class UserStatistics extends AppCompatActivity {
         return "";
     }
     //check
-    /*
-    private void connectionDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Connessione internet troppo debole o assente.")
-                .setCancelable(false)
-                .setPositiveButton("Connetti", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                        //restart Activity
-                        finish();
-                        startActivity(getIntent());
-                    }
-                }).setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //restart Activity
-                finish();
-                startActivity(getIntent());
-            }
-        });
-    }*/
+
 }

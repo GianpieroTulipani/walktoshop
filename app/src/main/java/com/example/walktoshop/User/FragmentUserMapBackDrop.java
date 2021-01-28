@@ -106,8 +106,10 @@ public class FragmentUserMapBackDrop extends Fragment {
                 {
                     DocumentSnapshot document = task.getResult();
                     ArrayList<String> discountUID = (ArrayList<String>) document.get("discountUID");
+                    Log.d("disBusiness", String.valueOf(discountUID));
                     if(discountUID!=null){
                         Log.d("discount",discountUID.size()+" ");
+                        Log.d("business",businessUID.get(0));
                         if(!discountUID.isEmpty()){
                             getDiscounts(discountUID, userDisUID);
                         }else{
@@ -123,61 +125,39 @@ public class FragmentUserMapBackDrop extends Fragment {
     }
 
     private void getDiscounts(ArrayList<String> discountUID, ArrayList<String> userDisUID){
-        discountArray.clear();
-        if(userDisUID.isEmpty()){
-            for(int k=0;k<discountUID.size();k++){
-                Log.d("dis",discountUID.get(k).toString());
-                db.collection("sconti").document(discountUID.get(k)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            Discount discount=new Discount();
-                            DocumentSnapshot document=task.getResult();
-                            discount.setUID(document.getString("uid"));
-                            discount.setBusinessUID(document.getString("businessUID"));
-                            discount.setState(document.getString("state"));
-                            discount.setExpiringDate(document.getString("expiringDate"));
-                            discount.setStepNumber(document.getString("stepNumber"));
-                            discount.setDescription(document.getString("description"));
-                            discount.setDiscountsQuantity(document.getString("discountsQuantity"));
-                            discountArray.add(discount);
-                        }
-                    }
-                }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        final SellerViewAdapter adapter=new SellerViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
-                        backdropListview.setAdapter(adapter);
-                    }
-                });
+        ArrayList<String> disUID = new ArrayList<String>();
+        for(int i=0;i<discountUID.size();i++){
+            if(!userDisUID.contains(discountUID.get(i))){
+                disUID.add(discountUID.get(i));
             }
-        } else {
-            db.collection("sconti").whereNotEqualTo("UID", userDisUID).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        }
+        for(int k=0;k<disUID.size();k++){
+            Log.d("dis",disUID.get(k).toString());
+            db.collection("sconti").document(disUID.get(k)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.isSuccessful()){
                         Discount discount=new Discount();
-                        for (QueryDocumentSnapshot document : task.getResult()){
-                            discount.setUID(document.getString("uid"));
-                            discount.setBusinessUID(document.getString("businessUID"));
-                            discount.setState(document.getString("state"));
-                            discount.setExpiringDate(document.getString("expiringDate"));
-                            discount.setStepNumber(document.getString("stepNumber"));
-                            discount.setDescription(document.getString("description"));
-                            discount.setDiscountsQuantity(document.getString("discountsQuantity"));
-                            discountArray.add(discount);
-                        }
+                        DocumentSnapshot document=task.getResult();
+                        discount.setUID(document.getString("uid"));
+                        discount.setBusinessUID(document.getString("businessUID"));
+                        discount.setState(document.getString("state"));
+                        discount.setExpiringDate(document.getString("expiringDate"));
+                        discount.setStepNumber(document.getString("stepNumber"));
+                        discount.setDescription(document.getString("description"));
+                        discount.setDiscountsQuantity(document.getString("discountsQuantity"));
+                        discountArray.add(discount);
+
                     }
                 }
-            }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     final SellerViewAdapter adapter=new SellerViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
                     backdropListview.setAdapter(adapter);
                 }
             });
         }
-
     }
 
 

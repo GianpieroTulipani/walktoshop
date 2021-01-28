@@ -43,6 +43,7 @@ public class SellerViewAdapter extends ArrayAdapter {
     private ArrayList<String> businessUID;
     private String usage;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
+
     public SellerViewAdapter(Context context, ArrayList<Discount> discounts, String UID,ArrayList businessUID,String usage) {
         super(context, R.layout.activity_sellerviewadapter);
         this.context=context;
@@ -94,6 +95,7 @@ public class SellerViewAdapter extends ArrayAdapter {
         ImageView difficultyColor = activity.findViewById(R.id.difficultyColor);
         ImageButton arrow = (ImageButton) activity.findViewById(R.id.arrow);
         Button addDiscount = (Button) activity.findViewById(R.id.addButton);
+
         //bottone attivazione contapassi
         //bottone abilitazione
         if(this.discounts.get(position) != null && position>=0 && !discounts.isEmpty()){

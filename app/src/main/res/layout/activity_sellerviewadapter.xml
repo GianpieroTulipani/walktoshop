@@ -25,7 +25,7 @@
                 </ImageView>
 
                 <LinearLayout
-                    android:layout_width="270dp"
+                    android:layout_width="230dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_gravity="center">

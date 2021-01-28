@@ -33,6 +33,7 @@ import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +87,8 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                         LatLng place=new LatLng(addr.getLatitude(),addr.getLongitude());
                         mMap.addMarker(new MarkerOptions().position(place).title(location));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place,15));
-                        addBusinessDialog();
+                        Toast.makeText(SellerMapView.this, R.string.addBusinessDialog, Toast.LENGTH_LONG).show();
+
                         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                             @Override
                             public boolean onMarkerClick(Marker marker) {
@@ -178,17 +180,6 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
 
             }
         }).setMessage(R.string.businessNotFound);
-        // Set other d
-        builder.show();
-    }
-    private void addBusinessDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(SellerMapView.this);
-        // Add the buttons
-        builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-
-            }
-        }).setMessage(R.string.addBusinessDialog);
         // Set other d
         builder.show();
     }

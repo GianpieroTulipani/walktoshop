@@ -1,15 +1,25 @@
 package com.example.walktoshop.User;
 
+import android.Manifest;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -17,6 +27,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
 import com.example.walktoshop.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,7 +57,8 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
     GoogleMap mMap;
     ProgressBar progressBar;
     List<LatLng> latLngs = new ArrayList<LatLng>();
-
+    LocationManager service;
+    LocationListener locationListener;
     double latitude;
     double longitude;
     String city;
@@ -56,28 +69,13 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_map_view);
+        progressBar = (ProgressBar) findViewById(R.id.userMapViewProgressBar);
+        progressBar.setProgress(View.VISIBLE);
+        Toast.makeText(UserMapView.this,"Apertura mappa in corso", Toast.LENGTH_LONG).show();
+        askGPSpermission();
 
         Intent intent = getIntent();
-        latitude = intent.getDoubleExtra("latitude", 0.0f);
-        longitude = intent.getDoubleExtra("longitude", 0.0f);
-        city = intent.getStringExtra("city");
         UID = intent.getStringExtra("UID");
-       
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        db.collection("attivita").whereEqualTo("locality",city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()){
-                        double lat = Double.parseDouble(document.getString("latitude"));
-                        double longt = Double.parseDouble(document.getString("longitude"));
-                        latLngs.add(new LatLng(lat, longt));
-                    }
-                }
-                mapFragment.getMapAsync(UserMapView.this);
-            }
-        });
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -88,6 +86,7 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
                         goHome();
                         break;
                     case R.id.action_statistics:
+                        goUserStatistics();
                         break;
                     case R.id.action_notification:
                         break;
@@ -95,6 +94,82 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
                 return true;
             }
         });
+    }
+
+    private void askGPSpermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.INTERNET},10);
+            }
+            return;
+        }
+        getUserPosition();
+        service.requestLocationUpdates("gps", 100, 1000, locationListener);
+    }
+
+    private void getUserPosition() {
+        service = (LocationManager) getSystemService(LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                latitude=location.getLatitude();
+                longitude=location.getLongitude();
+                Log.d("coordinates",latitude+"\n"+longitude);
+                try {
+                    Geocoder geocoder=new Geocoder(UserMapView.this);
+                    List<Address> addresses=new ArrayList<>();
+                    addresses=geocoder.getFromLocation(latitude,longitude,1);
+                    String country=addresses.get(0).getCountryName();
+                    city=addresses.get(0).getLocality();
+
+                    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                            .findFragmentById(R.id.map);
+
+                    db.collection("attivita").whereEqualTo("locality",city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if(task.isSuccessful()){
+                                for (QueryDocumentSnapshot document : task.getResult()){
+                                    double lat = Double.parseDouble(document.getString("latitude"));
+                                    double longt = Double.parseDouble(document.getString("longitude"));
+                                    latLngs.add(new LatLng(lat, longt));
+                                }
+                            }
+                            mapFragment.getMapAsync(UserMapView.this);
+                        }
+                    });
+                    //Log.d("city",city);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onProviderEnabled(@NonNull String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(@NonNull String provider) {
+                new AlertDialog.Builder(UserMapView.this).setTitle("GPS dialog").setMessage("Do you want to turn on gps?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity(intent);
+                            }
+                        }).setNegativeButton("Go Back", null).show();
+            }
+        };
+
+    }
+
+
+    private void goUserStatistics() {
+        final Intent intent = new Intent(this, UserStatistics.class);
+        User user = new User();
+        intent.putExtra("UID", UID);
+        startActivity(intent);
     }
 
     private void goHome() {
@@ -115,8 +190,6 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
 
     public void OnItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_search:
-                break;
             case R.id.action_exit:
                 break;
             case R.id.action_settings:
@@ -126,6 +199,7 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        progressBar.setVisibility(View.GONE);
         mMap = googleMap;
         Iterator<LatLng> iterator = latLngs.listIterator();
         while(iterator.hasNext()){

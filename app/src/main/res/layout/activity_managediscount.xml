@@ -7,9 +7,14 @@
     android:orientation="vertical"
     android:background="@color/white_ice">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:src="@drawable/_0943903"/>
+
 
     <EditText
-        android:layout_marginTop="250dp"
+        android:layout_marginTop="75dp"
         android:id="@+id/description"
         android:layout_width="317dp"
         android:layout_gravity="center"
@@ -74,19 +79,14 @@
     </LinearLayout>
     <Button
         android:layout_marginTop="25dp"
-        android:layout_marginRight="45dp"
-        android:layout_gravity="end"
+        android:layout_marginRight="20dp"
+        android:layout_gravity="bottom|end"
         android:id="@+id/add"
         android:background="@color/verde_maggio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.844"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.847" />
+        />
 
 
 </LinearLayout>

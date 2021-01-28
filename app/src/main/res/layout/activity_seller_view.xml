@@ -2,46 +2,81 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sellerViewcontainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white_ice">
 
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginBottom="-5dp"
-        android:clickable="false"
-        android:focusable="false">
-
-    </ListView>
-
     <TextView
         android:id="@+id/alertSeller"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <Button
-        android:id="@+id/addActivityButton"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#f8f8ff"
-        android:background="@color/verde_maggio"
-        android:text="Aggiungi attivita"
-        android:layout_gravity="center"
+        android:textSize="25dp"/>
+
+        <LinearLayout
+            android:id="@+id/sellerLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="190dp"
+                android:src="@drawable/_0943903"/>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/scontiAttivita"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sconti Attività"
+                    android:textAppearance="?attr/textAppearanceHeadline4"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+               <ListView
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:clickable="false"
+                    android:focusable="false">
+                </ListView>
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addBusinessFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="@dimen/material_bottom_margin"
+        android:layout_marginBottom="@dimen/material_botton_margin"
+        android:src="@android:drawable/ic_menu_mapmode"
+        app:backgroundTint="@color/verde_maggio"
+        app:backgroundTintMode="src_over"
+        app:fabSize="normal"
+        app:rippleColor="#00FF00" />
         />
     <ProgressBar
         android:id="@+id/sellerViewProgressBar"

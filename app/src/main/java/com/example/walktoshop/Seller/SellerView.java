@@ -35,7 +35,7 @@ public class SellerView extends AppCompatActivity {
     private TextView alert;
     private String UID=null;
     private ProgressBar progressBar;
-    private Button addActivityButton;
+    private FloatingActionButton addActivityButton;
     private ImageButton editDiscount;
     private ImageButton deleteDiscount;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
@@ -43,13 +43,15 @@ public class SellerView extends AppCompatActivity {
     private ArrayList<String> businessUID =new ArrayList<>();
     private ArrayList<String> discountUID = new ArrayList<>();
     private FloatingActionButton mFab;
+    private TextView scontiAttivita;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_view);
         alert = (TextView) findViewById(R.id.alertSeller);
         //View coordinatorLayout = findViewById(android.R.id.content);
-        addActivityButton=(Button)findViewById(R.id.addActivityButton);
+        addActivityButton=(FloatingActionButton)findViewById(R.id.addBusinessFab);
+        scontiAttivita = (TextView) findViewById(R.id.scontiAttivita);
         addActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,8 +89,10 @@ public class SellerView extends AppCompatActivity {
             if(businessUID.size()<= 0){
                 Log.d("Busi", String.valueOf(businessUID.size()));
                 addActivityButton.setVisibility(View.VISIBLE);
+                scontiAttivita.setVisibility(View.GONE);
+                alert.setText("Nessuna attività registrata");
                 mFab.setVisibility(View.GONE);
-                alert.setVisibility(View.GONE);
+
             }
         }
     }
@@ -129,6 +133,7 @@ public class SellerView extends AppCompatActivity {
                             getBusiness();
                             progressBar.setVisibility(View.INVISIBLE);
                         }else{
+                            alert.setText("Nessuna attività registrata");
                             addActivityButton.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.INVISIBLE);
                         }
@@ -140,6 +145,7 @@ public class SellerView extends AppCompatActivity {
     private void getBusiness(){
         if(businessUID!=null && !businessUID.isEmpty()){
             addActivityButton.setVisibility(View.INVISIBLE);
+            scontiAttivita.setVisibility(View.VISIBLE);
             mFab.setVisibility(View.VISIBLE);
             for(int i=0;i<businessUID.size();i++){
                 String b=businessUID.get(i);

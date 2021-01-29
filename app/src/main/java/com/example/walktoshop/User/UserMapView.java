@@ -31,6 +31,8 @@ import androidx.core.app.ActivityCompat;
 
 import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -39,6 +41,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
@@ -54,7 +57,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class UserMapView extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarkerClickListener,OnMapReadyCallback {
     GoogleMap mMap;
     ProgressBar progressBar;
     List<LatLng> latLngs = new ArrayList<LatLng>();
@@ -64,6 +67,8 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
     double longitude;
     String city;
     String UID;
+    FusedLocationProviderClient fusedLocationClient;
+    SupportMapFragment mapFragment;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
 
     @Override
@@ -72,11 +77,35 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_user_map_view);
         progressBar = (ProgressBar) findViewById(R.id.userMapViewProgressBar);
         progressBar.setProgress(View.VISIBLE);
+
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+
         Toast.makeText(UserMapView.this,"Apertura mappa in corso", Toast.LENGTH_LONG).show();
-        askGPSpermission();
 
         Intent intent = getIntent();
-        UID = intent.getStringExtra("UID");
+        if (intent.hasExtra("UID") && intent.hasExtra("city") && intent.hasExtra("latitude") && intent.hasExtra("longitude")) {
+            UID = intent.getStringExtra("UID");
+            city=intent.getStringExtra("city");
+            latitude= intent.getDoubleExtra("latitude",0.0f);
+            longitude= intent.getDoubleExtra("longitude",0.0f);
+            //Log.d("city",latitude+city +longitude);
+            db.collection("attivita").whereEqualTo("locality", city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful()){
+                        for (QueryDocumentSnapshot document : task.getResult()){
+                            double lat = Double.parseDouble(document.getString("latitude"));
+                            double longt = Double.parseDouble(document.getString("longitude"));
+                            latLngs.add(new LatLng(lat, longt));
+                        }
+                    }
+                    mapFragment.getMapAsync(UserMapView.this);
+                }
+            });
+        }
+
+
 
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -106,79 +135,39 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
         }
     }
 
-    private void askGPSpermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.INTERNET},10);
-            }
-            return;
-        }
-        getUserPosition();
-        service.requestLocationUpdates("gps", 100, 1000, locationListener);
-    }
-
-    private void getUserPosition() {
-        service = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
+    private void getBusinessLatLng(String city) {
+        Log.d("City1", city);
+        db.collection("attivita").whereEqualTo("locality", city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onLocationChanged(@NonNull Location location) {
-                latitude=location.getLatitude();
-                longitude=location.getLongitude();
-                Log.d("coordinates",latitude+"\n"+longitude);
-                try {
-                    Geocoder geocoder=new Geocoder(UserMapView.this);
-                    List<Address> addresses=new ArrayList<>();
-                    addresses=geocoder.getFromLocation(latitude,longitude,1);
-                    String country=addresses.get(0).getCountryName();
-                    city=addresses.get(0).getLocality();
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for (QueryDocumentSnapshot document : task.getResult()){
+                        double lat = Double.parseDouble(document.getString("latitude"));
+                        double longt = Double.parseDouble(document.getString("longitude"));
 
-                    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                            .findFragmentById(R.id.map);
+                    }
+                    /*
+                    //latLngs.add(new LatLng(lat, longt));
+                    LatLng latLng = new LatLng(lat,longt);
+                    Log.d("Location",location.getLatitude()+"+"+location.getLongitude());
+                    MarkerOptions options = new MarkerOptions().position(latLng);
+                    googleMap.addMarker(options);
+                    LatLng myPlace = new LatLng(location.getLatitude(), location.getLongitude());
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace, 12));
+                    googleMap.setOnMarkerClickListener(UserMapView.this::onMarkerClick);*/
 
-                    db.collection("attivita").whereEqualTo("locality",city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()){
-                                for (QueryDocumentSnapshot document : task.getResult()){
-                                    double lat = Double.parseDouble(document.getString("latitude"));
-                                    double longt = Double.parseDouble(document.getString("longitude"));
-                                    latLngs.add(new LatLng(lat, longt));
-                                }
-                            }
-                            mapFragment.getMapAsync(UserMapView.this);
-                        }
-                    });
-                    //Log.d("city",city);
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
-
-            @Override
-            public void onProviderEnabled(@NonNull String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(@NonNull String provider) {
-                new AlertDialog.Builder(UserMapView.this).setTitle("GPS dialog").setMessage("Do you want to turn on gps?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                startActivity(intent);
-                            }
-                        }).setNegativeButton("Go Back", null).show();
-            }
-        };
-
+        });
     }
-
 
     private void goUserStatistics() {
         final Intent intent = new Intent(this, UserStatistics.class);
         User user = new User();
         intent.putExtra("UID", UID);
+        intent.putExtra("city",city);
+        intent.putExtra("latitude",latitude);
+        intent.putExtra("longitude",longitude);
         startActivity(intent);
     }
 
@@ -217,7 +206,7 @@ public class UserMapView extends AppCompatActivity implements OnMapReadyCallback
         }
         LatLng myPlace = new LatLng(latitude, longitude);
         //mMap.addMarker(new MarkerOptions().position(italy).title("I'm here"));
-       // mMap.moveCamera(CameraUpdateFactory.newLatLng(italy));
+        // mMap.moveCamera(CameraUpdateFactory.newLatLng(italy));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace, 10));
         mMap.setOnMarkerClickListener(this);
 

@@ -27,7 +27,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,7 +47,6 @@ public class ManageDiscount extends AppCompatActivity {
     private String dateEditText;
     private String[] separetedDate;
     private boolean fromEditText;
-    private ImageView discountImage;
     int date;
     long expiringDateInMillis;
     String stringedDescription;
@@ -73,8 +71,6 @@ public class ManageDiscount extends AppCompatActivity {
         description=(EditText)findViewById(R.id.description);
         quantity=(EditText)findViewById(R.id.disocuntsQuantity);
         add=(Button)findViewById(R.id.add);
-        discountImage = (ImageView) findViewById(R.id.sellerImage);
-        Picasso.get().load(R.drawable._0943903).fit().centerInside().into(discountImage);
         //setting date picker
         cal=Calendar.getInstance();
         this.todayInMills=getTodayInMills();

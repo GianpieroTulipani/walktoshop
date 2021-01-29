@@ -31,7 +31,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -47,7 +46,6 @@ public class SellerView extends AppCompatActivity {
     private ArrayList<Discount> discountArray=new ArrayList<>();
     private ArrayList<String> businessUID =new ArrayList<>();
     private ArrayList<String> discountUID = new ArrayList<>();
-    private ImageView sellerImage;
     private FloatingActionButton mFab;
     private TextView scontiAttivita;
 
@@ -59,8 +57,6 @@ public class SellerView extends AppCompatActivity {
         //View coordinatorLayout = findViewById(android.R.id.content);
         addActivityButton=(FloatingActionButton)findViewById(R.id.addBusinessFab);
         scontiAttivita = (TextView) findViewById(R.id.scontiAttivita);
-        sellerImage = (ImageView) findViewById(R.id.sellerImage);
-        Picasso.get().load(R.drawable._0943903).fit().centerInside().into(sellerImage);
         addActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

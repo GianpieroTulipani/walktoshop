@@ -47,6 +47,9 @@ public class UserStatistics extends AppCompatActivity {
     FirebaseFirestore db =FirebaseFirestore.getInstance();
     String UID;
     BarChart barChart;
+    double latitude;
+    double longitude;
+    String city;
     BottomNavigationView bottomNavigationView;
     private ArrayList<BarEntry> dailySteps=new ArrayList<>();
     private ArrayList<BarEntry> dailyKm=new ArrayList<>();
@@ -63,8 +66,11 @@ public class UserStatistics extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_statistics);
         Intent intent = getIntent();
-        if(intent.hasExtra("UID")){
-            this.UID = intent.getStringExtra("UID");
+        if (intent.hasExtra("UID") && intent.hasExtra("city") && intent.hasExtra("latitude") && intent.hasExtra("longitude")) {
+            UID = intent.getStringExtra("UID");
+            city = intent.getStringExtra("city");
+            latitude = intent.getDoubleExtra("latitude", 0.0f);
+            longitude = intent.getDoubleExtra("longitude", 0.0f);
         }
         barChart = findViewById(R.id.barChart);
         stepsAverageText =findViewById(R.id.stepsAvg);
@@ -181,7 +187,10 @@ public class UserStatistics extends AppCompatActivity {
 
     private void goToUserViewMap() {
         final Intent intent = new Intent(UserStatistics.this, UserMapView.class);
-        intent.putExtra("UID", this.UID);
+        intent.putExtra("UID", UID);
+        intent.putExtra("city",city);
+        intent.putExtra("latitude",latitude);
+        intent.putExtra("longitude",longitude);
         startActivity(intent);
     }
     private void setBarChart(ArrayList<BarEntry> dailyKm,ArrayList<BarEntry> dailyKcal,ArrayList<BarEntry> dailySteps, String[] days){

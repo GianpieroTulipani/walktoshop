@@ -24,7 +24,8 @@
             <ImageView
                 android:id="@+id/sellerImage"
                 android:layout_width="match_parent"
-                android:layout_height="190dp" />
+                android:layout_height="190dp"
+                android:src="@drawable/_0943903"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

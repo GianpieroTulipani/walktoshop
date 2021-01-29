@@ -39,7 +39,6 @@ public class SignUp extends AppCompatActivity {
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth=FirebaseAuth.getInstance();
-    private EditText username;
     private EditText password;
     private EditText email;
     private Switch switchButton;
@@ -50,7 +49,6 @@ public class SignUp extends AppCompatActivity {
     private boolean isSeller;
     String stringEmail=null;
     String stringPassword=null;
-    String stringUsername=null;
     String stringHeight=null;
     String stringWeight=null;
     Seller seller=new Seller();
@@ -60,7 +58,6 @@ public class SignUp extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        username=(EditText)findViewById(R.id.username);
         password=(EditText) findViewById(R.id.password);
         email=(EditText) findViewById(R.id.email);
         switchButton=(Switch)findViewById(R.id.switch1);
@@ -153,7 +150,7 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void uploadUser() {
-        user.setUsername(stringUsername);
+
         user.setHeight(stringHeight);
         user.setWeight(stringWeight);
         user.setUID(mAuth.getUid());
@@ -204,7 +201,6 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void uploadSeller() {
-        seller.setUsername(stringUsername);
         String sellerUID=mAuth.getUid();
         seller.setUID(sellerUID);
         db.collection("venditore").document(sellerUID).set(seller).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -224,18 +220,13 @@ public class SignUp extends AppCompatActivity {
     private boolean checkUserInfo(){
         stringEmail=this.email.getText().toString().trim();
         stringPassword= this.password.getText().toString().trim();
-        stringUsername=this.username.getText().toString().trim();
         stringHeight = this.height.getText().toString().trim();
         stringWeight = this.weight.getText().toString().trim();
 
         Pattern PASSWORD_PATTERN
                 = Pattern.compile("^" + "(?=.*[0-9])" + "(?=.*[a-z])" + "(?=.*[A-Z])" + "(?=.*[@#$%&?!_])" + "(?=\\S+$)" + ".{8,}" + "$");
 
-        if(stringUsername.isEmpty()){
-            this.username.setError(getResources().getString(R.string.usernameEmpty));
-            this.username.requestFocus();
-            return false;
-        }else if(stringEmail.isEmpty()){
+        if(stringEmail.isEmpty()){
             this.email.setError(getResources().getString(R.string.emailEmpty));
             this.email.requestFocus();
             return false;

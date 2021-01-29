@@ -23,15 +23,16 @@
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp" />
 
+
     <EditText
         android:id="@+id/email"
         android:layout_width="317dp"
         android:layout_height="54dp"
         android:background="@drawable/ic_text_box"
         android:drawableStart="@drawable/ic_email"
-        android:ems="10"
         android:drawablePadding="4dp"
         android:elevation="6dp"
+        android:ems="10"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
         android:paddingStart="6dp"
@@ -39,9 +40,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username"
-        app:layout_constraintVertical_bias="0.058" />
-
+        app:layout_constraintTop_toBottomOf="@+id/switch1"
+        app:layout_constraintVertical_bias="0.228" />
 
     <Button
         android:id="@+id/nextButton"
@@ -73,6 +73,7 @@
         app:layout_constraintVertical_bias="0.958"
         tools:ignore="MissingConstraints" />
 
+
     <EditText
         android:id="@+id/password"
         android:layout_width="317dp"
@@ -81,16 +82,15 @@
         android:drawableStart="@drawable/ic_psw"
         android:drawablePadding="4dp"
         android:elevation="6dp"
-        android:paddingStart="6dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
+        android:paddingStart="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email"
-        app:layout_constraintVertical_bias="0.085" />
-
+        app:layout_constraintVertical_bias="0.238" />
 
     <Switch
         android:id="@+id/switch1"
@@ -103,23 +103,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.287" />
 
-    <EditText
-        android:id="@+id/username"
-        android:layout_width="317dp"
-        android:layout_height="54dp"
-        android:background="@drawable/ic_text_box"
-        android:drawableStart="@drawable/ic_user"
-        android:drawablePadding="4dp"
-        android:elevation="6dp"
-        android:ems="10"
-        android:hint="UserName"
-        android:inputType="textEmailAddress"
-        android:paddingStart="6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.478" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class Seller {
     private String UID;
-    private String username;
     private String email;
     private String password;
     private ArrayList<String> businessUID;
@@ -14,9 +13,6 @@ public class Seller {
         return UID;
     }
 
-    public String getUsername() {
-        return username;
-    }
 
     public String getPassword() {
         return password;
@@ -37,10 +33,6 @@ public class Seller {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public void setEmail(String email) {

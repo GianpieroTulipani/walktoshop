@@ -42,19 +42,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/username"
-                android:layout_width="317dp"
-                android:layout_height="54dp"
-                android:layout_gravity="center"
-                android:background="@drawable/ic_text_box"
-                android:drawableStart="@drawable/ic_user"
-                android:drawablePadding="4dp"
-                android:elevation="6dp"
-                android:hint="UserName"
-                android:inputType="textEmailAddress"
-                android:paddingStart="6dp" />
-
 
             <EditText
                 android:id="@+id/email"

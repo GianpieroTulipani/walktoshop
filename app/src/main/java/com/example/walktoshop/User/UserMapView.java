@@ -135,31 +135,6 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         }
     }
 
-    private void getBusinessLatLng(String city) {
-        Log.d("City1", city);
-        db.collection("attivita").whereEqualTo("locality", city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for (QueryDocumentSnapshot document : task.getResult()){
-                        double lat = Double.parseDouble(document.getString("latitude"));
-                        double longt = Double.parseDouble(document.getString("longitude"));
-
-                    }
-                    /*
-                    //latLngs.add(new LatLng(lat, longt));
-                    LatLng latLng = new LatLng(lat,longt);
-                    Log.d("Location",location.getLatitude()+"+"+location.getLongitude());
-                    MarkerOptions options = new MarkerOptions().position(latLng);
-                    googleMap.addMarker(options);
-                    LatLng myPlace = new LatLng(location.getLatitude(), location.getLongitude());
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace, 12));
-                    googleMap.setOnMarkerClickListener(UserMapView.this::onMarkerClick);*/
-
-                }
-            }
-        });
-    }
 
     private void goUserStatistics() {
         final Intent intent = new Intent(this, UserStatistics.class);

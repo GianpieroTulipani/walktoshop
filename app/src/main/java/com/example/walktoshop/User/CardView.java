@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +40,11 @@ public class CardView extends AppCompatActivity {
     private TextView code;
     private String userWeight=null;
     private String userHeight=null;
+    private ImageButton shareButton;
+    private String locality=null;
+    private String name=null;
     int percentage=0;
+    private TextView title;
     FirebaseFirestore db=FirebaseFirestore.getInstance();
 
 
@@ -51,9 +56,11 @@ public class CardView extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         progressBar = (ProgressBar) findViewById(R.id.progerssBar);
         goalStepRatio= findViewById(R.id.goalStepsRatio);
+        shareButton=findViewById(R.id.shareButton);
         kcal=findViewById(R.id.kcal);
         code=findViewById(R.id.code);
         kilometers = findViewById(R.id.kilometers);
+        title=findViewById(R.id.title);
 
         Intent intent=getIntent();
         if(intent.hasExtra("discount") && intent.hasExtra("UID")){
@@ -64,7 +71,13 @@ public class CardView extends AppCompatActivity {
 
             this.UID = intent.getStringExtra("UID");
         }
+        code.setText(d.getDescription());
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+            }
+        });
 
     }
 
@@ -78,8 +91,22 @@ public class CardView extends AppCompatActivity {
         long goal= Long.parseLong(d.getDiscountsQuantity());
         long beginDiscountDate= Long.parseLong(d.getStartDiscountDate());
         long expiringDiscountDate= Long.parseLong(d.getExpiringDate());
+        getBusinessInfo(d.getBusinessUID());
         getUserInfo();
         getUserWalkInATimeRange(beginDiscountDate,expiringDiscountDate,goal);
+    }
+    private void getBusinessInfo(String businessUID){
+        db.collection("attivita").document(businessUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document= task.getResult();
+                    CardView.this.locality=document.getString("locality");
+                    CardView.this.name=document.getString("name");
+                    title.setText(name+", "+locality);
+                }
+            }
+        });
     }
 
     @Override

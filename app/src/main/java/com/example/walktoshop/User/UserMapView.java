@@ -75,6 +75,7 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
     double longitude;
     String city;
     String UID;
+    ArrayList<String> name = new ArrayList<String>();
     private int cache;
     public static final String NOTIFICATION_CHANNEL_ID = "notification_channel";
     SupportMapFragment mapFragment;
@@ -107,6 +108,7 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
                             ArrayList<String> discounts= (ArrayList<String>) document.get("discountUID");
                             double lat = Double.parseDouble(document.getString("latitude"));
                             double longt = Double.parseDouble(document.getString("longitude"));
+                            name.add(document.getString("name"));
                             latLngs.add(new LatLng(lat, longt));
                             counter=counter+discounts.size();
                         }
@@ -191,9 +193,10 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
     public void onMapReady(GoogleMap googleMap) {
         progressBar.setVisibility(View.GONE);
         mMap = googleMap;
-        Iterator<LatLng> iterator = latLngs.listIterator();
-        while(iterator.hasNext()){
-            mMap.addMarker(new MarkerOptions().position(iterator.next()));
+        Iterator<LatLng> iteratorLatLng = latLngs.listIterator();
+        Iterator<String> iteratorName = name.listIterator();
+        while(iteratorLatLng.hasNext() && iteratorName.hasNext()){
+            mMap.addMarker(new MarkerOptions().position(iteratorLatLng.next()).title(iteratorName.next()));
         }
         LatLng myPlace = new LatLng(latitude, longitude);
         //mMap.addMarker(new MarkerOptions().position(italy).title("I'm here"));

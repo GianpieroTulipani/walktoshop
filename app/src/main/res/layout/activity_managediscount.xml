@@ -9,8 +9,9 @@
 
     <ImageView
         android:id="@+id/discountImage"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_width="300dp"
+        android:layout_height="190dp"
         android:src="@drawable/_0943903"/>
 
 
@@ -34,7 +35,7 @@
         app:layout_constraintVertical_bias="0.394" />
 
     <EditText
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="30dp"
         android:layout_gravity="center"
         android:layout_width="317dp"
         android:layout_height="54dp"
@@ -57,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="horizontal"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="7dp">
 
         <ImageButton
@@ -79,7 +80,7 @@
             />
     </LinearLayout>
     <Button
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="20dp"
         android:layout_gravity="bottom|end"
         android:id="@+id/add"

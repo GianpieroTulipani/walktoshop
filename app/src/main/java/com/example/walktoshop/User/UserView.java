@@ -103,8 +103,6 @@ public class UserView extends AppCompatActivity {
                     case R.id.action_statistics:
                         goUserStatistics();
                         break;
-                    case R.id.action_notification:
-                        break;
                 }
                 return true;
             }
@@ -252,8 +250,6 @@ public class UserView extends AppCompatActivity {
                 break;
             case R.id.action_exit:
                 logOut();
-                break;
-            case R.id.action_settings:
                 break;
         }
     }

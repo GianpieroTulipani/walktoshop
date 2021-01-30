@@ -47,6 +47,7 @@ public class SellerView extends AppCompatActivity {
     private ArrayList<String> businessUID =new ArrayList<>();
     private ArrayList<String> discountUID = new ArrayList<>();
     private FloatingActionButton mFab;
+    private  ImageView discountImage;
     private TextView scontiAttivita;
 
     @Override
@@ -57,6 +58,7 @@ public class SellerView extends AppCompatActivity {
         //View coordinatorLayout = findViewById(android.R.id.content);
         addActivityButton=(FloatingActionButton)findViewById(R.id.addBusinessFab);
         scontiAttivita = (TextView) findViewById(R.id.scontiAttivita);
+        discountImage = findViewById(R.id.discountImage);
         addActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,6 +100,7 @@ public class SellerView extends AppCompatActivity {
             if(businessUID.size()<= 0){
                 Log.d("Busi", String.valueOf(businessUID.size()));
                 addActivityButton.setVisibility(View.VISIBLE);
+                discountImage.setVisibility(View.GONE);
                 scontiAttivita.setVisibility(View.GONE);
                 alert.setText("Nessuna attività registrata");
                 mFab.setVisibility(View.GONE);
@@ -105,7 +108,6 @@ public class SellerView extends AppCompatActivity {
             }
         }
     }
-
 
     public boolean onCreateOptionsMenu(Menu menu){
         getMenuInflater().inflate(R.menu.menu_action_bar, menu);
@@ -116,14 +118,8 @@ public class SellerView extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
     public void OnItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_search:
-                break;
-            case R.id.action_exit:
-                logOut();
-                break;
-            case R.id.action_settings:
-                break;
+        if(item.getItemId() == R.id.action_exit){
+            logOut();
         }
     }
 
@@ -155,6 +151,7 @@ public class SellerView extends AppCompatActivity {
         if(businessUID!=null && !businessUID.isEmpty()){
             addActivityButton.setVisibility(View.INVISIBLE);
             scontiAttivita.setVisibility(View.VISIBLE);
+            discountImage.setVisibility(View.VISIBLE);
             mFab.setVisibility(View.VISIBLE);
             for(int i=0;i<businessUID.size();i++){
                 String b=businessUID.get(i);

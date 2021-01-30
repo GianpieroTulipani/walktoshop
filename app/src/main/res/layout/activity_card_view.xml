@@ -4,7 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:background="@color/white_ice"
     android:orientation="vertical">
 
     <LinearLayout
@@ -30,16 +31,16 @@
 
     </LinearLayout>
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:textColor="@color/black"
-            android:textSize="30dp"
-            >
-        </TextView>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:textAppearance="?attr/textAppearanceHeadline4" />
 
 
     <LinearLayout
@@ -52,7 +53,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:background="@color/white_ice"
+            android:background="@color/white"
             android:layout_height="wrap_content"
             android:layout_gravity="center">
 
@@ -70,7 +71,7 @@
             <ImageView
                 android:layout_width="121dp"
                 android:layout_height="113dp"
-                android:src="@drawable/icons8_esercizio_96"
+                android:src="@drawable/ic_directions_run_black_96dp"
                 app:layout_constraintBottom_toBottomOf="@+id/progerssBar"
                 app:layout_constraintEnd_toEndOf="@+id/progerssBar"
                 app:layout_constraintStart_toStartOf="@+id/progerssBar"
@@ -91,23 +92,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:src="@drawable/ic_scarpe"/>
+                    android:src="@drawable/ic_footsteps_silhouette_variant_svgrepo_com"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:src="@drawable/ic_kcal"/>
+                    android:src="@drawable/ic_calories_svgrepo_com"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/ic_lunghezza"/>
+                    android:src="@drawable/ic_ruler_svgrepo_com"/>
 
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
+                android:background="@color/white_ice"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
@@ -116,6 +118,7 @@
                     android:layout_marginLeft="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold|italic"
                     android:text="10000/10000"
                     android:textSize="30dp"
                     android:textColor="@color/black"/>
@@ -123,6 +126,7 @@
                     android:id="@+id/kcal"
                     android:layout_marginLeft="20dp"
                     android:layout_width="wrap_content"
+                    android:textStyle="bold|italic"
                     android:layout_height="wrap_content"
                     android:text="Kcal: 30"
                     android:textSize="30dp"
@@ -131,6 +135,7 @@
                     android:id="@+id/kilometers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold|italic"
                     android:layout_marginLeft="20dp"
                     android:text="Km: 50"
                     android:textSize="30dp"
@@ -140,37 +145,49 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/code"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:background="@color/white_ice"
-            android:padding="20dp"
-            android:text="Lo sconto è applicabile solo a determinate tipologie di sconti o applicazioni usarlo con prudenza."
-            android:textAppearance="?attr/textAppearanceBody2"
-            android:textColor="?android:attr/textColorSecondary" />
-        <ImageButton
-            android:id="@+id/shareButton"
-            style="?attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_condividi"
-            android:layout_gravity="bottom|right"
-            />
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_local_offer_24"
+                android:tintMode="src_in"
+                app:tint="@color/black" />
+            <TextView
+                android:id="@+id/sconto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
-
-        <LinearLayout
-            android:id="@+id/linearCard1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center">
-
+                android:textColor="@color/black"
+                android:text="Sconto:"
+                android:textSize="25dp"
+                android:textStyle="bold" />
         </LinearLayout>
 
+        <TextView
+        android:id="@+id/code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@color/white"
+        android:layout_marginTop="10dp"
+        android:text="Descrizione dello sconto definito all'interno dell'adapter"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="@color/black" />
 
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/shareButton"
+        style="?attr/borderlessButtonStyle"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/ic_share_black_24dp" />
 
 </LinearLayout>

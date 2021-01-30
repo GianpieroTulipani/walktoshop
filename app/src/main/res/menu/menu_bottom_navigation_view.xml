@@ -6,28 +6,17 @@
         android:id="@+id/action_home"
         android:enabled="true"
         android:title="@string/action_home"
-        android:icon="@drawable/ic_home"/>
+        android:icon="@drawable/ic_home_black_24dp"/>
     <item
         android:id="@+id/action_map"
         android:enabled="true"
         android:title="@string/action_map"
-        android:icon="@android:drawable/ic_menu_mapmode"/>
+        android:icon="@drawable/ic_map_black_24dp"/>
 
     <item
         android:id="@+id/action_statistics"
         android:enabled="true"
         android:title="@string/action_statistics"
-        android:icon="@drawable/ic_grafico"/>
-    <item
-        android:id="@+id/action_my_disocunt"
-        android:enabled="true"
-        android:title="@string/action_discount"
-        android:visible="false"
-        android:icon="@drawable/ic_sconti"/>
-    <item
-        android:title="@string/action_notification"
-        android:id="@+id/action_notification"
-        android:icon="@drawable/ic_notifiche"
-        android:enabled="true" />
+        android:icon="@drawable/ic_leaderboard_black_24dp"/>
 
 </menu>

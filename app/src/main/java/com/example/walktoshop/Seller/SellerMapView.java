@@ -130,7 +130,7 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                             public void onClick(DialogInterface dialog, int id) {
 
                             }
-                        }).setMessage("Attività già eistente inseriscine un altra");
+                        }).setMessage("Attività già esistente, inseriscine un'altra.");
                         // Set other d
                         builder.show();
                         isExisting = false;

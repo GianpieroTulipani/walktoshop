@@ -31,16 +31,18 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-condensed"
+                android:textStyle="bold"
+                android:textColor="@color/black"
                 android:text="Lista Sconti Attività"
                 android:textAlignment="center"
-                android:textSize="24sp" />
+                android:textAppearance="?attr/textAppearanceHeadline5" />
 
             <ImageView
                 android:id="@+id/filterIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_x"
-                android:layout_gravity="end"/>
+                android:src="@drawable/ic_x_symbol_svgrepo_com"
+                android:layout_gravity="center"/>
         </LinearLayout>
 
         <!--Qui dentro va il contenuto del backdrop. puoi aggiungere una qulasiasi ViewGroup (LinearLayout, RelativeLayout, SwipeRefreshLayout, ConstraintLayout, etc.)-->

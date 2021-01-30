@@ -23,21 +23,32 @@
 
             <ImageView
                 android:id="@+id/sellerImage"
-                android:layout_width="match_parent"
+                android:layout_width="300dp"
+                android:layout_gravity="center"
                 android:layout_height="190dp"
                 android:src="@drawable/_0943903"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/discountImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_local_offer_24"
+                    app:tint="@color/black"/>
 
                 <TextView
                     android:id="@+id/scontiAttivita"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sconti Attività"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
                     android:textAppearance="?attr/textAppearanceHeadline4"/>
 
             </LinearLayout>
@@ -72,7 +83,8 @@
         android:layout_gravity="bottom|right"
         android:layout_marginRight="@dimen/material_bottom_margin"
         android:layout_marginBottom="@dimen/material_botton_margin"
-        android:src="@android:drawable/ic_menu_mapmode"
+        android:src="@drawable/ic_add_location"
+        app:tint="@color/white"
         app:backgroundTint="@color/verde_maggio"
         app:backgroundTintMode="src_over"
         app:fabSize="normal"
@@ -85,6 +97,7 @@
         android:layout_height="81dp"
         android:layout_marginLeft="160dp"
         android:layout_marginTop="350dp" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -92,10 +105,13 @@
         android:layout_gravity="bottom|right"
         android:layout_marginRight="@dimen/material_bottom_margin"
         android:layout_marginBottom="@dimen/material_botton_margin"
-        android:src="@drawable/ic_add"
+        android:longClickable="true"
+        android:src="@drawable/ic_add_white"
+        app:tint="@color/white"
         app:backgroundTint="@color/verde_maggio"
-        app:backgroundTintMode="src_over"
+        app:backgroundTintMode="src_in"
         app:fabSize="normal"
+        app:navigationIcon="@drawable/ic_add_white"
         app:rippleColor="#00FF00" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

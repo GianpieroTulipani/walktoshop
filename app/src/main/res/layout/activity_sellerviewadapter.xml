@@ -25,7 +25,7 @@
                 </ImageView>
 
                 <LinearLayout
-                    android:layout_width="230dp"
+                    android:layout_width="210dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:layout_gravity="center">
@@ -37,7 +37,8 @@
                             android:id="@+id/difficulty"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="20dp"
+                            android:textStyle="bold"
+                           android:textSize="20dp"
                             android:layout_marginVertical="8dp"
                             android:textColor="@color/black"
                             android:text="Easy Difficult" />
@@ -45,7 +46,7 @@
                         <ImageView
                             android:id="@+id/difficultyColor"
                             android:layout_width="24dp"
-                            android:layout_height="26dp"
+                            android:layout_height="24dp"
                             android:layout_marginTop="1dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_green" />
@@ -70,7 +71,7 @@
                         android:background="@color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_freccia1">
+                        android:src="@drawable/ic_navigate_next_black_48dp">
 
                     </ImageButton>
                 </LinearLayout>
@@ -86,7 +87,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginLeft="20dp"
-                    android:layout_marginRight="130dp"
+                    android:layout_marginRight="100dp"
+                    android:textStyle="bold"
+                    android:textSize="15dp"
                     android:text="scadenza: 27/01/2021"
                     android:textColor="@color/black">
 

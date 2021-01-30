@@ -36,6 +36,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.walktoshop.Login_SignUp.LogIn;
 import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -53,6 +54,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -131,8 +133,6 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
                     case R.id.action_statistics:
                         goUserStatistics();
                         break;
-                    case R.id.action_notification:
-                        break;
                 }
                 return true;
             }
@@ -175,12 +175,16 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
     }
 
     public void OnItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_exit:
-                break;
-            case R.id.action_settings:
-                break;
+        if(item.getItemId() == R.id.action_exit){
+            logOut();
         }
+    }
+
+    private void logOut(){
+        FirebaseAuth.getInstance().signOut();
+        final Intent intent = new Intent(this, LogIn.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -194,7 +198,7 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         LatLng myPlace = new LatLng(latitude, longitude);
         //mMap.addMarker(new MarkerOptions().position(italy).title("I'm here"));
         // mMap.moveCamera(CameraUpdateFactory.newLatLng(italy));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace, 10));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace, 15));
         mMap.setOnMarkerClickListener(this);
 
     }

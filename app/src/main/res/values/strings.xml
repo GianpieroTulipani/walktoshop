@@ -48,7 +48,7 @@
     <string name="yes">Si</string>
     <string name="no">No</string>
     <string name="ok">Ok</string>
-    <string name="businessNotFound">Ci spiace!Località non trovata.Riprovare</string>
+    <string name="businessNotFound">Ci dispiace!Località non trovata.Riprovare</string>
     <string name="emptyBusiness">Non possiedi attività.Vuoi registrarne una?</string>
     <string name="action_stepcounter">Pedometro</string>
     <string name="addBusinessDialog">Cliccare sul marker in rosso, per confermare l\'inserimento dell\'attività</string>

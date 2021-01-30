@@ -1,59 +1,59 @@
 package com.example.walktoshop.User;
 
-import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.DragEvent;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.walktoshop.Login_SignUp.LogIn;
 import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import static com.github.mikephil.charting.utils.ColorTemplate.MATERIAL_COLORS;
+
 public class UserStatistics extends AppCompatActivity {
     FirebaseFirestore db =FirebaseFirestore.getInstance();
     String UID;
     BarChart barChart;
+    BarChart kcalBarChart;
+    BarChart kmBarChart;
     double latitude;
     double longitude;
     String city;
     BottomNavigationView bottomNavigationView;
     private ArrayList<BarEntry> dailySteps=new ArrayList<>();
     private ArrayList<BarEntry> dailyKm=new ArrayList<>();
-    private ArrayList<BarEntry> dailyKcal= new ArrayList<>();
+    private ArrayList<BarEntry> dailyKcal= new ArrayList<BarEntry>();
     private ArrayList<String> days = new ArrayList<>();
     private float stepsAverage = 0;
     private float kcalAverage = 0;
@@ -73,9 +73,11 @@ public class UserStatistics extends AppCompatActivity {
             longitude = intent.getDoubleExtra("longitude", 0.0f);
         }
         barChart = findViewById(R.id.barChart);
-        stepsAverageText =findViewById(R.id.stepsAvg);
-        kcalAverageText= findViewById(R.id.kcalAvg);
-        kilometersAverageText=findViewById(R.id.kilometersAvg);
+        kcalBarChart = findViewById(R.id.barChartKcal);
+        kmBarChart = findViewById(R.id.barChartKm);
+        //stepsAverageText =findViewById(R.id.stepsAvg);
+       // kcalAverageText= findViewById(R.id.kcalAvg);
+        //kilometersAverageText=findViewById(R.id.kilometersAvg);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -87,12 +89,31 @@ public class UserStatistics extends AppCompatActivity {
                     case R.id.action_map:
                         goToUserViewMap();
                         break;
-                    case R.id.action_notification:
-                        break;
                 }
                 return true;
             }
         });
+    }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_action_bar, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void OnItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_exit){
+            logOut();
+        }
+    }
+
+    private void logOut(){
+        FirebaseAuth.getInstance().signOut();
+        final Intent intent = new Intent(this, LogIn.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -150,27 +171,27 @@ public class UserStatistics extends AppCompatActivity {
                                 float meters= calculateKilometers(userHeight,steps)*1000;//trasformare in metri per il grafico
                                 int kcal= calculateKcal(userWeight,steps);
                                 Log.d("index",days.get(i)+" "+steps);
-                                stepsAverage= stepsAverage + steps;
-                                kcalAverage= kcalAverage + kcal;
-                                kmAverage =kmAverage + meters;
+                                //stepsAverage= stepsAverage + steps;
+                                //kcalAverage= kcalAverage + kcal;
+                                //kmAverage =kmAverage + meters;
                                 UserStatistics.this.dailySteps.add(new BarEntry(i,steps));
                                 UserStatistics.this.dailyKm.add(new BarEntry(i,meters));
                                 UserStatistics.this.dailyKcal.add(new BarEntry(i,kcal));
                                 numberOfUserWalks++;
                             }
                         }
-                        stepsAverage=Math.round((float) stepsAverage/numberOfUserWalks);
-                        kcalAverage=Math.round((float) kcalAverage/numberOfUserWalks);
-                        kmAverage=(float) (kmAverage/numberOfUserWalks)/1000;//riporto in km
+                        //stepsAverage=Math.round((float) stepsAverage/numberOfUserWalks);
+                        //kcalAverage=Math.round((float) kcalAverage/numberOfUserWalks);
+                        //kmAverage=(float) (kmAverage/numberOfUserWalks)/1000;//riporto in km
                         String[] daysArray = new String[UserStatistics.this.days.size()];
                         daysArray = UserStatistics.this.days.toArray(daysArray);
                         setBarChart(dailyKm,dailyKcal,dailySteps,daysArray);
                         //set medie
-                        stepsAverageText.setText("Media Passi:"+(int) stepsAverage);
-                        kcalAverageText.setText("Media calorie:"+(int) kcalAverage);
-                        kilometersAverageText.setText("Media kilometri:"+(int) kmAverage);
+                        //stepsAverageText.setText("Media Passi:"+(int) stepsAverage);
+                        //kcalAverageText.setText("Media calorie:"+(int) kcalAverage);
+                        //kilometersAverageText.setText("Media kilometri:"+(int) kmAverage);
 
-                        Log.d("average","walks"+numberOfUserWalks+"steps"+ stepsAverage +"kcal"+kcalAverage+"km"+kmAverage);
+                        //Log.d("average","walks"+numberOfUserWalks+"steps"+ stepsAverage +"kcal"+kcalAverage+"km"+kmAverage);
 
                     }
                 }
@@ -193,37 +214,55 @@ public class UserStatistics extends AppCompatActivity {
         intent.putExtra("longitude",longitude);
         startActivity(intent);
     }
-    private void setBarChart(ArrayList<BarEntry> dailyKm,ArrayList<BarEntry> dailyKcal,ArrayList<BarEntry> dailySteps, String[] days){
+    private void setBarChart(ArrayList<BarEntry> dailyKm, ArrayList<BarEntry> dailyKcal, ArrayList<BarEntry> dailySteps, String[] days){
+
         BarDataSet steps = new BarDataSet(dailySteps,"Passi giornalieri");
-        steps.setColor(Color.RED);
+        steps.setColors(MATERIAL_COLORS);
+        steps.setValueTextColor(Color.BLACK);
+        steps.setValueTextSize(12f);
+
         BarDataSet kcal = new BarDataSet(dailyKcal,"Kcal giornaliere");
-        kcal.setColor(Color.GREEN);
+        kcal.setColors(ColorTemplate.MATERIAL_COLORS);
+        kcal.setValueTextColor(Color.BLACK);
+        kcal.setValueTextSize(12f);
+
         BarDataSet km = new BarDataSet(dailyKm,"Metri giornalieri");
-        km.setColor(Color.MAGENTA);
+        km.setColors(ColorTemplate.MATERIAL_COLORS);
+        km.setValueTextColor(Color.BLACK);
+        km.setValueTextSize(12f);
 
-        BarData data = new BarData(steps,kcal,km);
+        BarData barDataKcal = new BarData(kcal);
+        kcalBarChart.setData(barDataKcal);
+        kcalBarChart.animate();
+        XAxis xAxisKcal = kcalBarChart.getXAxis();
+        xAxisKcal.setValueFormatter(new IndexAxisValueFormatter(days));
+        xAxisKcal.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxisKcal.setGranularity(1);
+        xAxisKcal.setGranularityEnabled(true);
+        kcalBarChart.setDragEnabled(true);
+        kcalBarChart.invalidate();
+
+        BarData data = new BarData(steps);
         barChart.setData(data);
-
+        kcalBarChart.animate();
         XAxis xAxis = barChart.getXAxis();
         xAxis.setValueFormatter(new IndexAxisValueFormatter(days));
-        xAxis.setCenterAxisLabels(true);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1);
         xAxis.setGranularityEnabled(true);
-
         barChart.setDragEnabled(true);
-        barChart.setVisibleXRangeMaximum(1);
-
-        float barSpace = 0.12f;
-        float groupSpace = 0.16f;
-        data.setBarWidth(0.16f);
-
-        barChart.getXAxis().setAxisMinimum(0);
-        barChart.getXAxis().setAxisMaximum(0+barChart.getBarData().getGroupWidth(groupSpace, barSpace)*7);
-        barChart.getAxisLeft().setAxisMinimum(0);
-
-        barChart.groupBars(0, groupSpace, barSpace);
         barChart.invalidate();
+
+        BarData barDataKm = new BarData(km);
+        kmBarChart.setData(barDataKm);
+        kmBarChart.animate();
+        XAxis xAxisKm = kmBarChart.getXAxis();
+        xAxisKm.setValueFormatter(new IndexAxisValueFormatter(days));
+        xAxisKm.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxisKm.setGranularity(1);
+        xAxisKm.setGranularityEnabled(true);
+        kmBarChart.setDragEnabled(true);
+        kmBarChart.invalidate();
     }
     private Walk getWalkInfoFromString(String info){
         String[] todayAndSteps =info.split(",");

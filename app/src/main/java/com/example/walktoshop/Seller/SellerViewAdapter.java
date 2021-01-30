@@ -137,7 +137,7 @@ public class SellerViewAdapter extends ArrayAdapter {
                 deleteDiscount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d("p",discounts.get(position).getUID()+" ");
+                        //Log.d("p",discounts.get(position).getUID()+" ");
                         getBusiness(position);
                     }
                 });

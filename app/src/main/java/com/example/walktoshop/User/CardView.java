@@ -1,9 +1,15 @@
 package com.example.walktoshop.User;
 
 import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.LabeledIntent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +34,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class CardView extends AppCompatActivity {
     private ProgressBar progressBar;
@@ -45,6 +52,7 @@ public class CardView extends AppCompatActivity {
     private String name=null;
     int percentage=0;
     private TextView title;
+    String discountCode=null;
     FirebaseFirestore db=FirebaseFirestore.getInstance();
 
 
@@ -71,11 +79,12 @@ public class CardView extends AppCompatActivity {
 
             this.UID = intent.getStringExtra("UID");
         }
+        discountCode=UID+d.getUID();
         code.setText(d.getDescription());
         shareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                shareDiscount();
             }
         });
 
@@ -156,7 +165,7 @@ public class CardView extends AppCompatActivity {
                     if(totalSteps!=0 && goal!=0){
                         percentage=Math.round((float)(totalSteps*100)/goal);
                         if(percentage>=100){
-                            code.setText("Ecco il tuo codice sconto: "+UID+d.getUID());
+                            code.setText("Ecco il tuo codice sconto: "+discountCode);
                         }
                         progressBar.setProgress((int)percentage);
                         goalStepRatio.setText(totalSteps+"/"+goal);
@@ -216,5 +225,17 @@ public class CardView extends AppCompatActivity {
         Log.d("kcal",kcal+"");
         return kcal;
     }
+    private void shareDiscount(){
+        String message=name+", "+locality+"\n"+d.getDescription()+"\n"+"Ecco il codice sconto che ti è stato regalato:\n"+discountCode+"\n";
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, message);
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
+    }
+
+
 
 }

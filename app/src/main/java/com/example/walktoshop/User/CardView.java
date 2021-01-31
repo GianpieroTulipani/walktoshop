@@ -102,7 +102,7 @@ public class CardView extends AppCompatActivity {
         long expiringDiscountDate= Long.parseLong(d.getExpiringDate());
         getBusinessInfo(d.getBusinessUID());
         getUserInfo();
-        getUserWalkInATimeRange(beginDiscountDate,expiringDiscountDate,goal);
+        getUserWalkInATimeRange(beginDiscountDate,expiringDiscountDate,goal,d);
     }
     private void getBusinessInfo(String businessUID){
         db.collection("attivita").document(businessUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -137,7 +137,7 @@ public class CardView extends AppCompatActivity {
             }
         });
     }
-    private void getUserWalkInATimeRange(long beginDiscountDate,long expiringDiscountDate,long goal){
+    private void getUserWalkInATimeRange(long beginDiscountDate,long expiringDiscountDate,long goal,Discount d){
         db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -166,6 +166,10 @@ public class CardView extends AppCompatActivity {
                         percentage=Math.round((float)(totalSteps*100)/goal);
                         if(percentage>=100){
                             code.setText("Ecco il tuo codice sconto: "+discountCode);
+                            if(d.getState()!="completed"){
+                                changeDiscountState(d);
+                            }
+
                         }
                         progressBar.setProgress((int)percentage);
                         goalStepRatio.setText(totalSteps+"/"+goal);
@@ -177,6 +181,9 @@ public class CardView extends AppCompatActivity {
                 }
             }
         });
+    }
+    private void changeDiscountState(Discount d){
+        db.collection("sconti").document(d.getUID()).update("state","completed");
     }
 
     private Walk getWalkInfoFromString(String info){

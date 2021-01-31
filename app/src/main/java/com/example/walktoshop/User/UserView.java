@@ -46,6 +46,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;;
@@ -64,6 +65,7 @@ public class UserView extends AppCompatActivity {
     private String userUID=null;
     double latitude=0;
     double longitude=0;
+    FloatingActionButton stepcounterFab;
     ImageView userImage;
     String city=null;
     LocationManager service;
@@ -78,6 +80,13 @@ public class UserView extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         alert=findViewById(R.id.alert);
         alert.setVisibility(View.GONE);
+        stepcounterFab = (FloatingActionButton) findViewById(R.id.stepcounterFab);
+        stepcounterFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startStepCounter();
+            }
+        });
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         homeListview= findViewById(R.id.homeListView);
         //setting del channel per quando partirà il service
@@ -243,14 +252,9 @@ public class UserView extends AppCompatActivity {
         }
     }
     public void OnItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.stepcounter:
-                startStepCounter();
-                break;
-            case R.id.action_exit:
-                logOut();
-                break;
-        }
+       if(item.getItemId() == R.id.action_exit){
+           logOut();
+       }
     }
 
     private void logOut(){

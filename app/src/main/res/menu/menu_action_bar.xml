@@ -3,15 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/menuActionBar">
 
-
-    <item
-        android:id="@+id/stepcounter"
-        android:onClick="OnItemSelected"
-        android:orderInCategory="100"
-        android:textColor="@color/white"
-        android:title="@string/action_stepcounter"
-        app:showAsAction="always" />
-
     <item
         android:id="@+id/action_exit"
         android:icon="@drawable/ic_exit_to_app_white_24dp"

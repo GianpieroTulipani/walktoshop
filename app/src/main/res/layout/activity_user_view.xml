@@ -25,22 +25,26 @@
         android:textSize="25dp"
         android:visibility="gone"/>
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+
         <ImageView
             android:id="@+id/userImage"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_gravity="center"
             android:layout_height="190dp"
             android:src="@drawable/_707919"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <LinearLayout
+                android:id="@+id/linearTitleLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -62,13 +66,12 @@
                     android:textAppearance="?attr/textAppearanceHeadline4"/>
             </LinearLayout>
 
+
             <ListView
                 android:id="@+id/homeListView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
+                android:layout_height="wrap_content" />
         </LinearLayout>
-
     </LinearLayout>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -78,4 +81,18 @@
         style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
         app:menu="@menu/menu_bottom_navigation_view"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/stepcounterFab"
+        android:src="@drawable/ic_footsteps_silhouette_variant_svgrepo_com"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/verde_maggio"
+        app:backgroundTintMode="src_over"
+        app:fabSize="normal"
+        app:rippleColor="#00FF00"
+        app:tint="@color/white"
+        android:layout_marginRight="@dimen/material_bottom_margin"
+        android:layout_marginBottom="@dimen/material_botton_margin"
+        app:layout_anchor="@+id/linearTitleLayout"
+        app:layout_anchorGravity="bottom|right"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

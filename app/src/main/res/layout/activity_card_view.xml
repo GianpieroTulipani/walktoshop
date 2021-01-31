@@ -72,6 +72,7 @@
                 android:layout_width="121dp"
                 android:layout_height="113dp"
                 android:src="@drawable/ic_directions_run_black_96dp"
+                app:tint="@color/black"
                 app:layout_constraintBottom_toBottomOf="@+id/progerssBar"
                 app:layout_constraintEnd_toEndOf="@+id/progerssBar"
                 app:layout_constraintStart_toStartOf="@+id/progerssBar"
@@ -92,17 +93,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:src="@drawable/ic_footsteps_silhouette_variant_svgrepo_com"/>
+                    android:src="@drawable/ic_footsteps_silhouette_variant_svgrepo_com"
+                    app:tint="@color/verde_maggio" />
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
-                    android:src="@drawable/ic_calories_svgrepo_com"/>
+                    android:src="@drawable/ic_calories_svgrepo_com"
+                    app:tint="@color/verde_maggio"/>
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:src="@drawable/ic_ruler_svgrepo_com"/>
+                    android:src="@drawable/ic_ruler_svgrepo_com"
+                    app:tint="@color/verde_maggio"/>
 
 
             </LinearLayout>
@@ -156,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_baseline_local_offer_24"
                 android:tintMode="src_in"
-                app:tint="@color/black" />
+                app:tint="@color/verde_maggio" />
             <TextView
                 android:id="@+id/sconto"
                 android:layout_width="wrap_content"

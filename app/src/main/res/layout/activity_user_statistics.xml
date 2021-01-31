@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nestedScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:background="@color/white_ice"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,6 +19,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/card_shape">
             <TextView
+                android:id="@+id/report"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -29,7 +30,7 @@
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/barChart"
                 android:layout_width="match_parent"
-                android:layout_height="150dp" />
+                android:layout_height="300dp" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,6 +39,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/card_shape">
             <TextView
+                android:id="@+id/report1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -49,7 +51,7 @@
                 android:id="@+id/barChartKcal"
                 android:layout_width="match_parent"
                 android:layout_marginTop="10dp"
-                android:layout_height="150dp" />
+                android:layout_height="300dp" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -58,6 +60,7 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/card_shape">
             <TextView
+                android:id="@+id/report2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -69,30 +72,17 @@
                 android:id="@+id/barChartKm"
                 android:layout_width="match_parent"
                 android:layout_marginTop="10dp"
-                android:layout_height="150dp" />
+                android:layout_height="300dp" />
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottom_navigation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+                app:menu="@menu/menu_bottom_navigation_view" />
         </LinearLayout>
 
-
     </LinearLayout>
 
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
-        app:menu="@menu/menu_bottom_navigation_view"
-        android:visibility="gone"/>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical">
-
-
-
-    </LinearLayout>
-
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.core.widget.NestedScrollView>

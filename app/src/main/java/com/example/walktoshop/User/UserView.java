@@ -3,6 +3,7 @@ package com.example.walktoshop.User;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.ActivityManager;
@@ -14,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -31,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.walktoshop.Login_SignUp.LogIn;
 import com.example.walktoshop.NetworkController.NetworkController;
 import com.example.walktoshop.R;
@@ -38,22 +41,14 @@ import com.example.walktoshop.Seller.Discount;
 import com.example.walktoshop.Seller.SellerViewAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,6 +64,7 @@ public class UserView extends AppCompatActivity {
     private String userUID=null;
     double latitude=0;
     double longitude=0;
+    ImageView userImage;
     String city=null;
     LocationManager service;
     LocationListener locationListener;
@@ -82,16 +78,19 @@ public class UserView extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         alert=findViewById(R.id.alert);
         alert.setVisibility(View.GONE);
+        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         homeListview= findViewById(R.id.homeListView);
         //setting del channel per quando partirà il service
         localizeUser();
         createNotificationChannel();
 
-        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
+                    case R.id.action_home:
+                        break;
                     case R.id.action_map:
                         if(city==null || latitude==0 || longitude==0){
                             Toast.makeText(UserView.this,"Rilevamento della posizione in corso",Toast.LENGTH_SHORT).show();
@@ -271,11 +270,6 @@ public class UserView extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        killServiceIfRunning();
-    }
     private void killServiceIfRunning(){
         if(isMyServiceRunning(StepCounter.class) == true){
             Intent intent =new Intent(this,StepCounter.class);

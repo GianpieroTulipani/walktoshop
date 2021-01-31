@@ -8,11 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.widget.NestedScrollView;
 
 import com.example.walktoshop.Login_SignUp.LogIn;
 import com.example.walktoshop.NetworkController.NetworkController;
@@ -60,6 +63,9 @@ public class UserStatistics extends AppCompatActivity {
     private float kmAverage = 0;
     private TextView stepsAverageText;
     private TextView kcalAverageText;
+    private TextView report;
+    private TextView report1;
+    private TextView report2;
     private TextView kilometersAverageText;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -72,12 +78,14 @@ public class UserStatistics extends AppCompatActivity {
             latitude = intent.getDoubleExtra("latitude", 0.0f);
             longitude = intent.getDoubleExtra("longitude", 0.0f);
         }
+
         barChart = findViewById(R.id.barChart);
         kcalBarChart = findViewById(R.id.barChartKcal);
         kmBarChart = findViewById(R.id.barChartKm);
-        //stepsAverageText =findViewById(R.id.stepsAvg);
-       // kcalAverageText= findViewById(R.id.kcalAvg);
-        //kilometersAverageText=findViewById(R.id.kilometersAvg);
+        report = findViewById(R.id.report);
+        report1 = findViewById(R.id.report1);
+        report2 = findViewById(R.id.report2);
+
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -128,28 +136,6 @@ public class UserStatistics extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        killServiceIfRunning();
-    }
-    private void killServiceIfRunning(){
-        if(isMyServiceRunning(StepCounter.class) == true){
-            Intent intent =new Intent(this,StepCounter.class);
-            Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();
-            stopService(intent);
-        }
-    }
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void getDailyWalk(){
         db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -162,7 +148,8 @@ public class UserStatistics extends AppCompatActivity {
                     if(stringedWalks!=null){
                         int numberOfUserWalks=0;
                         int totalNumberOfUserWalks= stringedWalks.size()-1;
-                        for (int i=0;i<6;i++){
+                        int i = 0;
+                        for (i=0;i<7;i++){
                             if(totalNumberOfUserWalks-i>=0){
                                 String walkInfo=stringedWalks.get(totalNumberOfUserWalks-i);
                                 Walk walk= getWalkInfoFromString(walkInfo);
@@ -171,28 +158,20 @@ public class UserStatistics extends AppCompatActivity {
                                 float meters= calculateKilometers(userHeight,steps)*1000;//trasformare in metri per il grafico
                                 int kcal= calculateKcal(userWeight,steps);
                                 Log.d("index",days.get(i)+" "+steps);
-                                //stepsAverage= stepsAverage + steps;
-                                //kcalAverage= kcalAverage + kcal;
-                                //kmAverage =kmAverage + meters;
+
                                 UserStatistics.this.dailySteps.add(new BarEntry(i,steps));
                                 UserStatistics.this.dailyKm.add(new BarEntry(i,meters));
                                 UserStatistics.this.dailyKcal.add(new BarEntry(i,kcal));
                                 numberOfUserWalks++;
                             }
+
                         }
-                        //stepsAverage=Math.round((float) stepsAverage/numberOfUserWalks);
-                        //kcalAverage=Math.round((float) kcalAverage/numberOfUserWalks);
-                        //kmAverage=(float) (kmAverage/numberOfUserWalks)/1000;//riporto in km
+                        report.setText("ultime "+i+" rilevazioni relative ai passi giornalieri");
+                        report1.setText("ultime "+i+" rilevazioni relative alle Kcal giornaliere");
+                        report2.setText("ultime "+i+" rilevazioni relative ai Km giornalieri");
                         String[] daysArray = new String[UserStatistics.this.days.size()];
                         daysArray = UserStatistics.this.days.toArray(daysArray);
                         setBarChart(dailyKm,dailyKcal,dailySteps,daysArray);
-                        //set medie
-                        //stepsAverageText.setText("Media Passi:"+(int) stepsAverage);
-                        //kcalAverageText.setText("Media calorie:"+(int) kcalAverage);
-                        //kilometersAverageText.setText("Media kilometri:"+(int) kmAverage);
-
-                        //Log.d("average","walks"+numberOfUserWalks+"steps"+ stepsAverage +"kcal"+kcalAverage+"km"+kmAverage);
-
                     }
                 }
             }

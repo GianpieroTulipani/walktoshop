@@ -179,27 +179,6 @@ public class CardView extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        killServiceIfRunning();
-    }
-    private void killServiceIfRunning(){
-        if(isMyServiceRunning(StepCounter.class) == true){
-            Intent intent =new Intent(this,StepCounter.class);
-            Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();
-            stopService(intent);
-        }
-    }
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
     private Walk getWalkInfoFromString(String info){
         String[] todayAndSteps =info.split(",");
         Walk walk =new Walk();

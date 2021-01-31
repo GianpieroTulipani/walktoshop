@@ -106,6 +106,9 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
                     if(task.isSuccessful()){
                         for (QueryDocumentSnapshot document : task.getResult()){
                             ArrayList<String> discounts= (ArrayList<String>) document.get("discountUID");
+                            if(discounts == null ){
+                                discounts = new ArrayList<String>();
+                            }
                             double lat = Double.parseDouble(document.getString("latitude"));
                             double longt = Double.parseDouble(document.getString("longitude"));
                             name.add(document.getString("name"));
@@ -193,14 +196,13 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
     public void onMapReady(GoogleMap googleMap) {
         progressBar.setVisibility(View.GONE);
         mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         Iterator<LatLng> iteratorLatLng = latLngs.listIterator();
         Iterator<String> iteratorName = name.listIterator();
         while(iteratorLatLng.hasNext() && iteratorName.hasNext()){
             mMap.addMarker(new MarkerOptions().position(iteratorLatLng.next()).title(iteratorName.next()));
         }
         LatLng myPlace = new LatLng(latitude, longitude);
-        //mMap.addMarker(new MarkerOptions().position(italy).title("I'm here"));
-        // mMap.moveCamera(CameraUpdateFactory.newLatLng(italy));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace, 15));
         mMap.setOnMarkerClickListener(this);
 
@@ -231,28 +233,7 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
             return null;
         }
     }
-    //killa il service se attivo
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        killServiceIfRunning();
-    }
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private void killServiceIfRunning(){
-        if(isMyServiceRunning(StepCounter.class) == true){
-            Intent intent =new Intent(this,StepCounter.class);
-            Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();
-            stopService(intent);
-        }
-    }
+
     private int getSharedPref(){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("details", MODE_PRIVATE);
         if(prefs.contains("discountNumber")){

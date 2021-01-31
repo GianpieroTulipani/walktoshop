@@ -89,7 +89,6 @@
         app:backgroundTintMode="src_over"
         app:fabSize="normal"
         app:rippleColor="#00FF00" />
-        />
     <ProgressBar
         android:id="@+id/sellerViewProgressBar"
         style="?android:attr/progressBarStyle"

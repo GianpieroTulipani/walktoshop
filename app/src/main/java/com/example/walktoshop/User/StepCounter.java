@@ -38,8 +38,7 @@ public class StepCounter extends Service implements Runnable{
     FirebaseFirestore db=FirebaseFirestore.getInstance();
     private String today=null;
     private SensorManager mSensorManager;
-    private Sensor mStepCounterSensor;
-    private Sensor mStepDetectorSensor;
+    //private Sensor mStepDetectorSensor;
     private int mySteps=0;
 
     private SensorEventListener eventListener;
@@ -54,13 +53,14 @@ public class StepCounter extends Service implements Runnable{
     public void onCreate() {
         super.onCreate();
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mStepDetectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-        Log.d("sensor","detector"+mStepDetectorSensor);
-        if(mStepDetectorSensor==null){
+        //Log.d("sensor","detector"+mStepDetectorSensor);
 
-            accel=mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            Log.d("sensor","accel"+accel);
-        }
+
+        accel=mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        /*if(accel==null){
+            mStepDetectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+        }*/
+        Log.d("sensor","accel"+accel);
         this.today=getTodayInMills();
         Log.d("thread", String.valueOf(Looper.myLooper() == Looper.getMainLooper()));
         //ottengo riferimento al servizio SENSOR_SERVICE
@@ -90,16 +90,9 @@ public class StepCounter extends Service implements Runnable{
                 if (values.length > 0) {
                     value = (int) values[0];
                 }
-                /*
-                if (sensor.getType() == Sensor.TYPE_STEP_COUNTER) {
-                    Log.d("Step Counter Detected"," "+ value);
-                } else*/
-                //controllare da che versione c'è il TYPE STEP DETECTOR
 
-                if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
-                    StepCounter.this.mySteps++;
-                    Log.d("Step Detector"," Detector:" + StepCounter.this.mySteps);
-                }else if(mStepDetectorSensor==null){
+                //controllare da che versione c'è il TYPE STEP DETECTOR
+                 /*if(accel!=null){
                     float x=event.values[0];
                     float y=event.values[1];
                     float z=event.values[2];
@@ -110,20 +103,38 @@ public class StepCounter extends Service implements Runnable{
                         StepCounter.this.mySteps++;
                         Log.d("Accel"," Accelerometer:" + StepCounter.this.mySteps);
                     }
+                 }else if (sensor.getType() == Sensor.TYPE_STEP_DETECTOR) {
+                    StepCounter.this.mySteps++;
+                    Log.d("Step Detector"," Detector:" + StepCounter.this.mySteps);
+                }*/
+                float x=event.values[0];
+                float y=event.values[1];
+                float z=event.values[2];
+                double magnitude = Math.sqrt(x*x+y*y+z*z);
+                double magnitudeDelta=magnitude-magitudePrevious;
+                magitudePrevious=magnitude;
+                if(magnitudeDelta>6){
+                    StepCounter.this.mySteps++;
+                    Log.d("Accel"," Accelerometer:" + StepCounter.this.mySteps);
                 }
             }
 
             @Override
             public void onAccuracyChanged(Sensor sensor, int i) {}
         };
-        if(mStepDetectorSensor==null){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            mSensorManager.registerListener(eventListener, accel,
+                    SensorManager.SENSOR_DELAY_NORMAL);
+        }
+        /*
+        if(accel!=null){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 mSensorManager.registerListener(eventListener, accel,
                         SensorManager.SENSOR_DELAY_NORMAL);//
             }
         }else{
             mSensorManager.registerListener(eventListener, mStepDetectorSensor, SensorManager.SENSOR_DELAY_FASTEST);
-        }
+        }*/
         Log.d("thread", String.valueOf(Looper.myLooper() == Looper.getMainLooper()));
     }
     private void makeNotificationIntent(){
@@ -238,11 +249,13 @@ public class StepCounter extends Service implements Runnable{
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 //forse qui va lo spegnimento e l'unregistering fare una funzione
+                /*
                 if(eventListener!=null && mStepDetectorSensor!=null){
                     mSensorManager.unregisterListener(eventListener, mStepDetectorSensor);
                 }else if(eventListener!=null && mStepDetectorSensor==null){
                     mSensorManager.unregisterListener(eventListener, accel);
-                }
+                }*/
+                mSensorManager.unregisterListener(eventListener, accel);
                 new Thread(StepCounter.this).interrupt();
             }
         });

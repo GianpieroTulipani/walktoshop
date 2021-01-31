@@ -165,14 +165,16 @@ public class CardView extends AppCompatActivity {
                     if(totalSteps!=0 && goal!=0){
                         percentage=Math.round((float)(totalSteps*100)/goal);
                         if(percentage>=100){
+                            goalStepRatio.setText(goal+"/"+goal);
                             code.setText("Ecco il tuo codice sconto: "+discountCode);
                             if(d.getState()!="completed"){
                                 changeDiscountState(d);
                             }
-
+                        }else{
+                            goalStepRatio.setText(totalSteps+"/"+goal);
                         }
                         progressBar.setProgress((int)percentage);
-                        goalStepRatio.setText(totalSteps+"/"+goal);
+
                         float km=calculateKilometers(Integer.parseInt(CardView.this.userHeight),totalSteps);
                         kilometers.setText(km+" Km");
                         int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),totalSteps);

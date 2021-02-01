@@ -1,4 +1,4 @@
-package com.example.walktoshop.Seller;
+package com.example.walktoshop.Utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -10,8 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,34 +17,25 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.walktoshop.Model.Discount;
 import com.example.walktoshop.R;
-import com.example.walktoshop.Seller.Business;
 import com.example.walktoshop.User.CardView;
-import com.example.walktoshop.User.StepCounter;
-import com.example.walktoshop.User.UserView;
+import com.example.walktoshop.User.ServiceStepCounter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.button.MaterialButton;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class SellerViewAdapter extends ArrayAdapter {
+public class ViewAdapter extends ArrayAdapter {
     private Context context;
     private ArrayList<Discount> discounts;
     private String UID;
@@ -54,7 +43,7 @@ public class SellerViewAdapter extends ArrayAdapter {
     private String usage;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
 
-    public SellerViewAdapter(Context context, ArrayList<Discount> discounts, String UID,ArrayList businessUID,String usage) {
+    public ViewAdapter(Context context, ArrayList<Discount> discounts, String UID, ArrayList businessUID, String usage) {
         super(context, R.layout.activity_sellerviewadapter);
         this.context=context;
         this.discounts=discounts;
@@ -223,8 +212,8 @@ public class SellerViewAdapter extends ArrayAdapter {
                 }).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                SellerViewAdapter.this.discounts.remove(position);
-                SellerViewAdapter.this.notifyDataSetChanged();
+                ViewAdapter.this.discounts.remove(position);
+                ViewAdapter.this.notifyDataSetChanged();
             }
         });
     }
@@ -282,8 +271,8 @@ public class SellerViewAdapter extends ArrayAdapter {
         db.collection("utente").document(UID).update("discountUID",discountUID);
     }
     private void killServiceIfRunning(){
-        if(isMyServiceRunning(StepCounter.class) == true){
-            Intent intent =new Intent(getContext(),StepCounter.class);
+        if(isMyServiceRunning(ServiceStepCounter.class) == true){
+            Intent intent =new Intent(getContext(), ServiceStepCounter.class);
             Toast.makeText(getContext(),"Contapassi disattivato",Toast.LENGTH_SHORT).show();
             getContext().stopService(intent);
         }

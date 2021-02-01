@@ -8,13 +8,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,9 +19,10 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.walktoshop.Login_SignUp.LogIn;
-import com.example.walktoshop.NetworkController.NetworkController;
+import com.example.walktoshop.Model.Discount;
+import com.example.walktoshop.Utils.NetworkController;
 import com.example.walktoshop.R;
-import com.example.walktoshop.User.UserMapView;
+import com.example.walktoshop.Utils.ViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -170,7 +168,7 @@ public class SellerView extends AppCompatActivity {
                                 }else{
                                     alert.setText("Nessuno sconto disponibile");
                                     alert.setVisibility(View.VISIBLE);
-                                    final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
+                                    final ViewAdapter adapter=new ViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
                                     listView.setAdapter(adapter);
                                 }
                             } else {
@@ -207,7 +205,7 @@ public class SellerView extends AppCompatActivity {
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        final SellerViewAdapter adapter=new SellerViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
+                        final ViewAdapter adapter=new ViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
                         listView.setAdapter(adapter);
                     }
                 });

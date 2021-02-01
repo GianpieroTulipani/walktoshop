@@ -1,4 +1,4 @@
-package com.example.walktoshop.Seller;
+package com.example.walktoshop.Model;
 
 import android.util.Log;
 

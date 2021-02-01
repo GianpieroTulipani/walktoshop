@@ -14,15 +14,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walktoshop.NetworkController.NetworkController;
+import com.example.walktoshop.Utils.NetworkController;
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.SellerView;
-import com.example.walktoshop.User.UserMapView;
 import com.example.walktoshop.User.UserView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

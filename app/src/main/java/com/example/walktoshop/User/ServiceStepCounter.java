@@ -11,20 +11,15 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
-import com.example.walktoshop.NetworkController.NetworkController;
+import com.example.walktoshop.Model.Walk;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -32,10 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Iterator;
 
-public class StepCounter extends Service implements Runnable{
+public class ServiceStepCounter extends Service implements Runnable{
     //definisco manager sensori, counter e detector
     FirebaseFirestore db=FirebaseFirestore.getInstance();
     private String today=null;
@@ -118,8 +112,8 @@ public class StepCounter extends Service implements Runnable{
                 double magnitudeDelta=magnitude-magitudePrevious;
                 magitudePrevious=magnitude;
                 if(magnitudeDelta>6){
-                    StepCounter.this.mySteps++;
-                    Log.d("Accel"," Accelerometer:" + StepCounter.this.mySteps);
+                    ServiceStepCounter.this.mySteps++;
+                    Log.d("Accel"," Accelerometer:" + ServiceStepCounter.this.mySteps);
                 }
             }
 
@@ -228,11 +222,11 @@ public class StepCounter extends Service implements Runnable{
                 if(task.isSuccessful()){
                     DocumentSnapshot document= task.getResult();
                     String lastWalkDate=document.getString("lastWalkDate");
-                    String todayPlusSteps=today + ","+String.valueOf(StepCounter.this.mySteps);
+                    String todayPlusSteps=today + ","+String.valueOf(ServiceStepCounter.this.mySteps);
                     if(lastWalkDate!=null){
                         //funzione per l'upload delle camminate
                         long lastWalkDateLong= Long.parseLong(lastWalkDate);
-                        long todayLong= Long.parseLong(StepCounter.this.today);
+                        long todayLong= Long.parseLong(ServiceStepCounter.this.today);
                         Log.d("diff",todayLong + " "+lastWalkDateLong);
                         //l'ha fatta oggi?
                         if(lastWalkDateLong>=todayLong){
@@ -248,7 +242,7 @@ public class StepCounter extends Service implements Runnable{
                             Walk oldWalk=getWalkInfoFromString(oldWalkInfo);
                             String oldSteps=oldWalk.getNumberOfSteps();
                             //Log.d("oldsteps",oldSteps);
-                            int updatedSteps=StepCounter.this.mySteps+ Integer.parseInt(oldSteps);
+                            int updatedSteps= ServiceStepCounter.this.mySteps+ Integer.parseInt(oldSteps);
                             Log.d("updatedsteps",updatedSteps+"");
                             String todayPlusUpdatedSteps=today + ","+updatedSteps;
                             walksArray.set(lastWalkIndex,todayPlusUpdatedSteps);
@@ -287,7 +281,7 @@ public class StepCounter extends Service implements Runnable{
                     mSensorManager.unregisterListener(eventListener, accel);
                 }*/
                 mSensorManager.unregisterListener(eventListener, accel);
-                new Thread(StepCounter.this).interrupt();
+                new Thread(ServiceStepCounter.this).interrupt();
             }
         });
     }

@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -19,23 +18,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.walktoshop.R;
-import com.example.walktoshop.Seller.Discount;
-import com.example.walktoshop.Seller.SellerView;
-import com.example.walktoshop.Seller.SellerViewAdapter;
+import com.example.walktoshop.Model.Discount;
+import com.example.walktoshop.Utils.ViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 public class FragmentUserMapBackDrop extends Fragment {
 
@@ -89,7 +83,7 @@ public class FragmentUserMapBackDrop extends Fragment {
                     if (userDisUID!= null){
                         getBusiness(userDisUID);
                     } else{
-                        final SellerViewAdapter adapter=new SellerViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
+                        final ViewAdapter adapter=new ViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
                         backdropListview.setAdapter(adapter);
                     }
                     Log.d("disUID", String.valueOf(userDisUID));
@@ -115,7 +109,7 @@ public class FragmentUserMapBackDrop extends Fragment {
                             getDiscounts(discountUID, userDisUID);
                         }else{
                             discountDescription.setText("Nessuno sconto disponibile");
-                            final SellerViewAdapter adapter=new SellerViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
+                            final ViewAdapter adapter=new ViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
                             backdropListview.setAdapter(adapter);
                         }
                     }else{
@@ -167,7 +161,7 @@ public class FragmentUserMapBackDrop extends Fragment {
             }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    final SellerViewAdapter adapter=new SellerViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
+                    final ViewAdapter adapter=new ViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
                     backdropListview.setAdapter(adapter);
 
                 }
@@ -203,8 +197,8 @@ public class FragmentUserMapBackDrop extends Fragment {
         return false;
     }
     private void killServiceIfRunning(){
-        if(isMyServiceRunning(StepCounter.class) == true){
-            Intent intent =new Intent(getActivity(),StepCounter.class);
+        if(isMyServiceRunning(ServiceStepCounter.class) == true){
+            Intent intent =new Intent(getActivity(), ServiceStepCounter.class);
             Toast.makeText(getActivity(),"Contapassi disattivato",Toast.LENGTH_SHORT).show();
             getActivity().stopService(intent);
         }

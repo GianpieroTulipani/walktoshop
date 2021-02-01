@@ -48,7 +48,7 @@
         <activity android:name=".User.CardView"></activity>
         <activity android:name=".User.UserStatistics"></activity>
 
-        <service android:name=".User.StepCounter" />
+        <service android:name=".User.ServiceStepCounter" />
     </application>
 
 </manifest>

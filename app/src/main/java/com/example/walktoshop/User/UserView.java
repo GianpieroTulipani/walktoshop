@@ -1,10 +1,7 @@
 package com.example.walktoshop.User;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.ActivityManager;
@@ -14,9 +11,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -24,30 +19,25 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.walktoshop.Login_SignUp.LogIn;
-import com.example.walktoshop.NetworkController.NetworkController;
+import com.example.walktoshop.Utils.NetworkController;
 import com.example.walktoshop.R;
-import com.example.walktoshop.Seller.Discount;
-import com.example.walktoshop.Seller.SellerViewAdapter;
+import com.example.walktoshop.Model.Discount;
+import com.example.walktoshop.Utils.ViewAdapter;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.appbar.CollapsingToolbarLayout;
-import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -225,7 +215,7 @@ public class UserView extends AppCompatActivity {
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        final SellerViewAdapter adapter=new SellerViewAdapter(UserView.this,myDiscounts, userUID,null,"userHome");
+                        final ViewAdapter adapter=new ViewAdapter(UserView.this,myDiscounts, userUID,null,"userHome");
                         homeListview.setAdapter(adapter);
                     }
                 });
@@ -256,8 +246,8 @@ public class UserView extends AppCompatActivity {
     }
     private  void startStepCounter(){
         if(userUID!=null  ){
-            Intent intent =new Intent(this,StepCounter.class);
-            if(isMyServiceRunning(StepCounter.class) == false){
+            Intent intent =new Intent(this, ServiceStepCounter.class);
+            if(isMyServiceRunning(ServiceStepCounter.class) == false){
                 Toast.makeText(this,"Contapassi attivato",Toast.LENGTH_SHORT).show();
                 intent.putExtra("UID",userUID);
                 intent.putStringArrayListExtra("myDiscountsUID",uidDiscount);
@@ -292,8 +282,8 @@ public class UserView extends AppCompatActivity {
     }
 
     private void killServiceIfRunning(){
-        if(isMyServiceRunning(StepCounter.class) == true){
-            Intent intent =new Intent(this,StepCounter.class);
+        if(isMyServiceRunning(ServiceStepCounter.class) == true){
+            Intent intent =new Intent(this, ServiceStepCounter.class);
             Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();
             stopService(intent);
         }

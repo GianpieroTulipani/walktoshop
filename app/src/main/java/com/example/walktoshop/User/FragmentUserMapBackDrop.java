@@ -33,6 +33,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class FragmentUserMapBackDrop extends Fragment {
@@ -51,13 +52,7 @@ public class FragmentUserMapBackDrop extends Fragment {
         View coordinatorLayout = (CoordinatorLayout)inflater.inflate(R.layout.fragment_map_backdrop, container, false);
         backdropListview = coordinatorLayout.findViewById(R.id.backdropListView);
         discountDescription= coordinatorLayout.findViewById(R.id.discountDescription);
-       /* backdropListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                final Intent intent = new Intent(getActivity(), CardView.class);
-                startActivity(intent);
-            }
-        });*/
+
         ImageView filterIcon = coordinatorLayout.findViewById(R.id.filterIcon);
         LinearLayout contentLayout = coordinatorLayout.findViewById(R.id.contentLayout);
         //vengono prese le informazioni passate cliccando sul marker
@@ -70,7 +65,7 @@ public class FragmentUserMapBackDrop extends Fragment {
         sheetBehavior = BottomSheetBehavior.from(contentLayout);
         sheetBehavior.setFitToContents(false);
         sheetBehavior.setHideable(false);//evita che il backdrop sia completamente oscurato
-        sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);//inizialmente il  backdrop parte esteso
+        sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);//inizialmente il  backdrop parte esteso
 
         filterIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +128,9 @@ public class FragmentUserMapBackDrop extends Fragment {
     }
 
     private void getDiscounts(ArrayList<String> discountUID, ArrayList<String> userDisUID){
+
         ArrayList<String> disUID = new ArrayList<String>();
+
         for(int i=0;i<discountUID.size();i++){
             if(!userDisUID.contains(discountUID.get(i))){
                 disUID.add(discountUID.get(i));
@@ -141,6 +138,7 @@ public class FragmentUserMapBackDrop extends Fragment {
         }
         for(int k=0;k<disUID.size();k++){
             Log.d("dis",disUID.get(k).toString());
+            int finalK = k;
             db.collection("sconti").document(disUID.get(k)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -154,8 +152,13 @@ public class FragmentUserMapBackDrop extends Fragment {
                         discount.setStepNumber(document.getString("stepNumber"));
                         discount.setDescription(document.getString("description"));
                         discount.setDiscountsQuantity(document.getString("discountsQuantity"));
-                        discountArray.add(discount);
 
+                        if(Long.parseLong(discount.getExpiringDate()) > Calendar.getInstance().getTimeInMillis()){
+                            discountArray.add(discount);
+
+                        } else {
+                            disUID.remove(finalK);
+                        }
                     }
                 }
             }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -163,12 +166,14 @@ public class FragmentUserMapBackDrop extends Fragment {
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     final SellerViewAdapter adapter=new SellerViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
                     backdropListview.setAdapter(adapter);
+
                 }
             });
         }
+        if(disUID.isEmpty() || disUID == null){
+            discountDescription.setText("Nessuno sconto disponibile");
+        }
     }
-
-
 
     private void toggleFilters() {
         if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {

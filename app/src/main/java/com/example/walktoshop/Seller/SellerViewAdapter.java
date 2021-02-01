@@ -99,11 +99,10 @@ public class SellerViewAdapter extends ArrayAdapter {
         //bottone eliminazione
         ImageButton deleteDiscount =activity.findViewById(R.id.deleteDiscount);
         //modifica
-        ImageButton editDiscount = activity.findViewById(R.id.editDiscount);
         TextView difficulty = activity.findViewById(R.id.difficulty);
         ImageView difficultyColor = activity.findViewById(R.id.difficultyColor);
         ImageButton arrow = (ImageButton) activity.findViewById(R.id.arrow);
-        Button addDiscount = (Button) activity.findViewById(R.id.addButton);
+        ImageView addDiscount = (ImageView) activity.findViewById(R.id.addButton);
 
         //bottone attivazione contapassi
         //bottone abilitazione
@@ -132,12 +131,10 @@ public class SellerViewAdapter extends ArrayAdapter {
             }
             //visibility
             deleteDiscount.setVisibility(View.GONE);
-            editDiscount.setVisibility(View.GONE);
             if(this.usage=="sellerHome"){
                 arrow.setVisibility(View.GONE);
                 addDiscount.setVisibility(View.GONE);
                 deleteDiscount.setVisibility(View.VISIBLE);
-                editDiscount.setVisibility(View.VISIBLE);
                 if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
                     date.setText("Scaduto");
                 }
@@ -174,9 +171,6 @@ public class SellerViewAdapter extends ArrayAdapter {
             }else if(this.usage=="backdropList"){
                 arrow.setVisibility(View.GONE);
                 addDiscount.setVisibility(View.VISIBLE);
-                if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
-                    date.setText("Scaduto");
-                }
                 addDiscount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

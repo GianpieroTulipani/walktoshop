@@ -56,6 +56,7 @@ import com.google.firebase.firestore.FirebaseFirestore;;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -69,8 +70,6 @@ public class UserView extends AppCompatActivity {
     double latitude=0;
     double longitude=0;
     FloatingActionButton stepcounterFab;
-    ImageView userImage;
-    boolean isScrolled = false;
     String city=null;
     LocationManager service;
     LocationListener locationListener;
@@ -95,20 +94,6 @@ public class UserView extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         homeListview= findViewById(R.id.homeListView);
         //setting del channel per quando partirà il service
-        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.userCoordinatorLayout);
-        coordinatorLayout.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if(isScrolled == false){
-                    bottomNavigationView.setVisibility(View.GONE);
-                    isScrolled = true;
-                } else {
-                    bottomNavigationView.setVisibility(View.VISIBLE);
-                    isScrolled = false;
-                }
-                return false;
-            }
-        });
         localizeUser();
         createNotificationChannel();
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -223,7 +208,9 @@ public class UserView extends AppCompatActivity {
                             discount.setState(document.getString("state"));
                             discount.setDescription(document.getString("description"));
                             discount.setStepNumber(document.getString("stepNumber"));
-                            myDiscounts.add(discount);
+                            if(Long.parseLong(discount.getExpiringDate()) > Calendar.getInstance().getTimeInMillis()) {
+                                myDiscounts.add(discount);
+                            }
                         }
                     }
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -366,7 +353,6 @@ public class UserView extends AppCompatActivity {
                         }).setNegativeButton("Go Back", null).show();
             }
         };
-
     }
 
     private void askGPSpermission() {
@@ -379,5 +365,4 @@ public class UserView extends AppCompatActivity {
         getUserPosition();
         service.requestLocationUpdates("gps", 500, 1000, locationListener);
     }
-
 }

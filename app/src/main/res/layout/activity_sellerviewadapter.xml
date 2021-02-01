@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:backgroundTint="#FFFFFF"
     android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,110 +24,94 @@
                     android:id="@+id/imageView"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:src="@drawable/sconti">
-                </ImageView>
+                    android:src="@drawable/sconti"></ImageView>
 
                 <LinearLayout
-                    android:layout_width="210dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_gravity="center">
+                    android:orientation="vertical">
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
+
                         <TextView
                             android:id="@+id/difficulty"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textStyle="bold"
-                           android:textSize="20dp"
                             android:layout_marginVertical="8dp"
+                            android:text="Easy Difficult"
                             android:textColor="@color/black"
-                            android:text="Easy Difficult" />
+                            android:textSize="20dp"
+                            android:textStyle="bold" />
 
                         <ImageView
                             android:id="@+id/difficultyColor"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
-                            android:layout_marginTop="1dp"
                             android:layout_gravity="center"
+                            android:layout_marginTop="1dp"
                             android:src="@drawable/ic_green" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/disocuntDescription"
+                        android:layout_width="210dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="questa è una entuale descrizione da inserire all'interno dello sconto"
+                        android:textColor="@color/black"
+                        android:textSize="17dp"></TextView>
+
+                    <TextView
+                        android:id="@+id/date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginLeft="20dp"
+                        android:text="scadenza: 27/01/2021"
                         android:textColor="@color/black"
-                        android:textSize="17dp"
-                        android:text="questa è una entuale descrizione da inserire all'interno dello sconto">
-                    </TextView>
+                        android:textSize="15dp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center">
+
                     <ImageButton
                         android:id="@+id/arrow"
-                        android:background="@color/white"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:visibility="gone"
                         android:src="@drawable/ic_navigate_next_black_48dp">
 
                     </ImageButton>
+
+                    <ImageButton
+                        android:id="@+id/addButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        android:src="@drawable/ic_add_black_48dp"/>
                 </LinearLayout>
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom">
 
-                <TextView
-                    android:id="@+id/date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="100dp"
-                    android:textStyle="bold"
-                    android:textSize="15dp"
-                    android:text="scadenza: 27/01/2021"
-                    android:textColor="@color/black">
+            <ImageButton
+                android:id="@+id/deleteDiscount"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="right"
+                android:layout_marginRight="20dp"
+                android:background="@color/white"
+                android:src="@android:drawable/ic_menu_delete"
+                android:tint="@color/verde_maggio"
+                android:visibility="gone" />
 
-                </TextView>
-
-                <Button
-                    android:id="@+id/addButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/ovale"
-                    android:visibility="visible"
-                    android:textColor="@color/white"
-                    android:text="AGGIUNGI">
-                </Button>
-
-                <ImageButton
-                    android:id="@+id/editDiscount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:layout_marginRight="20dp"
-                    android:src="@android:drawable/ic_menu_edit"
-                    android:tint="@color/verde_maggio"
-                    android:visibility="gone"/>
-                <ImageButton
-                    android:id="@+id/deleteDiscount"
-                    android:layout_width="wrap_content"
-                    android:background="@color/white"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="20dp"
-                    android:src="@android:drawable/ic_menu_delete"
-                    android:tint="@color/verde_maggio"
-                    android:visibility="gone"/>
-
-            </LinearLayout>
 
         </LinearLayout>
 

@@ -75,6 +75,7 @@ public class UserView extends AppCompatActivity {
     LocationManager service;
     LocationListener locationListener;
     FusedLocationProviderClient fusedLocationClient;
+    private ArrayList<String> uidDiscount=new ArrayList<>();
     private ArrayList<Discount> myDiscounts= new ArrayList<>();
 
     @Override
@@ -189,6 +190,7 @@ public class UserView extends AppCompatActivity {
                     DocumentSnapshot document= task.getResult();
                     ArrayList<String> discountUID = (ArrayList) document.get("discountUID");
                     if(discountUID!=null){
+                        UserView.this.uidDiscount=discountUID;
                         getMyDiscounts(discountUID);
                     }else  if(discountUID==null){
                         alert.setVisibility(View.VISIBLE);
@@ -258,6 +260,7 @@ public class UserView extends AppCompatActivity {
             if(isMyServiceRunning(StepCounter.class) == false){
                 Toast.makeText(this,"Contapassi attivato",Toast.LENGTH_SHORT).show();
                 intent.putExtra("UID",userUID);
+                intent.putStringArrayListExtra("myDiscountsUID",uidDiscount);
                 startService(intent);
             }else{
                 Toast.makeText(this,"Contapassi disattivato",Toast.LENGTH_SHORT).show();

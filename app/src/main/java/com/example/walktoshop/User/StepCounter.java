@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -32,6 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class StepCounter extends Service implements Runnable{
     //definisco manager sensori, counter e detector
@@ -40,7 +42,7 @@ public class StepCounter extends Service implements Runnable{
     private SensorManager mSensorManager;
     //private Sensor mStepDetectorSensor;
     private int mySteps=0;
-
+    private ArrayList<String> myDiscounts;
     private SensorEventListener eventListener;
     private String UID=null;
     private static final String CHANNEL_ID="StepCounter_notification_channel";
@@ -68,8 +70,10 @@ public class StepCounter extends Service implements Runnable{
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent.hasExtra("UID")){
+        if(intent.hasExtra("UID") && intent.hasExtra("myDiscountsUID")){
             this.UID=intent.getStringExtra("UID");
+            this.myDiscounts=intent.getStringArrayListExtra("myDiscountsUID");
+            Log.d("dis",myDiscounts.get(0));
             //function
             makeNotificationIntent();
             //crea un thread separato e fa partire il contapassi
@@ -159,7 +163,34 @@ public class StepCounter extends Service implements Runnable{
         super.onDestroy();
         //spegnimento da background service
         Log.d("des","destroy");
+        updateSharedPrefDiscounts(mySteps,myDiscounts);
         getUserWalkArray();
+    }
+    private void updateSharedPrefDiscounts(int mySteps,ArrayList<String> myDiscounts){
+        Iterator it1= myDiscounts.iterator();
+        while (it1.hasNext()){
+            String uid=(String) it1.next();
+            int oldSteps=getSharedPrefDiscountSteps(uid);
+            if(oldSteps>-1){
+                oldSteps+=mySteps;
+                writeSharedPrefDiscountSteps(uid,oldSteps);
+            }
+        }
+    }
+    private int getSharedPrefDiscountSteps(String discountUID){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);
+        if(prefs.contains("steps")){
+            int value=prefs.getInt("steps", -1);
+            return value;
+        }else{
+            return -1;
+        }
+    }
+    private void writeSharedPrefDiscountSteps(String discountUID,int newSteps){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("steps", newSteps);
+        editor.apply();
     }
     private String getTodayInMills(){
         Calendar cal = Calendar.getInstance();

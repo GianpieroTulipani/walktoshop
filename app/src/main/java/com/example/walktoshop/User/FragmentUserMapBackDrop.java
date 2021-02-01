@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -42,12 +43,14 @@ public class FragmentUserMapBackDrop extends Fragment {
     private ArrayList<Discount> discountArray= new ArrayList<>();
     private ArrayList<String> businessUID=new ArrayList<>();
     private String UID;
+    private TextView discountDescription;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View coordinatorLayout = (CoordinatorLayout)inflater.inflate(R.layout.fragment_map_backdrop, container, false);
         backdropListview = coordinatorLayout.findViewById(R.id.backdropListView);
+        discountDescription= coordinatorLayout.findViewById(R.id.discountDescription);
        /* backdropListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -86,6 +89,7 @@ public class FragmentUserMapBackDrop extends Fragment {
                 if(task.isSuccessful()){
                     DocumentSnapshot document = task.getResult();
                     ArrayList<String> userDisUID = (ArrayList<String>) document.get("discountUID");
+                    Log.d("disocunt uidArray",userDisUID.size()+"");
                     if (userDisUID!= null){
                         getBusiness(userDisUID);
                     } else{
@@ -110,12 +114,16 @@ public class FragmentUserMapBackDrop extends Fragment {
                     if(discountUID!=null){
                         Log.d("discount",discountUID.size()+" ");
                         Log.d("business",businessUID.get(0));
+                        discountDescription.setText("Lista sconti disponibili");
                         if(!discountUID.isEmpty()){
                             getDiscounts(discountUID, userDisUID);
                         }else{
+                            discountDescription.setText("Nessuno sconto disponibile");
                             final SellerViewAdapter adapter=new SellerViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
                             backdropListview.setAdapter(adapter);
                         }
+                    }else{
+                        discountDescription.setText("Nessuno sconto disponibile");
                     }
                 }else{
                     Log.d("non successo","non successo");

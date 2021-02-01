@@ -1,8 +1,11 @@
 package com.example.walktoshop.Seller;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.CalendarView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +23,7 @@ import androidx.annotation.Nullable;
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.Business;
 import com.example.walktoshop.User.CardView;
+import com.example.walktoshop.User.StepCounter;
 import com.example.walktoshop.User.UserView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,6 +42,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class SellerViewAdapter extends ArrayAdapter {
     private Context context;
@@ -144,7 +151,9 @@ public class SellerViewAdapter extends ArrayAdapter {
             }else if(this.usage=="userHome"){
                 arrow.setVisibility(View.VISIBLE);
                 addDiscount.setVisibility(View.GONE);
-
+                if(getSharedPrefDiscountState(d.getUID())=="completed"){
+                    date.setText("Completato");
+                }
                 if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
                     arrow.setVisibility(View.GONE);
                     date.setText("Scaduto");
@@ -171,7 +180,14 @@ public class SellerViewAdapter extends ArrayAdapter {
                 addDiscount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        saveDiscountSharedPref(d);
+                        killServiceIfRunning();
                         addDiscounts(d.getUID());
+                        Toast toast =  Toast.makeText(getContext(),"Sconto aggiunto con successo!Visita la Home",Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+
+                        //funzione che sava in shared pref
                     }
                 });
                 //qui si devono inserire elementi grafici tipici della vista in cui è chiamato
@@ -179,7 +195,22 @@ public class SellerViewAdapter extends ArrayAdapter {
         }
         return activity;
     }
-
+    private void saveDiscountSharedPref(Discount d){
+        SharedPreferences prefs = getContext().getSharedPreferences(d.getUID(), MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("steps", 0);
+        editor.putString("state",null);
+        editor.commit();
+    }
+    private String getSharedPrefDiscountState(String discountUID){
+        SharedPreferences prefs = getContext().getSharedPreferences(discountUID, MODE_PRIVATE);
+        if(prefs.contains("state")){
+            String value=prefs.getString("state",null);
+            return value;
+        }else{
+            return null;
+        }
+    }
     private void deleteDiscount(int position){
         //getBusiness(position);
         db.collection("sconti").document(discounts.get(position).getUID())
@@ -255,6 +286,22 @@ public class SellerViewAdapter extends ArrayAdapter {
     }
     private void updateUserDiscounts(ArrayList<String> discountUID){
         db.collection("utente").document(UID).update("discountUID",discountUID);
+    }
+    private void killServiceIfRunning(){
+        if(isMyServiceRunning(StepCounter.class) == true){
+            Intent intent =new Intent(getContext(),StepCounter.class);
+            Toast.makeText(getContext(),"Contapassi disattivato",Toast.LENGTH_SHORT).show();
+            getContext().stopService(intent);
+        }
+    }
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

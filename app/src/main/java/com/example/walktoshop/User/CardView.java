@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -76,7 +77,6 @@ public class CardView extends AppCompatActivity {
             String jsonDiscount=intent.getStringExtra("discount");
             Log.d("d",jsonDiscount);
             this.d = gson.fromJson(jsonDiscount, Discount.class);
-
             this.UID = intent.getStringExtra("UID");
         }
         discountCode=UID+d.getUID();
@@ -97,12 +97,48 @@ public class CardView extends AppCompatActivity {
         if(!networkController.isConnected(CardView.this)){
             networkController.connectionDialog(CardView.this);
         }
-        long goal= Long.parseLong(d.getDiscountsQuantity());
         long beginDiscountDate= Long.parseLong(d.getStartDiscountDate());
         long expiringDiscountDate= Long.parseLong(d.getExpiringDate());
         getBusinessInfo(d.getBusinessUID());
         getUserInfo();
-        getUserWalkInATimeRange(beginDiscountDate,expiringDiscountDate,goal,d);
+        //getUserWalkInATimeRange(beginDiscountDate,expiringDiscountDate,goal,d);
+
+    }
+    private void updateUI(){
+        long goal= Long.parseLong(d.getDiscountsQuantity());
+        CardView.this.totalSteps=getSharedPrefDiscountSteps(d.getUID());
+        Log.d("totalSteps",totalSteps+"");
+        if(totalSteps!=0 && goal!=0){
+            percentage=Math.round((float)(totalSteps*100)/goal);
+            if(percentage>=100){
+                goalStepRatio.setText(goal+"/"+goal);
+                code.setText("Ecco il tuo codice sconto: "+discountCode);
+                updateDiscountStateSharedPref(d.getUID());
+            }else{
+                goalStepRatio.setText(totalSteps+"/"+goal);
+            }
+            progressBar.setProgress((int)percentage);
+            Log.d("peso altezzo",userWeight+" "+userHeight);
+            float km=calculateKilometers(Integer.parseInt(CardView.this.userHeight), totalSteps);
+            kilometers.setText(km+" Km");
+            int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),totalSteps);
+            kcal.setText(calories+" Kcal");
+        }
+    }
+    private void updateDiscountStateSharedPref(String discountUID){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("state", "completed");
+        editor.apply();
+    }
+    private int getSharedPrefDiscountSteps(String discountUID){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);
+        if(prefs.contains("steps")){
+            int value=prefs.getInt("steps", -1);
+            return value;
+        }else{
+            return -1;
+        }
     }
     private void getBusinessInfo(String businessUID){
         db.collection("attivita").document(businessUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -133,66 +169,15 @@ public class CardView extends AppCompatActivity {
                     DocumentSnapshot document= task.getResult();
                     CardView.this.userWeight=document.getString("weight");
                     CardView.this.userHeight=document.getString("height");
+                    updateUI();
                 }
             }
         });
     }
-    private void getUserWalkInATimeRange(long beginDiscountDate,long expiringDiscountDate,long goal,Discount d){
-        db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot document=task.getResult();
-                    ArrayList<String> myStringedWalks= (ArrayList<String>) document.get("walk");
-                    //Log.d("size",myStringedWalks.size()+"");
-                    if(myStringedWalks==null){
-                        myStringedWalks=new ArrayList<>();
-                    }
-                    Iterator it=myStringedWalks.iterator();
-                    while(it.hasNext()){
-                        String dateAndSteps= (String) it.next();
-                        Walk walk=getWalkInfoFromString(dateAndSteps);
-                        long date= Long.parseLong(walk.getDate());
-                        Log.d("date", String.valueOf(date >= beginDiscountDate));
-                        Log.d("date", String.valueOf(date <= expiringDiscountDate));
-                        if(date>=beginDiscountDate && date<=expiringDiscountDate){
-                            long walkSteps= Long.parseLong(walk.getNumberOfSteps());
-                            totalSteps=totalSteps + walkSteps;
-                            //dailykcal
-                            //dailykm
-                        }
-                    }
-                    if(totalSteps!=0 && goal!=0){
-                        percentage=Math.round((float)(totalSteps*100)/goal);
-                        if(percentage>=100){
-                            goalStepRatio.setText(goal+"/"+goal);
-                            code.setText("Ecco il tuo codice sconto: "+discountCode);
-                            if(d.getState()!="completed"){
-                                //changeDiscountState(d);
-                            }
-                        }else{
-                            goalStepRatio.setText(totalSteps+"/"+goal);
-                        }
-                        progressBar.setProgress((int)percentage);
 
-                        float km=calculateKilometers(Integer.parseInt(CardView.this.userHeight),totalSteps);
-                        kilometers.setText(km+" Km");
-                        int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),totalSteps);
-                        kcal.setText(calories+" Kcal");
-                    }
-                }
-            }
-        });
-    }
-    private Walk getWalkInfoFromString(String info){
-        String[] todayAndSteps =info.split(",");
-        Walk walk =new Walk();
-        walk.setDate(todayAndSteps[0]);
-        walk.setNumberOfSteps(todayAndSteps[1]);
-        return walk;
-    }
     private float calculateKilometers(int height,long steps){
         float meters;
+        Log.d("hei",height+" "+steps);
         if(height<170){
             meters=Math.round((float)600*steps/1000);
         }else{
@@ -219,7 +204,4 @@ public class CardView extends AppCompatActivity {
         Intent shareIntent = Intent.createChooser(sendIntent, null);
         startActivity(shareIntent);
     }
-
-
-
 }

@@ -72,6 +72,19 @@
                 android:paddingStart="6dp" />
 
             <EditText
+                android:id="@+id/confermapassword"
+                android:layout_width="317dp"
+                android:layout_height="54dp"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_text_box"
+                android:drawableStart="@drawable/ic_psw"
+                android:drawablePadding="4dp"
+                android:elevation="6dp"
+                android:hint="Conferma password"
+                android:inputType="textPassword"
+                android:paddingStart="6dp" />
+
+            <EditText
                 android:id="@+id/height"
                 android:layout_width="317dp"
                 android:layout_height="54dp"
@@ -87,7 +100,6 @@
 
             <EditText
                 android:id="@+id/weight"
-
                 android:layout_width="317dp"
                 android:layout_height="54dp"
                 android:layout_gravity="center"

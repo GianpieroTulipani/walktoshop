@@ -40,6 +40,7 @@ public class SignUp extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseAuth mAuth=FirebaseAuth.getInstance();
     private EditText password;
+    private EditText confpassword;
     private EditText email;
     private Switch switchButton;
     private Button goNext;
@@ -49,6 +50,7 @@ public class SignUp extends AppCompatActivity {
     private boolean isSeller;
     String stringEmail=null;
     String stringPassword=null;
+    String stringConfPassword=null;
     String stringHeight=null;
     String stringWeight=null;
     Seller seller=new Seller();
@@ -59,6 +61,7 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         password=(EditText) findViewById(R.id.password);
+        confpassword=(EditText) findViewById(R.id.confermapassword);
         email=(EditText) findViewById(R.id.email);
         switchButton=(Switch)findViewById(R.id.switch1);
         goNext=(Button)findViewById(R.id.nextButton);
@@ -220,6 +223,7 @@ public class SignUp extends AppCompatActivity {
     private boolean checkUserInfo(){
         stringEmail=this.email.getText().toString().trim();
         stringPassword= this.password.getText().toString().trim();
+        stringConfPassword= this.confpassword.getText().toString().trim();
         stringHeight = this.height.getText().toString().trim();
         stringWeight = this.weight.getText().toString().trim();
 
@@ -238,6 +242,10 @@ public class SignUp extends AppCompatActivity {
             this.password.setError(getResources().getString(R.string.passwordEmpty));
             this.password.requestFocus();
             return false;
+        }else if(stringConfPassword.isEmpty()){
+            this.confpassword.setError(getResources().getString(R.string.passwordEmpty));
+            this.confpassword.requestFocus();
+            return false;
         }else if(!isSeller && stringHeight.isEmpty()){
             this.height.setError( getResources().getString(R.string.heightEmpty));
             this.height.requestFocus();
@@ -251,6 +259,12 @@ public class SignUp extends AppCompatActivity {
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             this.password.setError(getResources().getString(R.string.InvalidPassword));
+            this.password.requestFocus();
+            return false;
+        }else if(stringPassword.equals(stringConfPassword)){
+            this.confpassword.setError(getResources().getString(R.string.EqualPassword));
+            this.confpassword.requestFocus();
+            this.password.setError(getResources().getString(R.string.EqualPassword));
             this.password.requestFocus();
             return false;
         }else  if(!isSeller && (Long.parseLong(stringHeight) < 100 || Long.parseLong(stringHeight) > 270)){

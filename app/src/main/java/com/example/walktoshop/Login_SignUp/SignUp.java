@@ -261,7 +261,7 @@ public class SignUp extends AppCompatActivity {
             this.password.setError(getResources().getString(R.string.InvalidPassword));
             this.password.requestFocus();
             return false;
-        }else if(stringPassword.equals(stringConfPassword)){
+        }else if(!stringPassword.equals(stringConfPassword)){
             this.confpassword.setError(getResources().getString(R.string.EqualPassword));
             this.confpassword.requestFocus();
             this.password.setError(getResources().getString(R.string.EqualPassword));

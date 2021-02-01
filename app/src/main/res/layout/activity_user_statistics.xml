@@ -26,7 +26,7 @@
                 android:textSize="15dp"
                 android:textColor="@color/black"
                 android:layout_marginTop="10dp"
-                android:text="Ultime 7 rilevazioni relative ai passi giornalieri"/>
+                android:text=""/>
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/barChart"
                 android:layout_width="match_parent"
@@ -46,7 +46,7 @@
                 android:textSize="15dp"
                 android:textColor="@color/black"
                 android:layout_marginTop="10dp"
-                android:text="Ultime 7 rilevazioni relative alle Kcal"/>
+                android:text=""/>
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/barChartKcal"
                 android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                 android:textSize="15dp"
                 android:textColor="@color/black"
                 android:layout_marginTop="10dp"
-                android:text="Ultime 7 rilevazioni relative ai Km giornalieri"/>
+                android:text=""/>
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/barChartKm"
                 android:layout_width="match_parent"

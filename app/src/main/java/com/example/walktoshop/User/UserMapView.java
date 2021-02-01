@@ -54,6 +54,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -75,6 +76,8 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
     double longitude;
     String city;
     String UID;
+    boolean isSatellite = false;
+    FloatingActionButton userMapFab;
     ArrayList<String> name = new ArrayList<String>();
     private int cache;
     public static final String NOTIFICATION_CHANNEL_ID = "notification_channel";
@@ -85,8 +88,6 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_map_view);
-        progressBar = (ProgressBar) findViewById(R.id.userMapViewProgressBar);
-        progressBar.setProgress(View.VISIBLE);
         cache=getSharedPref();
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -194,9 +195,21 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        progressBar.setVisibility(View.GONE);
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+        userMapFab = (FloatingActionButton) findViewById(R.id.userMapFab);
+        userMapFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isSatellite == false){
+                    mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                    isSatellite = true;
+                } else {
+                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                    isSatellite = false;
+                }
+            }
+        });
+
         Iterator<LatLng> iteratorLatLng = latLngs.listIterator();
         Iterator<String> iteratorName = name.listIterator();
         while(iteratorLatLng.hasNext() && iteratorName.hasNext()){

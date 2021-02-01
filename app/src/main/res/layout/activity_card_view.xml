@@ -72,7 +72,7 @@
                 android:layout_width="121dp"
                 android:layout_height="113dp"
                 android:src="@drawable/ic_directions_run_black_96dp"
-                app:tint="@color/black"
+                app:tint="@color/verde_opale"
                 app:layout_constraintBottom_toBottomOf="@+id/progerssBar"
                 app:layout_constraintEnd_toEndOf="@+id/progerssBar"
                 app:layout_constraintStart_toStartOf="@+id/progerssBar"
@@ -124,27 +124,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold|italic"
-                    android:text="10000/10000"
+                    android:text="0/10000"
                     android:textSize="30dp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/verde_opale"/>
                 <TextView
                     android:id="@+id/kcal"
                     android:layout_marginLeft="20dp"
                     android:layout_width="wrap_content"
                     android:textStyle="bold|italic"
                     android:layout_height="wrap_content"
-                    android:text="Kcal: 30"
+                    android:text="0 Kcal"
                     android:textSize="30dp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/verde_opale"/>
                 <TextView
                     android:id="@+id/kilometers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold|italic"
                     android:layout_marginLeft="20dp"
-                    android:text="Km: 50"
+                    android:text="0 Km"
                     android:textSize="30dp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/verde_opale"/>
 
             </LinearLayout>
 
@@ -159,6 +159,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:src="@drawable/ic_baseline_local_offer_24"
                 android:tintMode="src_in"
                 app:tint="@color/verde_maggio" />

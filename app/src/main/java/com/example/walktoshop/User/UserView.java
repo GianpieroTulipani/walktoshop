@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.ActivityManager;
@@ -31,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +47,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.behavior.HideBottomViewOnScrollBehavior;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -67,6 +70,7 @@ public class UserView extends AppCompatActivity {
     double longitude=0;
     FloatingActionButton stepcounterFab;
     ImageView userImage;
+    boolean isScrolled = false;
     String city=null;
     LocationManager service;
     LocationListener locationListener;
@@ -90,18 +94,28 @@ public class UserView extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         homeListview= findViewById(R.id.homeListView);
         //setting del channel per quando partirà il service
+        CoordinatorLayout coordinatorLayout = (CoordinatorLayout) findViewById(R.id.userCoordinatorLayout);
+        coordinatorLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if(isScrolled == false){
+                    bottomNavigationView.setVisibility(View.GONE);
+                    isScrolled = true;
+                } else {
+                    bottomNavigationView.setVisibility(View.VISIBLE);
+                    isScrolled = false;
+                }
+                return false;
+            }
+        });
         localizeUser();
         createNotificationChannel();
-
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.action_home:
-                        break;
                     case R.id.action_map:
-                        if(city==null || latitude==0 || longitude==0){
+                        if(city==null && latitude==0 && longitude==0){
                             Toast.makeText(UserView.this,"Rilevamento della posizione in corso",Toast.LENGTH_SHORT).show();
                             askGPSpermission();
                         }else{

@@ -24,7 +24,6 @@ o	Peso
 o	Falcata
 o	CamminataUID[]
 o	ScontiUID[]
-
     */
     public User(){}
     //setters

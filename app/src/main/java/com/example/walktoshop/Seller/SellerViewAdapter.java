@@ -144,11 +144,7 @@ public class SellerViewAdapter extends ArrayAdapter {
             }else if(this.usage=="userHome"){
                 arrow.setVisibility(View.VISIBLE);
                 addDiscount.setVisibility(View.GONE);
-                if(d.getState()==""){
 
-                }else{
-                    date.setText("Completato");
-                }
                 if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
                     arrow.setVisibility(View.GONE);
                     date.setText("Scaduto");

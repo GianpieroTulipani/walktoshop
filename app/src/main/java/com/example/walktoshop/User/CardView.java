@@ -168,7 +168,7 @@ public class CardView extends AppCompatActivity {
                             goalStepRatio.setText(goal+"/"+goal);
                             code.setText("Ecco il tuo codice sconto: "+discountCode);
                             if(d.getState()!="completed"){
-                                changeDiscountState(d);
+                                //changeDiscountState(d);
                             }
                         }else{
                             goalStepRatio.setText(totalSteps+"/"+goal);
@@ -184,10 +184,6 @@ public class CardView extends AppCompatActivity {
             }
         });
     }
-    private void changeDiscountState(Discount d){
-        db.collection("sconti").document(d.getUID()).update("state","completed");
-    }
-
     private Walk getWalkInfoFromString(String info){
         String[] todayAndSteps =info.split(",");
         Walk walk =new Walk();

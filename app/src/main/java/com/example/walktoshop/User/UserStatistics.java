@@ -148,8 +148,7 @@ public class UserStatistics extends AppCompatActivity {
                     if(stringedWalks!=null){
                         int numberOfUserWalks=0;
                         int totalNumberOfUserWalks= stringedWalks.size()-1;
-                        int i = 0;
-                        for (i=0;i<7;i++){
+                        for (int i=0;i<7;i++){
                             if(totalNumberOfUserWalks-i>=0){
                                 String walkInfo=stringedWalks.get(totalNumberOfUserWalks-i);
                                 Walk walk= getWalkInfoFromString(walkInfo);
@@ -166,9 +165,20 @@ public class UserStatistics extends AppCompatActivity {
                             }
 
                         }
-                        report.setText("ultime "+i+" rilevazioni relative ai passi giornalieri");
-                        report1.setText("ultime "+i+" rilevazioni relative alle Kcal giornaliere");
-                        report2.setText("ultime "+i+" rilevazioni relative ai Km giornalieri");
+                        if(stringedWalks.size() == 1){
+                            report.setText("prima rilevazione relativa ai passi giornalieri");
+                            report1.setText("prima rilevazione relativa alle Kcal giornaliere");
+                            report2.setText("prima rilevazione relativa ai Km giornalieri");
+                        } else if(stringedWalks.size() <= 7){
+                            report.setText("ultime "+stringedWalks.size()+" rilevazioni relative ai passi giornalieri");
+                            report1.setText("ultime "+stringedWalks.size()+" rilevazioni relative alle Kcal giornaliere");
+                            report2.setText("ultime "+stringedWalks.size()+" rilevazioni relative ai Km giornalieri");
+                        } else if(stringedWalks.size() > 7){
+                            report.setText("ultime 7 rilevazioni relative ai passi giornalieri");
+                            report1.setText("ultime 7 rilevazioni relative alle Kcal giornaliere");
+                            report2.setText("ultime 7 rilevazioni relative ai Km giornalieri");
+                        }
+
                         String[] daysArray = new String[UserStatistics.this.days.size()];
                         daysArray = UserStatistics.this.days.toArray(daysArray);
                         setBarChart(dailyKm,dailyKcal,dailySteps,daysArray);
@@ -219,6 +229,7 @@ public class UserStatistics extends AppCompatActivity {
         xAxisKcal.setGranularity(1);
         xAxisKcal.setGranularityEnabled(true);
         kcalBarChart.setDragEnabled(true);
+        kcalBarChart.setVisibleXRangeMaximum(3);
         kcalBarChart.invalidate();
 
         BarData data = new BarData(steps);
@@ -230,6 +241,7 @@ public class UserStatistics extends AppCompatActivity {
         xAxis.setGranularity(1);
         xAxis.setGranularityEnabled(true);
         barChart.setDragEnabled(true);
+        barChart.setVisibleXRangeMaximum(3);
         barChart.invalidate();
 
         BarData barDataKm = new BarData(km);
@@ -241,6 +253,7 @@ public class UserStatistics extends AppCompatActivity {
         xAxisKm.setGranularity(1);
         xAxisKm.setGranularityEnabled(true);
         kmBarChart.setDragEnabled(true);
+        kmBarChart.setVisibleXRangeMaximum(3);
         kmBarChart.invalidate();
     }
     private Walk getWalkInfoFromString(String info){

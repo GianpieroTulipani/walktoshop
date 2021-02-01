@@ -189,28 +189,37 @@ public class UserView extends AppCompatActivity {
         });
     }
     private void getMyDiscounts(ArrayList discountUID){
+
         if(!discountUID.isEmpty()){
+            int k=0;
             Iterator it =discountUID.iterator();
             while(it.hasNext()){
                 String uid= (String) it.next();
                 myDiscounts.clear();
+                int finalK = k;
                 db.collection("sconti").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if(task.isSuccessful()){
                             DocumentSnapshot document= task.getResult();
-                            Discount discount=new Discount();
-                            discount.setUID(document.getString("uid"));
-                            discount.setExpiringDate(document.getString("expiringDate"));
-                            discount.setBusinessUID(document.getString("businessUID"));
-                            discount.setDiscountsQuantity(document.getString("discountsQuantity"));
-                            discount.setStartDiscountDate(document.getString("startDiscountDate"));
-                            discount.setState(document.getString("state"));
-                            discount.setDescription(document.getString("description"));
-                            discount.setStepNumber(document.getString("stepNumber"));
-                            if(Long.parseLong(discount.getExpiringDate()) > Calendar.getInstance().getTimeInMillis()) {
-                                myDiscounts.add(discount);
+                            if(document.exists()){
+                                Discount discount=new Discount();
+                                discount.setUID(document.getString("uid"));
+                                discount.setExpiringDate(document.getString("expiringDate"));
+                                discount.setBusinessUID(document.getString("businessUID"));
+                                discount.setDiscountsQuantity(document.getString("discountsQuantity"));
+                                discount.setStartDiscountDate(document.getString("startDiscountDate"));
+                                discount.setState(document.getString("state"));
+                                discount.setDescription(document.getString("description"));
+                                discount.setStepNumber(document.getString("stepNumber"));
+                                if(Long.parseLong(discount.getExpiringDate()) > Calendar.getInstance().getTimeInMillis()) {
+                                    myDiscounts.add(discount);
+                                }
+                            }else{
+                                Log.d("non success",finalK+"");
+                                discountUID.remove(finalK);
                             }
+                            setUpdatedArray(discountUID);
                         }
                     }
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -220,8 +229,12 @@ public class UserView extends AppCompatActivity {
                         homeListview.setAdapter(adapter);
                     }
                 });
+                k++;
             }
         }
+    }
+    private void setUpdatedArray(ArrayList<String> discountUID){
+        db.collection("utente").document(UserView.this.userUID).update("discountUID",discountUID);
     }
 
     private void goToUserViewMap() {

@@ -145,19 +145,21 @@ public class FragmentUserMapBackDrop extends Fragment {
                     if(task.isSuccessful()){
                         Discount discount=new Discount();
                         DocumentSnapshot document=task.getResult();
-                        discount.setUID(document.getString("uid"));
-                        discount.setBusinessUID(document.getString("businessUID"));
-                        discount.setState(document.getString("state"));
-                        discount.setExpiringDate(document.getString("expiringDate"));
-                        discount.setStepNumber(document.getString("stepNumber"));
-                        discount.setDescription(document.getString("description"));
-                        discount.setDiscountsQuantity(document.getString("discountsQuantity"));
-
-                        if(Long.parseLong(discount.getExpiringDate()) > Calendar.getInstance().getTimeInMillis()){
-                            discountArray.add(discount);
-
-                        } else {
-                            disUID.remove(finalK);
+                        if(document.exists()){
+                            discount.setUID(document.getString("uid"));
+                            discount.setBusinessUID(document.getString("businessUID"));
+                            discount.setState(document.getString("state"));
+                            discount.setExpiringDate(document.getString("expiringDate"));
+                            discount.setStepNumber(document.getString("stepNumber"));
+                            discount.setDescription(document.getString("description"));
+                            discount.setDiscountsQuantity(document.getString("discountsQuantity"));
+                            if(discount!=null){
+                                if(Long.parseLong(discount.getExpiringDate()) > Calendar.getInstance().getTimeInMillis()){
+                                    discountArray.add(discount);
+                                } else {
+                                    disUID.remove(finalK);
+                                }
+                            }
                         }
                     }
                 }

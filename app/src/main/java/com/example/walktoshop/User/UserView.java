@@ -11,6 +11,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -199,17 +200,18 @@ public class UserView extends AppCompatActivity {
                                 discount.setBusinessUID(document.getString("businessUID"));
                                 discount.setDiscountsQuantity(document.getString("discountsQuantity"));
                                 discount.setStartDiscountDate(document.getString("startDiscountDate"));
-                                discount.setState(document.getString("state"));
                                 discount.setDescription(document.getString("description"));
-                                discount.setStepNumber(document.getString("stepNumber"));
                                 if(Long.parseLong(discount.getExpiringDate()) > Calendar.getInstance().getTimeInMillis()) {
                                     myDiscounts.add(discount);
                                 }
                             }else{
                                 Log.d("non success",finalK+"");
                                 discountUID.remove(finalK);
+                                deleteSharedPref((String) discountUID.get(finalK));
+
                             }
                             setUpdatedArray(discountUID);
+
                         }
                     }
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -222,6 +224,12 @@ public class UserView extends AppCompatActivity {
                 k++;
             }
         }
+    }
+    private void deleteSharedPref(String uid){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(uid, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.apply();
     }
     private void setUpdatedArray(ArrayList<String> discountUID){
         db.collection("utente").document(UserView.this.userUID).update("discountUID",discountUID);

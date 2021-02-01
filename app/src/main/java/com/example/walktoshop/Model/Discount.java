@@ -9,10 +9,8 @@ import java.util.Calendar;
 public class Discount {
     private String UID;
     private String businessUID;
-    private String state;
     private String expiringDate;
     private String startDiscountDate;
-    private String stepNumber;
     private String description;
     private String discountsQuantity;
     //private Date expiring date
@@ -35,9 +33,6 @@ public class Discount {
         this.UID = UID;
     }
 
-    public void setState(String state) {
-        this.state = state;
-    }
 
     public void setExpiringDate(String expiringDate) {
         this.expiringDate = expiringDate;
@@ -45,10 +40,6 @@ public class Discount {
 
     public void setStartDiscountDate(String startDiscountDate) {
         this.startDiscountDate = startDiscountDate;
-    }
-
-    public void setStepNumber(String stepNumber) {
-        this.stepNumber = stepNumber;
     }
 
 
@@ -74,18 +65,9 @@ public class Discount {
         return expiringDate;
     }
 
-    public String getState() {
-        return state;
-    }
-
-    public String getStepNumber() {
-        return stepNumber;
-    }
-
     public String getDescription() {
         return description;
     }
-
 
     public String getDiscountsQuantity() {
         return discountsQuantity;

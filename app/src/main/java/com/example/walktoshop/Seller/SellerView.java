@@ -191,10 +191,8 @@ public class SellerView extends AppCompatActivity {
                             DocumentSnapshot document=task.getResult();
                             discount.setUID(document.getString("uid"));
                             discount.setBusinessUID(document.getString("businessUID"));
-                            discount.setState(document.getString("state"));
                             discount.setStartDiscountDate(document.getString("startDiscountDate"));
                             discount.setExpiringDate(document.getString("expiringDate"));
-                            discount.setStepNumber(document.getString("stepNumber"));
                             discount.setDescription(document.getString("description"));
                             discount.setDiscountsQuantity(document.getString("discountsQuantity"));
                             discountArray.add(discount);

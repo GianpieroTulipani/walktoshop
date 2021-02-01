@@ -143,9 +143,7 @@ public class FragmentUserMapBackDrop extends Fragment {
                         if(document.exists()){
                             discount.setUID(document.getString("uid"));
                             discount.setBusinessUID(document.getString("businessUID"));
-                            discount.setState(document.getString("state"));
                             discount.setExpiringDate(document.getString("expiringDate"));
-                            discount.setStepNumber(document.getString("stepNumber"));
                             discount.setDescription(document.getString("description"));
                             discount.setDiscountsQuantity(document.getString("discountsQuantity"));
                             if(discount!=null){

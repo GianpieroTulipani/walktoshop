@@ -6,25 +6,11 @@ public class User {
     private String UID;
     private String email;
     private String password;
-    private String latitude;
-    private String longitude;
     private String height;//cm
     private String weight;//kg
     private String lastWalkDate;
     private ArrayList<String> walk;
     private ArrayList<String> discountUID;
-    /*
-   o	UID
-o	Email
-o	Password
-o	Latitude
-o	Longitude
-o	Altezza
-o	Peso
-o	Falcata
-o	CamminataUID[]
-o	ScontiUID[]
-    */
     public User(){}
     //setters
 
@@ -32,21 +18,12 @@ o	ScontiUID[]
         this.UID = UID;
     }
 
-
     public void setPassword(String password) {
         this.password = password;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
     }
 
     public void setHeight(String height) {
@@ -83,13 +60,6 @@ o	ScontiUID[]
         return password;
     }
 
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
-    }
 
     public String getHeight() {
         return height;

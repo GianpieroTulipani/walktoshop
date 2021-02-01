@@ -141,7 +141,6 @@ public class ManageDiscount extends AppCompatActivity {
                     discount.setUID(customDiscountUID);
                     discount.setBusinessUID(businessUID);
                     discount.setExpiringDate(String.valueOf(expiringDateInMillis));
-                    discount.setState("");
                     discount.setDescription(stringedDescription);
                     discount.setDiscountsQuantity(stringedQuantity);
                     discount.setStartDiscountDate(todayInMills);

@@ -3,15 +3,16 @@ package com.example.walktoshop.Model;
 import java.util.ArrayList;
 
 public class User {
-    private String UID;
+    private String UID;//identificatore utente sul db
     private String email;
     private String password;
-    private String height;//cm
-    private String weight;//kg
-    private String lastWalkDate;
-    private ArrayList<String> walk;
-    private ArrayList<String> discountUID;
+    private String height;//altezza utente utile per il calcolo dei kilometri in base alla falcata
+    private String weight;//peso utente per il calcolo delle calorie in base anche al numero dei passi
+    private String lastWalkDate;//ultima data di registrazione del contapassi
+    private ArrayList<String> walk;//array di "camminate" quotidiane che verranno salvate sul db per le statistiche,sono stringhe di tipo dataInMillisecondi,passi
+    private ArrayList<String> discountUID;//array di id degli sconti che l'utente aggiunge dal backdrop presente nella UserMapView e appaiono nella home
     public User(){}
+
     //setters
 
     public void setUID(String UID) {
@@ -45,12 +46,10 @@ public class User {
     public void setDiscountUID(ArrayList<String> discountUID) { this.discountUID = discountUID;
     }
 
-
     //getters
     public String getUID() {
         return UID;
     }
-
 
     public String getEmail() {
         return email;
@@ -59,7 +58,6 @@ public class User {
     public String getPassword() {
         return password;
     }
-
 
     public String getHeight() {
         return height;

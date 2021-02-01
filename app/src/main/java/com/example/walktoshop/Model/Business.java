@@ -3,19 +3,21 @@ package com.example.walktoshop.Model;
 import android.util.Log;
 
 import java.util.ArrayList;
-
+/*
+    Classe che indica l'attività di cui il venditore è in possesso che registrerà sulla mappa e verrà scritta sul database
+ */
 public class Business{
-    private String UID=null;
-    private String ownerUID=null;
-    private String name=null;
+    private String UID=null;//id utile per le query al db
+    private String ownerUID=null;//id del proprietario
+    private String name=null;//nome dell'attività
     private String latitude=null;
     private String longitude=null;
-    private String locality=null;
-    private ArrayList discountUID=null;
+    private String locality=null;//città dell'attività
+    private ArrayList discountUID=null;//array di id degli sconti erogati dall'attività
 
     public Business(){}
-    //getter
 
+    //getter
     public String getOwnerUID() {
         return ownerUID;
     }
@@ -43,6 +45,7 @@ public class Business{
     public String getName() {
         return name;
     }
+
     //setter
     public void setOwnerUID(String ownerUID) {
         this.ownerUID = ownerUID;

@@ -3,11 +3,13 @@ package com.example.walktoshop.Model;
 import java.util.ArrayList;
 
 public class Seller {
-    private String UID;
+    private String UID;//identificatore venditore
     private String email;
     private String password;
-    private ArrayList<String> businessUID;
+    private ArrayList<String> businessUID;//array di id di attività in possesso del venditore (è un array in ottica di previsione al cambiamento in caso di più attività)
+
     public Seller(){};
+
     //getters
     public String getUID() {
         return UID;
@@ -26,7 +28,7 @@ public class Seller {
         return businessUID;
     }
 
-    //setterss
+    //setters
     public void setUID(String UID) {
         this.UID = UID;
     }

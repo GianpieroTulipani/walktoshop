@@ -7,21 +7,13 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Discount {
-    private String UID;
-    private String businessUID;
-    private String expiringDate;
-    private String startDiscountDate;
+    private String UID;//identificatore dello sconto sul db
+    private String businessUID;//identificatore dell'attività di appartenenza
+    private String expiringDate;//data di scadenza dello sconto
+    private String startDiscountDate;//data di inizio dello sconto
     private String description;
-    private String discountsQuantity;
-    //private Date expiring date
-       /*
-    o	UID
-    o	Codice(per renderlo unico uidsconto+uidUtente)
-    o	Stato
-    o	NPassiCompletamentoSconto
-    o	GiornodiScadenza
+    private String discountsQuantity;//quantità di passi che il venditore dovrà inserire in un range tra 2000 e 60000
 
-     */
     public Discount(){};
     //setters
 
@@ -41,7 +33,6 @@ public class Discount {
     public void setStartDiscountDate(String startDiscountDate) {
         this.startDiscountDate = startDiscountDate;
     }
-
 
     public void setDescription(String description) {
         this.description = description;
@@ -72,7 +63,12 @@ public class Discount {
     public String getDiscountsQuantity() {
         return discountsQuantity;
     }
-    //riconversione data
+
+    public String getStartDiscountDate() {
+        return startDiscountDate;
+    }
+
+    //metodo che converte una data da millisecondi nel formato prestabilito dd/MM/yyyy
     public String millisecondsToDate(String milliseconds){
         if(milliseconds!=null){
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -82,9 +78,5 @@ public class Discount {
             return formatter.format(calendar.getTime());
         }
         return "";
-    }
-
-    public String getStartDiscountDate() {
-        return startDiscountDate;
     }
 }

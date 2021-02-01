@@ -2,11 +2,11 @@ package com.example.walktoshop.Model;
 
 
 public class Walk {
-    private String numberOfSteps;
-    private String date;
+    private String numberOfSteps;//numero di passi della camminata
+    private String date;//data di avvenimento della registrazione in millisecondi
 
     public Walk(){}
-
+    //setters
     public void setDate(String date) {
         this.date = date;
     }

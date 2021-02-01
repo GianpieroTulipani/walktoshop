@@ -74,6 +74,7 @@ public class ManageDiscount extends AppCompatActivity {
         //setting date picker
         cal=Calendar.getInstance();
         this.todayInMills=getTodayInMills();
+        expiringDate.setEnabled(false);
         //
         addDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,8 +84,8 @@ public class ManageDiscount extends AppCompatActivity {
                 int month=cal.get(Calendar.MONTH);
                 Log.d("month", String.valueOf(month));
                 int year=cal.get(Calendar.YEAR);
-                expiringDate.setEnabled(false);
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    expiringDate.setEnabled(false);
                     fromEditText = false;
                     DatePickerDialog datePickerDialog=new DatePickerDialog(ManageDiscount.this, android.R.style.Theme_DeviceDefault_Dialog, new DatePickerDialog.OnDateSetListener() {
                         @Override

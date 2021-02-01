@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.Business;
@@ -135,9 +136,12 @@ public class SellerViewAdapter extends ArrayAdapter {
                 arrow.setVisibility(View.GONE);
                 addDiscount.setVisibility(View.GONE);
                 deleteDiscount.setVisibility(View.VISIBLE);
-                if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
-                    date.setText("Scaduto");
+                if(d != null){
+                    if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
+                        date.setText("Scaduto");
+                    }
                 }
+
                 deleteDiscount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -150,10 +154,6 @@ public class SellerViewAdapter extends ArrayAdapter {
                 addDiscount.setVisibility(View.GONE);
                 if(getSharedPrefDiscountState(d.getUID())=="completed"){
                     date.setText("Completato");
-                }
-                if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
-                    arrow.setVisibility(View.GONE);
-                    date.setText("Scaduto");
                 }
                 arrow.setOnClickListener(new View.OnClickListener() {
                     @Override

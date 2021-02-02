@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class User {
     private String UID;//identificatore utente sul db
     private String email;
+    private ArrayList<String> discountSteps;
     private String password;
     private String height;//altezza utente utile per il calcolo dei kilometri in base alla falcata
     private String weight;//peso utente per il calcolo delle calorie in base anche al numero dei passi
@@ -46,6 +47,10 @@ public class User {
     public void setDiscountUID(ArrayList<String> discountUID) { this.discountUID = discountUID;
     }
 
+    public void setDiscountSteps(ArrayList<String> discountSteps) {
+        this.discountSteps = discountSteps;
+    }
+
     //getters
     public String getUID() {
         return UID;
@@ -76,5 +81,9 @@ public class User {
     }
 
     public ArrayList<String> getDiscountUID() { return discountUID; }
+
+    public ArrayList<String> getDiscountSteps() {
+        return discountSteps;
+    }
 }
 

@@ -3,16 +3,12 @@ package com.example.walktoshop.User;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +24,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.ListIterator;
 
 public class CardView extends AppCompatActivity {
     private ProgressBar progressBar;
@@ -99,9 +95,9 @@ public class CardView extends AppCompatActivity {
         //getUserWalkInATimeRange(beginDiscountDate,expiringDiscountDate,goal,d);
 
     }
-    private void updateUI(){
+    private void updateUI(String newSteps){
         long goal= Long.parseLong(d.getDiscountsQuantity());
-        CardView.this.totalSteps=getSharedPrefDiscountSteps(d.getUID());
+        CardView.this.totalSteps=Integer.parseInt(newSteps);
         Log.d("totalSteps",totalSteps+"");
         if(totalSteps!=0 && goal!=0){
             percentage=Math.round((float)(totalSteps*100)/goal);
@@ -165,10 +161,24 @@ public class CardView extends AppCompatActivity {
                     DocumentSnapshot document= task.getResult();
                     CardView.this.userWeight=document.getString("weight");
                     CardView.this.userHeight=document.getString("height");
-                    updateUI();
+                    ArrayList<String> discountSteps = (ArrayList<String>) document.get("discountSteps");
+                    Iterator<String> it = discountSteps.iterator();
+                    while (it.hasNext()){
+                        Discount dis = getDiscountInfoFromString(it.next());
+                        if(dis.getUID().equals(CardView.this.d.getUID())){
+                            updateUI(dis.getDiscountsQuantity());
+                        }
+                    }
                 }
             }
         });
+    }
+    private Discount getDiscountInfoFromString(String info){
+        Discount d = new Discount();
+        String[] uidAndSteps =info.split(",");
+        d.setUID(uidAndSteps[0]);
+        d.setDiscountsQuantity(uidAndSteps[1]);
+        return d;
     }
 
     private float calculateKilometers(int height,long steps){

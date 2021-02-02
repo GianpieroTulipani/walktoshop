@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -19,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.example.walktoshop.Model.Discount;
 import com.example.walktoshop.Model.Walk;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,6 +28,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.ListIterator;
+
 /*
     ServiceStepCounter è un service che viene richiamato nella UserView e implementa runnable di modo che questo possa lavorare
     su un thread separato alleggerendo il lavoro del thread principale che altrimenti sarebbe sovraccaricato di lavoro.
@@ -73,7 +75,7 @@ public class ServiceStepCounter extends Service implements Runnable{
         if(intent.hasExtra("UID") && intent.hasExtra("myDiscountsUID")){
             this.UID=intent.getStringExtra("UID");
             this.myDiscounts=intent.getStringArrayListExtra("myDiscountsUID");
-            Log.d("dis",myDiscounts.get(0));
+            //Log.d("dis",myDiscounts.get(0));
             //creazione background notification channel
             makeNotificationIntent();
             //crea un thread separato e fa partire il contapassi
@@ -167,44 +169,47 @@ public class ServiceStepCounter extends Service implements Runnable{
         //spegnimento da background service,oppure qualora il service vada in onDestroy
         Log.d("des","destroy");
         //vengono allora aggiornati i passi di tutti gli sconti in possesso
-        updateSharedPrefDiscounts(mySteps,myDiscounts);
+        getDiscountSteps(mySteps);
         //vengono scritti sul db i passi effettuati giornalmente e la data
         getUserWalkArray();
     }
     /*
-    Metodo che per ogni sconto in possesso nella home aggiorna lo sharedpref precedentemente creato con i nuovi passi
-     */
-    private void updateSharedPrefDiscounts(int mySteps,ArrayList<String> myDiscounts){
-        Iterator it1= myDiscounts.iterator();
-        while (it1.hasNext()){
-            String uid=(String) it1.next();
-            int oldSteps=getSharedPrefDiscountSteps(uid);
-            if(oldSteps>-1){
-                oldSteps+=mySteps;
-                writeSharedPrefDiscountSteps(uid,oldSteps);
-            }
-        }
-    }
-    /*
     Metodo che restituisce i file dello sharedpref altrimenti restituisce -1 se assente
      */
-    private int getSharedPrefDiscountSteps(String discountUID){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID + UID, MODE_PRIVATE);
-        if(prefs.contains("steps")){
-            int value=prefs.getInt("steps", 0);
-            return value;
-        }else{
-            return -1;
-        }
+    private void getDiscountSteps(int mySteps){
+       db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+           @Override
+           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+               if(task.isSuccessful()){
+                   DocumentSnapshot document = task.getResult();
+                   if(document.exists()){
+                       ArrayList<String> discountSteps = (ArrayList<String>) document.get("discountSteps");
+                       updateDiscountSteps(mySteps, discountSteps);
+                   }
+               }
+           }
+       });
     }
     /*
         Metodo che una volta aggiornati i passi sovrascrive questi nel corrispettivo file sharedpref all'id dello sconto che è usato come chiave
      */
-    private void writeSharedPrefDiscountSteps(String discountUID,int newSteps){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID + UID, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("steps", newSteps);
-        editor.apply();
+    private void updateDiscountSteps(int mySteps, ArrayList<String> dsp){
+        Iterator<String> it1 = dsp.iterator();
+        ArrayList<String> newDsp = new ArrayList<>();
+        int newSteps;
+        while (it1.hasNext()){
+            Discount d = getDiscountInfoFromString(it1.next());
+            newSteps = Integer.parseInt(d.getDiscountsQuantity()) + mySteps;
+            newDsp.add(d.getUID() + "," + newSteps);
+        }
+        db.collection("utente").document(UID).update("discountSteps",newDsp);
+    }
+    private Discount getDiscountInfoFromString(String info){
+        Discount d = new Discount();
+        String[] uidAndSteps =info.split(",");
+        d.setUID(uidAndSteps[0]);
+        d.setDiscountsQuantity(uidAndSteps[1]);
+        return d;
     }
     /*
     Metodo che restituisce il giorno attuale in millisecondi

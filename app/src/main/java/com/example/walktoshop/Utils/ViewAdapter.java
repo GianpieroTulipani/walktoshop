@@ -145,9 +145,6 @@ public class ViewAdapter extends ArrayAdapter {
 
                 arrow.setVisibility(View.VISIBLE);
                 addDiscount.setVisibility(View.GONE);
-                if(getSharedPrefDiscountState(d.getUID())=="completed"){
-                    date.setText("Completato");
-                }
                 arrow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -167,7 +164,7 @@ public class ViewAdapter extends ArrayAdapter {
                 addDiscount.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        saveDiscountSharedPref(d);
+                        saveDiscountSteps(d);
                         killServiceIfRunning();
                         addDiscounts(d.getUID());
                         card.setVisibility(View.GONE);
@@ -182,22 +179,26 @@ public class ViewAdapter extends ArrayAdapter {
         }
         return activity;
     }
-    private void saveDiscountSharedPref(Discount d){
-        SharedPreferences prefs = getContext().getSharedPreferences(d.getUID() + UID, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt("steps", 0);
-        editor.putString("state",null);
-        editor.commit();
+    private void saveDiscountSteps(Discount d){
+        db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
+                        ArrayList<String> discountSteps = (ArrayList<String>) document.get("discountSteps");
+                        discountSteps.add(d.getUID()+",0");
+                        uploadDiscountSteps(discountSteps);
+                    }
+                }
+            }
+        });
     }
-    private String getSharedPrefDiscountState(String discountUID){
-        SharedPreferences prefs = getContext().getSharedPreferences(discountUID + UID, MODE_PRIVATE);
-        if(prefs.contains("state")){
-            String value=prefs.getString("state",null);
-            return value;
-        }else{
-            return null;
-        }
+
+    private void uploadDiscountSteps(ArrayList<String> dsp) {
+        db.collection("utente").document(UID).update("discountSteps",dsp);
     }
+
     private void deleteDiscount(int position){
         //getBusiness(position);
         db.collection("sconti").document(discounts.get(position).getUID())

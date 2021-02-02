@@ -159,7 +159,7 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void uploadUser() {
-
+        user.setDiscountSteps(new ArrayList<String>());
         user.setHeight(stringHeight);
         user.setWeight(stringWeight);
         user.setUID(mAuth.getUid());

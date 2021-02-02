@@ -54,4 +54,8 @@
     <string name="DialogFirstTime">Hai appena attivato il contapassi, questo vale per tutti i tuoi sconti nella Home. Per avere una accurata rilevazione deponi il dispositivo in tasca, fai le tue camminate e alla fine ricordati di disattivarlo per vedere i tuoi risultati!!</string>
     <string name="action_stepcounter">Pedometro</string>
     <string name="addBusinessDialog">Cliccare sul marker in rosso, per confermare l\'inserimento dell\'attività</string>
+    //networkcontroller
+    <string name="connect">Connettiti</string>
+    <string name="Undo">Annulla</string>
+    <string name="internetFail">Connessione internet troppo debole o assente.</string>
 </resources>

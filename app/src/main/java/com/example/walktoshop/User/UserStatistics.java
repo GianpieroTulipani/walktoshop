@@ -38,7 +38,7 @@ import java.util.Calendar;
 import static com.github.mikephil.charting.utils.ColorTemplate.MATERIAL_COLORS;
 
 public class UserStatistics extends AppCompatActivity {
-    FirebaseFirestore db =FirebaseFirestore.getInstance();
+    FirebaseFirestore db =FirebaseFirestore.getInstance();//istanziazione al database
     String UID;
     BarChart barChart;
     BarChart kcalBarChart;
@@ -51,15 +51,9 @@ public class UserStatistics extends AppCompatActivity {
     private ArrayList<BarEntry> dailyKm=new ArrayList<>();
     private ArrayList<BarEntry> dailyKcal= new ArrayList<BarEntry>();
     private ArrayList<String> days = new ArrayList<>();
-    private float stepsAverage = 0;
-    private float kcalAverage = 0;
-    private float kmAverage = 0;
-    private TextView stepsAverageText;
-    private TextView kcalAverageText;
     private TextView report;
     private TextView report1;
     private TextView report2;
-    private TextView kilometersAverageText;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

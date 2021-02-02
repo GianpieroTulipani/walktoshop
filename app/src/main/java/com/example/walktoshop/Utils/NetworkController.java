@@ -10,9 +10,14 @@ import android.provider.Settings;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.walktoshop.R;
+
+/*
+    La classe network controller contiene i metodi che vengono richiamati nell'on start di ogni attività per controllare se internet è presente
+ */
 public class NetworkController {
     public NetworkController(){}
-
+    //verifica se l'app è connessa ad internet sia tramite wifi che tramite connessione dati
     public boolean isConnected(AppCompatActivity app){
         ConnectivityManager connectivityManager= (ConnectivityManager) app.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifiConnection = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -23,16 +28,17 @@ public class NetworkController {
             return false;
         }
     }
+    //in caso non sia connesso parte un dialog che chiede di riconnettersi riportando l'utente alle impostazioni di rete altrimenti avviene il refresh dell'activity in corso
     public void connectionDialog(AppCompatActivity app){
         AlertDialog.Builder builder = new AlertDialog.Builder(app);
-        builder.setMessage("Connessione internet troppo debole o assente.")
+        builder.setMessage(R.string.internetFail)
                 .setCancelable(false)
-                .setPositiveButton("Connetti", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.connect, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         app.startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                     }
-                }).setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
+                }).setNegativeButton(R.string.Undo, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //restart Activity

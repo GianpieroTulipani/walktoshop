@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.example.walktoshop.Model.Discount;
 import com.example.walktoshop.R;
@@ -171,7 +173,6 @@ public class ViewAdapter extends ArrayAdapter {
                         Toast toast =  Toast.makeText(getContext(),"Sconto aggiunto con successo!Visita la Home",Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
-
                         //funzione che sava in shared pref
                     }
                 });

@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/action_exit"
-        android:icon="@drawable/ic_exit_to_app_white_24dp"
+        android:icon="@drawable/ic_logout_white_24dp"
         android:title="@string/action_exit"
         android:onClick="OnItemSelected"
         android:orderInCategory="100"

@@ -1,6 +1,7 @@
 package com.example.walktoshop.Login_SignUp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -9,12 +10,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import com.example.walktoshop.Utils.NetworkController;
 import com.example.walktoshop.R;
@@ -41,8 +44,8 @@ public class SignUp extends AppCompatActivity {
     private EditText password;
     private EditText confpassword;
     private EditText email;
-    private Switch switchButton;
-    private Button goNext;
+    private SwitchCompat switchButton;
+    private ImageView goNext;
     private TextView already_registered;
     private EditText height;
     private EditText weight;
@@ -62,8 +65,9 @@ public class SignUp extends AppCompatActivity {
         password=(EditText) findViewById(R.id.password);
         confpassword=(EditText) findViewById(R.id.confermapassword);
         email=(EditText) findViewById(R.id.email);
-        switchButton=(Switch)findViewById(R.id.switch1);
-        goNext=(Button)findViewById(R.id.nextButton);
+        switchButton=(SwitchCompat)findViewById(R.id.switch1);
+        switchButton.setHintTextColor(Color.WHITE);
+        goNext=(ImageView)findViewById(R.id.nextButton);
         height = (EditText) findViewById(R.id.height);
         weight = (EditText) findViewById(R.id.weight);
         already_registered = (TextView) findViewById(R.id.already_registered);

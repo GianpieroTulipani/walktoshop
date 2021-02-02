@@ -2,4 +2,5 @@
 <resources>
     <dimen name="material_botton_margin">16dp</dimen>
     <dimen name="material_bottom_margin">16dp</dimen>
+    <dimen name="splash_size">150dp</dimen>
 </resources>

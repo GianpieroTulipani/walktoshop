@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +33,7 @@ public class LogIn extends AppCompatActivity {
 
     private EditText emailLogIn;
     private EditText passwordLogIn;
-    private Button buttonLogIn;
+    private ImageView buttonLogIn;
     private TextView notRegistered;
     private String email;
     private String password;
@@ -48,7 +49,7 @@ public class LogIn extends AppCompatActivity {
 
         emailLogIn = (EditText) findViewById(R.id.emailLogIn);
         passwordLogIn = (EditText) findViewById(R.id.passwordLogIn);
-        buttonLogIn = (Button) findViewById(R.id.buttonlogIn);
+        buttonLogIn = (ImageView) findViewById(R.id.buttonlogIn);
         notRegistered = (TextView) findViewById(R.id.not_registered);
 
         mAuth = FirebaseAuth.getInstance();

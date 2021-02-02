@@ -1,0 +1,663 @@
+Index: app/src/main/java/com/example/walktoshop/Login_SignUp/SignUp.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.walktoshop.Login_SignUp;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.util.Patterns;\r\nimport android.view.Gravity;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.CompoundButton;\r\nimport android.widget.EditText;\r\nimport android.widget.Switch;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.example.walktoshop.Utils.NetworkController;\r\nimport com.example.walktoshop.R;\r\nimport com.example.walktoshop.Model.Seller;\r\nimport com.example.walktoshop.Seller.SellerView;\r\nimport com.example.walktoshop.Model.User;\r\nimport com.example.walktoshop.User.UserView;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.OnFailureListener;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.AuthResult;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseAuthUserCollisionException;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\nimport java.util.ArrayList;\r\nimport java.util.regex.Pattern;\r\n\r\n\r\npublic class SignUp extends AppCompatActivity {\r\n\r\n    FirebaseFirestore db = FirebaseFirestore.getInstance();\r\n    FirebaseAuth mAuth=FirebaseAuth.getInstance();\r\n    private EditText password;\r\n    private EditText confpassword;\r\n    private EditText email;\r\n    private Switch switchButton;\r\n    private Button goNext;\r\n    private TextView already_registered;\r\n    private EditText height;\r\n    private EditText weight;\r\n    private boolean isSeller;\r\n    String stringEmail=null;\r\n    String stringPassword=null;\r\n    String stringConfPassword=null;\r\n    String stringHeight=null;\r\n    String stringWeight=null;\r\n    Seller seller=new Seller();\r\n    private User user=new User();\r\n\r\n    @Override\r\n    protected void onCreate(@Nullable Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_signup);\r\n        password=(EditText) findViewById(R.id.password);\r\n        confpassword=(EditText) findViewById(R.id.confermapassword);\r\n        email=(EditText) findViewById(R.id.email);\r\n        switchButton=(Switch)findViewById(R.id.switch1);\r\n        goNext=(Button)findViewById(R.id.nextButton);\r\n        height = (EditText) findViewById(R.id.height);\r\n        weight = (EditText) findViewById(R.id.weight);\r\n        already_registered = (TextView) findViewById(R.id.already_registered);\r\n        goNext.setVisibility(View.VISIBLE);\r\n        seller.setUID(mAuth.getUid());\r\n\r\n        already_registered.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                goUserLogInActivity();\r\n            }\r\n        });\r\n\r\n        switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {\r\n            @Override\r\n            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {\r\n                if(switchButton.isChecked()){\r\n                    weight.setVisibility(View.GONE);\r\n                    height.setVisibility(View.GONE);\r\n                    isSeller = true;\r\n                } else {\r\n                    isSeller = false;\r\n                    weight.setVisibility(View.VISIBLE);\r\n                    height.setVisibility(View.VISIBLE);\r\n                }\r\n            }\r\n        });\r\n\r\n        goNext.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                if(checkUserInfo()){\r\n                    if(switchButton.isChecked()){\r\n                        //crea e carica il negoziante\r\n                        createSeller();\r\n                    }else{\r\n                        //lato utente\r\n                        createUser();\r\n                    }\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    protected void onStart() {\r\n        super.onStart();\r\n        NetworkController networkController =new NetworkController();\r\n        if(!networkController.isConnected(SignUp.this)){\r\n            networkController.connectionDialog(SignUp.this);\r\n        }\r\n    }\r\n\r\n    private void goSellerViewActivity(){\r\n        final Intent intent = new Intent(this, SellerView.class);\r\n        intent.putExtra(\"UID\", seller.getUID());\r\n        startActivity(intent);\r\n    }\r\n\r\n    private void goUserLogInActivity(){\r\n        final Intent intent = new Intent(this, LogIn.class);\r\n        startActivity(intent);\r\n    }\r\n\r\n    private void createUser() {\r\n        user.setEmail(stringEmail);\r\n        user.setPassword(stringPassword);\r\n        mAuth.createUserWithEmailAndPassword(user.getEmail(),user.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<AuthResult> task) {\r\n                if(task.isSuccessful()){\r\n                    uploadUser();\r\n                }else{\r\n                    try\r\n                    {\r\n                        throw task.getException();\r\n                    }catch (FirebaseAuthUserCollisionException existEmail) {\r\n                        email.setError(getResources().getString(R.string.emailExists));\r\n                        email.requestFocus();\r\n                    }catch(Exception e ){\r\n                        e.printStackTrace();\r\n                    }\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    private void uploadUser() {\r\n\r\n        user.setHeight(stringHeight);\r\n        user.setWeight(stringWeight);\r\n        user.setUID(mAuth.getUid());\r\n        user.setWalk(new ArrayList<String>());\r\n        user.setDiscountUID(new ArrayList<>());\r\n\r\n        db.collection(\"utente\").document(user.getUID()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {\r\n            @Override\r\n            public void onSuccess(Void aVoid) {\r\n                goHomeActivity();\r\n                finish();\r\n            }\r\n        }).addOnFailureListener(new OnFailureListener() {\r\n            @Override\r\n            public void onFailure(@NonNull Exception e) {\r\n\r\n            }\r\n        });\r\n    }\r\n\r\n    public void goHomeActivity() {\r\n        final Intent intent = new Intent(SignUp.this, UserView.class);\r\n        intent.putExtra(\"UID\",user.getUID());\r\n        startActivity(intent);\r\n    }\r\n\r\n    private void createSeller() {\r\n        seller.setEmail(stringEmail);\r\n        seller.setPassword(stringPassword);\r\n        mAuth.createUserWithEmailAndPassword(seller.getEmail(),seller.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<AuthResult> task) {\r\n                if(task.isSuccessful()){\r\n                    uploadSeller();\r\n                }else{\r\n                    try\r\n                    {\r\n                        throw task.getException();\r\n                    }catch (FirebaseAuthUserCollisionException existEmail) {\r\n                        email.setError(getResources().getString(R.string.emailExists));\r\n                        email.requestFocus();\r\n                    }catch(Exception e ){\r\n                        e.printStackTrace();\r\n                    }\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    private void uploadSeller() {\r\n        String sellerUID=mAuth.getUid();\r\n        seller.setUID(sellerUID);\r\n        db.collection(\"venditore\").document(sellerUID).set(seller).addOnSuccessListener(new OnSuccessListener<Void>() {\r\n            @Override\r\n            public void onSuccess(Void aVoid) {\r\n                Log.d(\"SUCCESSO\",\"successoo\");\r\n                goSellerViewActivity();\r\n            }\r\n        }).addOnFailureListener(new OnFailureListener() {\r\n            @Override\r\n            public void onFailure(@NonNull Exception e) {\r\n                Log.d(\"FALLIMENTO\",\"fallito\");\r\n            }\r\n        });\r\n    }\r\n\r\n    private boolean checkUserInfo(){\r\n        stringEmail=this.email.getText().toString().trim();\r\n        stringPassword= this.password.getText().toString().trim();\r\n        stringConfPassword= this.confpassword.getText().toString().trim();\r\n        stringHeight = this.height.getText().toString().trim();\r\n        stringWeight = this.weight.getText().toString().trim();\r\n\r\n        Pattern PASSWORD_PATTERN\r\n                = Pattern.compile(\"^\" + \"(?=.*[0-9])\" + \"(?=.*[a-z])\" + \"(?=.*[A-Z])\" + \"(?=.*[@#$%&?!_])\" + \"(?=\\\\S+$)\" + \".{8,}\" + \"$\");\r\n\r\n        if(stringEmail.isEmpty()){\r\n            this.email.setError(getResources().getString(R.string.emailEmpty));\r\n            this.email.requestFocus();\r\n            return false;\r\n        }else if(!Patterns.EMAIL_ADDRESS.matcher(stringEmail).matches()){\r\n            this.email.setError(getResources().getString(R.string.InvalidEmail));\r\n            this.email.requestFocus();\r\n            return false;\r\n        }else if(stringPassword.isEmpty()){\r\n            this.password.setError(getResources().getString(R.string.passwordEmpty));\r\n            this.password.requestFocus();\r\n            return false;\r\n        }else if(stringConfPassword.isEmpty()){\r\n            this.confpassword.setError(getResources().getString(R.string.passwordEmpty));\r\n            this.confpassword.requestFocus();\r\n            return false;\r\n        }else if(!isSeller && stringHeight.isEmpty()){\r\n            this.height.setError( getResources().getString(R.string.heightEmpty));\r\n            this.height.requestFocus();\r\n            return false;\r\n        }else if(!isSeller && stringWeight.isEmpty()) {\r\n            this.weight.setError(getResources().getString(R.string.weightEmpty));\r\n            this.weight.requestFocus();\r\n            return false;\r\n        }else if(!PASSWORD_PATTERN.matcher(stringPassword).matches()){\r\n            Toast toast = Toast.makeText(this,\"La password deve essere lunga almeno 8 caratteri e inserire almeno: una lettera minuscola,una maiuscola, un carattere speciale[@,#,$,%,&,?,!,_] e un numero\",Toast.LENGTH_LONG);\r\n            toast.setGravity(Gravity.CENTER, 0, 0);\r\n            toast.show();\r\n            this.password.setError(getResources().getString(R.string.InvalidPassword));\r\n            this.password.requestFocus();\r\n            return false;\r\n        }else if(!stringPassword.equals(stringConfPassword)){\r\n            this.confpassword.setError(getResources().getString(R.string.EqualPassword));\r\n            this.confpassword.requestFocus();\r\n            this.password.setError(getResources().getString(R.string.EqualPassword));\r\n            this.password.requestFocus();\r\n            return false;\r\n        }else  if(!isSeller && (Long.parseLong(stringHeight) < 100 || Long.parseLong(stringHeight) > 270)){\r\n            Toast toast = Toast.makeText(this,\"inserire un'altezza compresa tra 100cm e 278cm\",Toast.LENGTH_LONG);\r\n            toast.setGravity(Gravity.CENTER, 0, 0);\r\n            toast.show();\r\n            this.height.setError( getResources().getString(R.string.InvalidHeight));\r\n            this.height.requestFocus();\r\n            return false;\r\n        }else if(!isSeller && (Long.parseLong(stringWeight) < 40 || Long.parseLong(stringWeight) > 250)){\r\n            Toast toast = Toast.makeText(this,\"inserire un peso che sia compreso tra 40kg e 250kg\",Toast.LENGTH_LONG);\r\n            toast.setGravity(Gravity.CENTER, 0, 0);\r\n            toast.show();\r\n            this.weight.setError(getResources().getString(R.string.InvalidWeight));\r\n            this.weight.requestFocus();\r\n            return false;\r\n        }\r\n        return true;\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/walktoshop/Login_SignUp/SignUp.java	(revision 006378d458085dd4b2220a562b48faa091fa9972)
++++ app/src/main/java/com/example/walktoshop/Login_SignUp/SignUp.java	(date 1612256344559)
+@@ -1,6 +1,7 @@
+ package com.example.walktoshop.Login_SignUp;
+ 
+ import android.content.Intent;
++import android.graphics.Color;
+ import android.os.Bundle;
+ import android.util.Log;
+ import android.util.Patterns;
+@@ -9,12 +10,14 @@
+ import android.widget.Button;
+ import android.widget.CompoundButton;
+ import android.widget.EditText;
++import android.widget.ImageView;
+ import android.widget.Switch;
+ import android.widget.TextView;
+ import android.widget.Toast;
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.appcompat.app.AppCompatActivity;
++import androidx.appcompat.widget.SwitchCompat;
+ 
+ import com.example.walktoshop.Utils.NetworkController;
+ import com.example.walktoshop.R;
+@@ -41,8 +44,8 @@
+     private EditText password;
+     private EditText confpassword;
+     private EditText email;
+-    private Switch switchButton;
+-    private Button goNext;
++    private SwitchCompat switchButton;
++    private ImageView goNext;
+     private TextView already_registered;
+     private EditText height;
+     private EditText weight;
+@@ -62,8 +65,9 @@
+         password=(EditText) findViewById(R.id.password);
+         confpassword=(EditText) findViewById(R.id.confermapassword);
+         email=(EditText) findViewById(R.id.email);
+-        switchButton=(Switch)findViewById(R.id.switch1);
+-        goNext=(Button)findViewById(R.id.nextButton);
++        switchButton=(SwitchCompat)findViewById(R.id.switch1);
++        switchButton.setHintTextColor(Color.WHITE);
++        goNext=(ImageView)findViewById(R.id.nextButton);
+         height = (EditText) findViewById(R.id.height);
+         weight = (EditText) findViewById(R.id.weight);
+         already_registered = (TextView) findViewById(R.id.already_registered);
+Index: app/src/main/java/com/example/walktoshop/Login_SignUp/LogIn.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.walktoshop.Login_SignUp;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.Gravity;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.example.walktoshop.Utils.NetworkController;\r\nimport com.example.walktoshop.R;\r\nimport com.example.walktoshop.Seller.SellerView;\r\nimport com.example.walktoshop.User.UserView;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.auth.AuthResult;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.auth.FirebaseUser;\r\nimport com.google.firebase.firestore.DocumentSnapshot;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\n\r\n\r\npublic class LogIn extends AppCompatActivity {\r\n\r\n    private EditText emailLogIn;\r\n    private EditText passwordLogIn;\r\n    private Button buttonLogIn;\r\n    private TextView notRegistered;\r\n    private String email;\r\n    private String password;\r\n    private String Uid = null;\r\n\r\n    private FirebaseAuth mAuth;\r\n    FirebaseFirestore db = FirebaseFirestore.getInstance();\r\n\r\n    @Override\r\n    protected void onCreate(@Nullable Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_login);\r\n\r\n        emailLogIn = (EditText) findViewById(R.id.emailLogIn);\r\n        passwordLogIn = (EditText) findViewById(R.id.passwordLogIn);\r\n        buttonLogIn = (Button) findViewById(R.id.buttonlogIn);\r\n        notRegistered = (TextView) findViewById(R.id.not_registered);\r\n\r\n        mAuth = FirebaseAuth.getInstance();\r\n\r\n        notRegistered.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                goUserRegistrationActivity();\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n\r\n\r\n    @Override\r\n    public void onStart() {\r\n        super.onStart();\r\n        // Check if user is signed in (non-null) and update UI accordingly.\r\n        NetworkController networkController =new NetworkController();\r\n        if(!networkController.isConnected(LogIn.this)){\r\n            networkController.connectionDialog(LogIn.this);\r\n        }\r\n        FirebaseUser currentUser = mAuth.getCurrentUser();\r\n        if(currentUser != null) {\r\n           Uid = mAuth.getUid();\r\n           Log.d(\"loggato\",Uid);\r\n           db.collection(\"venditore\").document(Uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {\r\n               @Override\r\n               public void onSuccess(DocumentSnapshot documentSnapshot) {\r\n                   if(documentSnapshot.exists()) {\r\n                       goSellerViewActivity();\r\n                   }else{\r\n                       goUserViewActivity();\r\n                   }\r\n               }\r\n           });\r\n        }\r\n    }\r\n\r\n    //questo metodo effettua l'autenticazione dell'utente\r\n    public void login(View v){\r\n\r\n        this.email = this.emailLogIn.getText().toString().trim();\r\n        this.password = this.passwordLogIn.getText().toString().trim();\r\n\r\n        //qui viene effettuata l'autenticazione che se va a buon fine, controlla la tipologia di utente\r\n        //e lo manda alla home rispettiva\r\n        //altrimenti segnala degli errori rispetto ai campi\r\n        if(checkInfo()) {\r\n\r\n            mAuth.signInWithEmailAndPassword(email, password)\r\n                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {\r\n                        @Override\r\n                        public void onComplete(@NonNull Task<AuthResult> task) {\r\n                            if (task.isSuccessful()) {\r\n                                Uid = mAuth.getCurrentUser().getUid();\r\n                                checkTypeUser();\r\n                            }\r\n                            else\r\n                            {\r\n                                emailLogIn.setError(getResources().getString(R.string.InvalidEmail));\r\n                                passwordLogIn.setError(getResources().getString(R.string.InvalidPassword));\r\n                                Toast toast = Toast.makeText(LogIn.this,\"EMAIL O PASSWORD ERRATI\",Toast.LENGTH_LONG);\r\n                                toast.setGravity(Gravity.CENTER, 0, 0);\r\n                                toast.show();\r\n                            }\r\n                        }\r\n                    });\r\n        }\r\n    }\r\n\r\n    // questo metodo controlla che tipo di utente si sta loggando e quindi in che home indirizzarlo\r\n    public void  checkTypeUser()\r\n    {\r\n        db.collection(\"venditore\").document(Uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {\r\n\r\n            //dopo aver confrontato l'uid dell'utente dell'utente loggato  con quello dei venditori\r\n            //controlliamo che il documento effettivamente esista e se esiste\r\n            //questo logga come venditore, andando alla home venditore\r\n            //altrimenti come utente, andando alla home utente\r\n            @Override\r\n            public void onSuccess(DocumentSnapshot documentSnapshot) {\r\n                if(documentSnapshot.exists()) {\r\n                    goSellerViewActivity();\r\n                    finish();\r\n                }\r\n                else{\r\n                    goUserViewActivity();\r\n                    finish();\r\n                }\r\n            }\r\n        });\r\n    }\r\n    private void goSellerViewActivity(){\r\n        final Intent intent = new Intent(this, SellerView.class);\r\n        intent.putExtra(\"UID\", Uid);\r\n        startActivity(intent);\r\n    }\r\n    private void goUserViewActivity() {\r\n        final Intent intent = new Intent(this, UserView.class);\r\n        intent.putExtra(\"UID\", Uid);\r\n        startActivity(intent);\r\n    }\r\n    private void goUserRegistrationActivity(){\r\n        final Intent intent = new Intent(this, SignUp.class);\r\n        startActivity(intent);\r\n    }\r\n\r\n    private boolean checkInfo(){\r\n\r\n        if(email.isEmpty() ){\r\n            emailLogIn.setError(getResources().getString(R.string.emailEmpty));\r\n            this.emailLogIn.requestFocus();\r\n            return false;\r\n\r\n        }else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){\r\n            emailLogIn.setError(getResources().getString(R.string.InvalidEmail));\r\n            this.emailLogIn.requestFocus();\r\n            return false;\r\n\r\n        }else if(password.isEmpty()){\r\n            passwordLogIn.setError(getResources().getString(R.string.passwordEmpty));\r\n            this.passwordLogIn.requestFocus();\r\n            return false;\r\n        }\r\n\r\n        return true;\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/walktoshop/Login_SignUp/LogIn.java	(revision 006378d458085dd4b2220a562b48faa091fa9972)
++++ app/src/main/java/com/example/walktoshop/Login_SignUp/LogIn.java	(date 1612252381526)
+@@ -7,6 +7,7 @@
+ import android.view.View;
+ import android.widget.Button;
+ import android.widget.EditText;
++import android.widget.ImageView;
+ import android.widget.TextView;
+ import android.widget.Toast;
+ 
+@@ -32,7 +33,7 @@
+ 
+     private EditText emailLogIn;
+     private EditText passwordLogIn;
+-    private Button buttonLogIn;
++    private ImageView buttonLogIn;
+     private TextView notRegistered;
+     private String email;
+     private String password;
+@@ -48,7 +49,7 @@
+ 
+         emailLogIn = (EditText) findViewById(R.id.emailLogIn);
+         passwordLogIn = (EditText) findViewById(R.id.passwordLogIn);
+-        buttonLogIn = (Button) findViewById(R.id.buttonlogIn);
++        buttonLogIn = (ImageView) findViewById(R.id.buttonlogIn);
+         notRegistered = (TextView) findViewById(R.id.not_registered);
+ 
+         mAuth = FirebaseAuth.getInstance();
+Index: app/src/main/res/layout/activity_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:padding=\"16dp\"\r\n    android:id=\"@+id/itemPage\"\r\n    android:orientation=\"vertical\"\r\n    android:background=\"@color/white_ice\">\r\n\r\n    <RelativeLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"vertical\">\r\n\r\n        <TextView\r\n            android:id=\"@+id/banner\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:text=\"WalkToShop\"\r\n            android:textAlignment=\"center\"\r\n            android:textSize=\"60sp\"\r\n            android:textStyle=\"bold\"\r\n            android:layout_marginVertical=\"50dp\"\r\n            android:layout_gravity=\"center\"/>\r\n\r\n        <EditText\r\n            android:id=\"@+id/emailLogIn\"\r\n            android:layout_width=\"317dp\"\r\n            android:layout_height=\"54dp\"\r\n            android:background=\"@drawable/ic_text_box\"\r\n            android:drawableStart=\"@drawable/ic_email\"\r\n            android:drawablePadding=\"4dp\"\r\n            android:elevation=\"6dp\"\r\n            android:hint=\"Email\"\r\n            android:inputType=\"textEmailAddress\"\r\n            android:paddingStart=\"6dp\"\r\n            android:layout_below=\"@id/banner\"\r\n            android:layout_centerHorizontal=\"true\"\r\n            android:layout_marginVertical=\"50dp\" />\r\n\r\n        <EditText\r\n            android:id=\"@+id/passwordLogIn\"\r\n            android:layout_width=\"317dp\"\r\n            android:layout_height=\"54dp\"\r\n            android:background=\"@drawable/ic_text_box\"\r\n            android:drawableStart=\"@drawable/ic_psw\"\r\n            android:drawablePadding=\"4dp\"\r\n            android:layout_below=\"@id/banner\"\r\n            android:elevation=\"6dp\"\r\n            android:layout_marginVertical=\"130dp\"\r\n            android:hint=\"Password\"\r\n            android:layout_centerHorizontal=\"true\"\r\n            android:inputType=\"textPassword\"\r\n            android:paddingStart=\"6dp\"\r\n            />\r\n\r\n\r\n        <Button\r\n            android:id=\"@+id/buttonlogIn\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:background=\"@drawable/rounded_button\"\r\n            android:onClick=\"login\"\r\n            android:text=\"Accedi\"\r\n            android:layout_below=\"@id/emailLogIn\"\r\n            android:layout_alignRight=\"@id/passwordLogIn\"\r\n            android:layout_marginVertical=\"60dp\"\r\n            android:textColor=\"@color/white_ice\" />\r\n\r\n        <TextView\r\n            android:id=\"@+id/not_registered\"\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:text=\"Non sei registrato? Clicca qui!\"\r\n            android:textColor=\"#7081DF\"\r\n            android:textSize=\"16sp\"\r\n            android:textStyle=\"bold\"\r\n            android:layout_below=\"@id/emailLogIn\"\r\n            android:layout_centerHorizontal=\"true\"\r\n            android:layout_marginVertical=\"130dp\"/>\r\n\r\n\r\n    </RelativeLayout>\r\n\r\n\r\n</androidx.coordinatorlayout.widget.CoordinatorLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_login.xml	(revision 006378d458085dd4b2220a562b48faa091fa9972)
++++ app/src/main/res/layout/activity_login.xml	(date 1612258401704)
+@@ -18,10 +18,12 @@
+             android:layout_height="wrap_content"
+             android:text="WalkToShop"
+             android:textAlignment="center"
+-            android:textSize="60sp"
++            android:textSize="55dp"
++            android:textColor="@color/verde_maggio"
+             android:textStyle="bold"
+             android:layout_marginVertical="50dp"
+-            android:layout_gravity="center"/>
++            android:layout_gravity="center"
++            android:fitsSystemWindows="true"/>
+ 
+         <EditText
+             android:id="@+id/emailLogIn"
+@@ -32,9 +34,11 @@
+             android:drawablePadding="4dp"
+             android:elevation="6dp"
+             android:hint="Email"
++            android:drawableTint="@color/verde_maggio"
+             android:inputType="textEmailAddress"
+             android:paddingStart="6dp"
+             android:layout_below="@id/banner"
++            android:textColor="@color/black"
+             android:layout_centerHorizontal="true"
+             android:layout_marginVertical="50dp" />
+ 
+@@ -46,7 +50,9 @@
+             android:drawableStart="@drawable/ic_psw"
+             android:drawablePadding="4dp"
+             android:layout_below="@id/banner"
++            android:drawableTint="@color/verde_maggio"
+             android:elevation="6dp"
++            android:textColor="@color/black"
+             android:layout_marginVertical="130dp"
+             android:hint="Password"
+             android:layout_centerHorizontal="true"
+@@ -55,16 +61,16 @@
+             />
+ 
+ 
+-        <Button
++        <ImageView
+             android:id="@+id/buttonlogIn"
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:background="@drawable/rounded_button"
+-            android:onClick="login"
+-            android:text="Accedi"
++            android:layout_width="96dp"
++            android:layout_height="36dp"
+             android:layout_below="@id/emailLogIn"
+             android:layout_alignRight="@id/passwordLogIn"
+             android:layout_marginVertical="60dp"
++            android:background="@drawable/rounded_button"
++            android:onClick="login"
++            android:src="@drawable/ic_login_white_24dp"
+             android:textColor="@color/white_ice" />
+ 
+         <TextView
+Index: app/src/main/res/layout/activity_signup.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.coordinatorlayout.widget.CoordinatorLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:padding=\"16dp\"\r\n    android:id=\"@+id/itemPage\"\r\n    android:orientation=\"vertical\"\r\n    android:background=\"@color/white_ice\"\r\n    android:fitsSystemWindows=\"true\">\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:orientation=\"vertical\">\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:orientation=\"vertical\">\r\n            <TextView\r\n                android:id=\"@+id/banner\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:text=\"WalkToShop\"\r\n                android:textAlignment=\"center\"\r\n                android:textSize=\"50dp\"\r\n                android:textColor=\"@color/verde_maggio\"\r\n                android:textStyle=\"bold\"\r\n                android:layout_marginTop=\"20dp\"\r\n                android:layout_gravity=\"center\"\r\n                android:fitsSystemWindows=\"true\"/>\r\n\r\n\r\n            <Switch\r\n                android:layout_marginTop=\"20dp\"\r\n                android:id=\"@+id/switch1\"\r\n                android:layout_width=\"139dp\"\r\n                android:layout_height=\"53dp\"\r\n                android:layout_gravity=\"center\"\r\n                android:text=\"Utente\" />\r\n        </LinearLayout>\r\n\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:orientation=\"vertical\">\r\n\r\n\r\n            <EditText\r\n                android:id=\"@+id/email\"\r\n                android:layout_width=\"317dp\"\r\n                android:layout_height=\"54dp\"\r\n                android:layout_gravity=\"center\"\r\n                android:layout_marginVertical=\"10dp\"\r\n                android:background=\"@drawable/ic_text_box\"\r\n                android:drawableStart=\"@drawable/ic_email\"\r\n                android:drawablePadding=\"4dp\"\r\n                android:elevation=\"6dp\"\r\n                android:ems=\"10\"\r\n                android:hint=\"@string/email\"\r\n                android:inputType=\"textEmailAddress\"\r\n                android:paddingStart=\"6dp\" />\r\n\r\n            <EditText\r\n                android:id=\"@+id/password\"\r\n                android:layout_width=\"317dp\"\r\n                android:layout_height=\"54dp\"\r\n                android:layout_gravity=\"center\"\r\n                android:background=\"@drawable/ic_text_box\"\r\n                android:drawableStart=\"@drawable/ic_psw\"\r\n                android:drawablePadding=\"4dp\"\r\n                android:elevation=\"6dp\"\r\n                android:hint=\"Password\"\r\n                android:inputType=\"textPassword\"\r\n                android:paddingStart=\"6dp\" />\r\n\r\n            <EditText\r\n                android:id=\"@+id/confermapassword\"\r\n                android:layout_width=\"317dp\"\r\n                android:layout_height=\"54dp\"\r\n                android:layout_gravity=\"center\"\r\n                android:layout_marginVertical=\"10dp\"\r\n                android:background=\"@drawable/ic_text_box\"\r\n                android:drawableStart=\"@drawable/ic_psw\"\r\n                android:drawablePadding=\"4dp\"\r\n                android:elevation=\"6dp\"\r\n                android:hint=\"Conferma password\"\r\n                android:inputType=\"textPassword\"\r\n                android:paddingStart=\"6dp\" />\r\n\r\n            <EditText\r\n                android:id=\"@+id/height\"\r\n                android:layout_width=\"317dp\"\r\n                android:layout_height=\"54dp\"\r\n                android:layout_gravity=\"center\"\r\n                android:background=\"@drawable/ic_text_box\"\r\n                android:drawableStart=\"@drawable/ic_height\"\r\n                android:drawablePadding=\"4dp\"\r\n                android:elevation=\"6dp\"\r\n                android:inputType=\"number\"\r\n                android:hint=\"@string/height\"\r\n                android:paddingStart=\"6dp\" />\r\n\r\n            <EditText\r\n                android:id=\"@+id/weight\"\r\n                android:layout_width=\"317dp\"\r\n                android:layout_height=\"54dp\"\r\n                android:layout_marginVertical=\"10dp\"\r\n                android:layout_gravity=\"center\"\r\n                android:background=\"@drawable/ic_text_box\"\r\n                android:drawableStart=\"@drawable/ic_balance\"\r\n                android:drawablePadding=\"4dp\"\r\n                android:elevation=\"6dp\"\r\n                android:inputType=\"number\"\r\n                android:hint=\"@string/weight\"\r\n                android:paddingStart=\"6dp\" />\r\n\r\n        </LinearLayout>\r\n\r\n\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:orientation=\"vertical\">\r\n\r\n            <Button\r\n                android:id=\"@+id/nextButton\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_gravity=\"right\"\r\n                android:layout_marginVertical=\"10dp\"\r\n                android:background=\"@drawable/rounded_button\"\r\n                android:text=\"Avanti\"\r\n                android:textColor=\"@color/white_ice\" />\r\n\r\n            <TextView\r\n                android:id=\"@+id/already_registered\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_gravity=\"center\"\r\n                android:text=\"Sei già registrato? Clicca qui!\"\r\n                android:textColor=\"#7081DF\"\r\n                android:textSize=\"16sp\"\r\n                android:textStyle=\"bold\" />\r\n\r\n\r\n        </LinearLayout>\r\n\r\n    </LinearLayout>\r\n\r\n\r\n\r\n</androidx.coordinatorlayout.widget.CoordinatorLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_signup.xml	(revision 006378d458085dd4b2220a562b48faa091fa9972)
++++ app/src/main/res/layout/activity_signup.xml	(date 1612258401714)
+@@ -24,7 +24,7 @@
+                 android:layout_height="wrap_content"
+                 android:text="WalkToShop"
+                 android:textAlignment="center"
+-                android:textSize="50dp"
++                android:textSize="55dp"
+                 android:textColor="@color/verde_maggio"
+                 android:textStyle="bold"
+                 android:layout_marginTop="20dp"
+@@ -32,13 +32,18 @@
+                 android:fitsSystemWindows="true"/>
+ 
+ 
+-            <Switch
+-                android:layout_marginTop="20dp"
++            <androidx.appcompat.widget.SwitchCompat
+                 android:id="@+id/switch1"
+-                android:layout_width="139dp"
+-                android:layout_height="53dp"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
+                 android:layout_gravity="center"
+-                android:text="Utente" />
++                android:layout_marginTop="20dp"
++                android:textOff="Utente"
++                android:textOn="Venditore"
++                android:textStyle="bold"
++                android:thumb="@drawable/sw_thumb"
++                app:showText="true"
++                app:track="@drawable/sw_track" />
+         </LinearLayout>
+ 
+         <LinearLayout
+@@ -53,7 +58,9 @@
+                 android:layout_height="54dp"
+                 android:layout_gravity="center"
+                 android:layout_marginVertical="10dp"
++                android:textColor="@color/black"
+                 android:background="@drawable/ic_text_box"
++                android:drawableTint="@color/verde_maggio"
+                 android:drawableStart="@drawable/ic_email"
+                 android:drawablePadding="4dp"
+                 android:elevation="6dp"
+@@ -67,6 +74,8 @@
+                 android:layout_width="317dp"
+                 android:layout_height="54dp"
+                 android:layout_gravity="center"
++                android:textColor="@color/black"
++                android:drawableTint="@color/verde_maggio"
+                 android:background="@drawable/ic_text_box"
+                 android:drawableStart="@drawable/ic_psw"
+                 android:drawablePadding="4dp"
+@@ -80,6 +89,8 @@
+                 android:layout_width="317dp"
+                 android:layout_height="54dp"
+                 android:layout_gravity="center"
++                android:textColor="@color/black"
++                android:drawableTint="@color/verde_maggio"
+                 android:layout_marginVertical="10dp"
+                 android:background="@drawable/ic_text_box"
+                 android:drawableStart="@drawable/ic_psw"
+@@ -94,6 +105,8 @@
+                 android:layout_width="317dp"
+                 android:layout_height="54dp"
+                 android:layout_gravity="center"
++                android:textColor="@color/black"
++                android:drawableTint="@color/verde_maggio"
+                 android:background="@drawable/ic_text_box"
+                 android:drawableStart="@drawable/ic_height"
+                 android:drawablePadding="4dp"
+@@ -108,6 +121,8 @@
+                 android:layout_height="54dp"
+                 android:layout_marginVertical="10dp"
+                 android:layout_gravity="center"
++                android:drawableTint="@color/verde_maggio"
++                android:textColor="@color/black"
+                 android:background="@drawable/ic_text_box"
+                 android:drawableStart="@drawable/ic_balance"
+                 android:drawablePadding="4dp"
+@@ -120,19 +135,21 @@
+ 
+ 
+         <LinearLayout
+-            android:layout_width="match_parent"
++            android:layout_width="317dp"
+             android:layout_height="wrap_content"
++            android:layout_gravity="center"
+             android:orientation="vertical">
+ 
+-            <Button
++            <ImageView
+                 android:id="@+id/nextButton"
+-                android:layout_width="wrap_content"
+-                android:layout_height="wrap_content"
++                android:layout_width="96dp"
++                android:layout_height="36dp"
+                 android:layout_gravity="right"
+                 android:layout_marginVertical="10dp"
+                 android:background="@drawable/rounded_button"
+-                android:text="Avanti"
+-                android:textColor="@color/white_ice" />
++                android:src="@drawable/ic_add_people_interface_symbol_of_black_person_close_up_with_plus_sign_in_small_circle"
++                android:textColor="@color/white_ice"
++                app:tint="@color/white" />
+ 
+             <TextView
+                 android:id="@+id/already_registered"
+Index: app/src/main/java/com/example/walktoshop/Utils/ViewAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.walktoshop.Utils;\r\n\r\nimport android.app.ActivityManager;\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.content.SharedPreferences;\r\nimport android.util.Log;\r\nimport android.view.Gravity;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ArrayAdapter;\r\nimport android.widget.ImageButton;\r\nimport android.widget.ImageView;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\n\r\nimport com.example.walktoshop.Model.Discount;\r\nimport com.example.walktoshop.R;\r\nimport com.example.walktoshop.User.CardView;\r\nimport com.example.walktoshop.User.ServiceStepCounter;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.OnFailureListener;\r\nimport com.google.android.gms.tasks.OnSuccessListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.firestore.DocumentSnapshot;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\nimport com.google.gson.Gson;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\n\r\nimport static android.content.Context.MODE_PRIVATE;\r\n\r\npublic class ViewAdapter extends ArrayAdapter {\r\n    private Context context;\r\n    private ArrayList<Discount> discounts;\r\n    private String UID;\r\n    private ArrayList<String> businessUID;\r\n    private String usage;\r\n    FirebaseFirestore db =FirebaseFirestore.getInstance();\r\n\r\n    public ViewAdapter(Context context, ArrayList<Discount> discounts, String UID, ArrayList businessUID, String usage) {\r\n        super(context, R.layout.activity_sellerviewadapter);\r\n        this.context=context;\r\n        this.discounts=discounts;\r\n        this.UID = UID;\r\n        this.usage= usage;\r\n        this.businessUID = businessUID;\r\n\r\n    }\r\n    @Override\r\n    public int getCount() {\r\n        return discounts.size();\r\n    }\r\n    @Override\r\n    public Object getItem(int position) {\r\n        return discounts.get(position);\r\n    }\r\n\r\n    @Override\r\n    public long getItemId(int position) {\r\n        return position;\r\n    }\r\n    @Override\r\n    public int getViewTypeCount() {\r\n        if(getCount() > 0){\r\n            return getCount();\r\n        }else{\r\n            return super.getViewTypeCount();\r\n        }\r\n    }\r\n    @Override\r\n    public int getItemViewType(int position) {\r\n        return position;\r\n    }\r\n\r\n    @NonNull\r\n    @Override\r\n    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {\r\n        LayoutInflater layoutInflater=(LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);\r\n        final View activity = layoutInflater.inflate(R.layout.activity_sellerviewadapter,parent,false);\r\n        //caratteristiche card di sconto\r\n        TextView disocuntDescription= activity.findViewById(R.id.disocuntDescription);\r\n        TextView date = activity.findViewById(R.id.date);\r\n        //bottone eliminazione\r\n        ImageButton deleteDiscount =activity.findViewById(R.id.deleteDiscount);\r\n        //modifica\r\n        TextView difficulty = activity.findViewById(R.id.difficulty);\r\n        ImageView difficultyColor = activity.findViewById(R.id.difficultyColor);\r\n        ImageButton arrow = (ImageButton) activity.findViewById(R.id.arrow);\r\n        ImageView addDiscount = (ImageView) activity.findViewById(R.id.addButton);\r\n\r\n        //bottone attivazione contapassi\r\n        //bottone abilitazione\r\n        if(this.discounts.get(position) != null && position>=0 && !discounts.isEmpty()){\r\n            Discount d=this.discounts.get(position);\r\n            //settare tutti gli attributi xml\r\n            Log.d(\"DATE\", d.millisecondsToDate(d.getExpiringDate()));\r\n            date.setText(\"scadenza: \"+d.millisecondsToDate(d.getExpiringDate()));\r\n            disocuntDescription.setText(d.getDescription());\r\n            String stringedGoal=d.getDiscountsQuantity();\r\n            Log.d(\"string\",stringedGoal+\"\");\r\n\r\n            if(stringedGoal != null){\r\n                int goal= Integer.parseInt(stringedGoal);\r\n\r\n                if(goal<5000){\r\n                    difficulty.setText(\"Facile\");\r\n\r\n                }else if(goal>=5000 && goal<=20000){\r\n                    difficulty.setText(\"Difficoltà Media\");\r\n                    difficultyColor.setImageResource(R.drawable.ic_yellow);\r\n                }else if(goal>20000){\r\n                    difficulty.setText(\"Difficile\");\r\n                    difficultyColor.setImageResource(R.drawable.ic_red);\r\n                }\r\n            }\r\n            //visibility\r\n            deleteDiscount.setVisibility(View.GONE);\r\n            if(this.usage==\"sellerHome\"){\r\n                arrow.setVisibility(View.GONE);\r\n                addDiscount.setVisibility(View.GONE);\r\n                deleteDiscount.setVisibility(View.VISIBLE);\r\n                if(d != null){\r\n                    if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){\r\n                        date.setText(\"Scaduto\");\r\n                    }\r\n                }\r\n\r\n                deleteDiscount.setOnClickListener(new View.OnClickListener() {\r\n                    @Override\r\n                    public void onClick(View v) {\r\n                        //Log.d(\"p\",discounts.get(position).getUID()+\" \");\r\n                        getBusiness(position);\r\n                    }\r\n                });\r\n            }else if(this.usage==\"userHome\"){\r\n                arrow.setVisibility(View.VISIBLE);\r\n                addDiscount.setVisibility(View.GONE);\r\n                if(getSharedPrefDiscountState(d.getUID())==\"completed\"){\r\n                    date.setText(\"Completato\");\r\n                }\r\n                arrow.setOnClickListener(new View.OnClickListener() {\r\n                    @Override\r\n                    public void onClick(View v) {\r\n                        final Intent intent = new Intent(getContext(), CardView.class);\r\n                        Gson gson = new Gson();\r\n                        String jsonDiscount = gson.toJson(d);\r\n                        intent.putExtra(\"discount\",jsonDiscount);\r\n                        Log.d(\"json\",jsonDiscount);\r\n                        intent.putExtra(\"UID\",UID);\r\n                        context.startActivity(intent);\r\n                    }\r\n                });\r\n                //qui si devono inserire elementi grafici tipici della vista in cui è chiamato\r\n            }else if(this.usage==\"backdropList\"){\r\n                arrow.setVisibility(View.GONE);\r\n                addDiscount.setVisibility(View.VISIBLE);\r\n                addDiscount.setOnClickListener(new View.OnClickListener() {\r\n                    @Override\r\n                    public void onClick(View view) {\r\n                        saveDiscountSharedPref(d);\r\n                        killServiceIfRunning();\r\n                        addDiscounts(d.getUID());\r\n                        Toast toast =  Toast.makeText(getContext(),\"Sconto aggiunto con successo!Visita la Home\",Toast.LENGTH_LONG);\r\n                        toast.setGravity(Gravity.CENTER, 0, 0);\r\n                        toast.show();\r\n\r\n                        //funzione che sava in shared pref\r\n                    }\r\n                });\r\n                //qui si devono inserire elementi grafici tipici della vista in cui è chiamato\r\n            }\r\n        }\r\n        return activity;\r\n    }\r\n    private void saveDiscountSharedPref(Discount d){\r\n        SharedPreferences prefs = getContext().getSharedPreferences(d.getUID(), MODE_PRIVATE);\r\n        SharedPreferences.Editor editor = prefs.edit();\r\n        editor.putInt(\"steps\", 0);\r\n        editor.putString(\"state\",null);\r\n        editor.commit();\r\n    }\r\n    private String getSharedPrefDiscountState(String discountUID){\r\n        SharedPreferences prefs = getContext().getSharedPreferences(discountUID, MODE_PRIVATE);\r\n        if(prefs.contains(\"state\")){\r\n            String value=prefs.getString(\"state\",null);\r\n            return value;\r\n        }else{\r\n            return null;\r\n        }\r\n    }\r\n    private void deleteDiscount(int position){\r\n        //getBusiness(position);\r\n        db.collection(\"sconti\").document(discounts.get(position).getUID())\r\n                .delete()\r\n                .addOnSuccessListener(new OnSuccessListener<Void>() {\r\n                    @Override\r\n                    public void onSuccess(Void aVoid) {\r\n                        Log.d(\"delete\", \"DocumentSnapshot successfully deleted!\");\r\n                    }\r\n                })\r\n                .addOnFailureListener(new OnFailureListener() {\r\n                    @Override\r\n                    public void onFailure(@NonNull Exception e) {\r\n                        Log.w(\"delete\", \"Error deleting document\", e);\r\n                    }\r\n                }).addOnCompleteListener(new OnCompleteListener<Void>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<Void> task) {\r\n                ViewAdapter.this.discounts.remove(position);\r\n                ViewAdapter.this.notifyDataSetChanged();\r\n            }\r\n        });\r\n    }\r\n\r\n    private void getBusiness(int position)\r\n    {\r\n        db.collection(\"attivita\").document(businessUID.get(0)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<DocumentSnapshot> task) {\r\n                if(task.isSuccessful())\r\n                {   Log.d(\"position\",position+\" \");\r\n                    DocumentSnapshot document = task.getResult();\r\n                    ArrayList<String> discountUID = (ArrayList<String>) document.get(\"discountUID\");\r\n                    discountUID.remove(position);\r\n                    Log.d(\"discountUID\", discountUID.size()+\" \");\r\n                    updateBusiness(discountUID,position);\r\n                }else{\r\n                    Log.d(\"non successo\",\"non successo\");\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    private void updateBusiness(ArrayList<String> discountUID,int position)\r\n    {\r\n        db.collection(\"attivita\").document(businessUID.get(0)).update(\"discountUID\",discountUID).addOnCompleteListener(new OnCompleteListener<Void>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<Void> task) {\r\n                if(task.isSuccessful())\r\n                {\r\n                    deleteDiscount(position);\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    //query di aggiunta sconto\r\n    private void addDiscounts(String discountuid){\r\n        db.collection(\"utente\").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<DocumentSnapshot> task) {\r\n                if(task.isSuccessful()){\r\n                    DocumentSnapshot document=task.getResult();\r\n                    ArrayList<String> discountUID= (ArrayList<String>) document.get(\"discountUID\");\r\n                    if(discountUID==null){\r\n                        discountUID=new ArrayList<>();\r\n                    }\r\n                    discountUID.add(discountuid);\r\n                    updateUserDiscounts(discountUID);\r\n                }\r\n            }\r\n        });\r\n    }\r\n    private void updateUserDiscounts(ArrayList<String> discountUID){\r\n        db.collection(\"utente\").document(UID).update(\"discountUID\",discountUID);\r\n    }\r\n    private void killServiceIfRunning(){\r\n        if(isMyServiceRunning(ServiceStepCounter.class) == true){\r\n            Intent intent =new Intent(getContext(), ServiceStepCounter.class);\r\n            Toast.makeText(getContext(),\"Contapassi disattivato\",Toast.LENGTH_SHORT).show();\r\n            getContext().stopService(intent);\r\n        }\r\n    }\r\n    private boolean isMyServiceRunning(Class<?> serviceClass) {\r\n        ActivityManager manager = (ActivityManager) getContext().getSystemService(Context.ACTIVITY_SERVICE);\r\n        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {\r\n            if (serviceClass.getName().equals(service.service.getClassName())) {\r\n                return true;\r\n            }\r\n        }\r\n        return false;\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/walktoshop/Utils/ViewAdapter.java	(revision 006378d458085dd4b2220a562b48faa091fa9972)
++++ app/src/main/java/com/example/walktoshop/Utils/ViewAdapter.java	(date 1612221338973)
+@@ -9,6 +9,7 @@
+ import android.view.LayoutInflater;
+ import android.view.View;
+ import android.view.ViewGroup;
++import android.widget.AdapterView;
+ import android.widget.ArrayAdapter;
+ import android.widget.ImageButton;
+ import android.widget.ImageView;
+@@ -17,6 +18,7 @@
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
++import androidx.coordinatorlayout.widget.CoordinatorLayout;
+ 
+ import com.example.walktoshop.Model.Discount;
+ import com.example.walktoshop.R;
+@@ -169,7 +171,6 @@
+                         Toast toast =  Toast.makeText(getContext(),"Sconto aggiunto con successo!Visita la Home",Toast.LENGTH_LONG);
+                         toast.setGravity(Gravity.CENTER, 0, 0);
+                         toast.show();
+-
+                         //funzione che sava in shared pref
+                     }
+                 });
+Index: app/src/main/res/menu/menu_action_bar.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<menu xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:id=\"@+id/menuActionBar\">\r\n\r\n    <item\r\n        android:id=\"@+id/action_exit\"\r\n        android:icon=\"@drawable/ic_exit_to_app_white_24dp\"\r\n        android:title=\"@string/action_exit\"\r\n        android:onClick=\"OnItemSelected\"\r\n        android:orderInCategory=\"100\"\r\n        app:showAsAction=\"always\"/>\r\n\r\n</menu>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/menu/menu_action_bar.xml	(revision 006378d458085dd4b2220a562b48faa091fa9972)
++++ app/src/main/res/menu/menu_action_bar.xml	(date 1612252588892)
+@@ -5,7 +5,7 @@
+ 
+     <item
+         android:id="@+id/action_exit"
+-        android:icon="@drawable/ic_exit_to_app_white_24dp"
++        android:icon="@drawable/ic_logout_white_24dp"
+         android:title="@string/action_exit"
+         android:onClick="OnItemSelected"
+         android:orderInCategory="100"
+Index: app/src/main/res/drawable/ic_logout_white_24dp.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_logout_white_24dp.xml	(date 1612252223232)
++++ app/src/main/res/drawable/ic_logout_white_24dp.xml	(date 1612252223232)
+@@ -0,0 +1,9 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24">
++  <path
++      android:pathData="M17,7l-1.41,1.41L18.17,11H8v2h10.17l-2.58,2.58L17,17l5,-5zM4,5h8V3H4c-1.1,0 -2,0.9 -2,2v14c0,1.1 0.9,2 2,2h8v-2H4V5z"
++      android:fillColor="#ffffff"/>
++</vector>
+Index: app/src/main/res/drawable/ic_login_white_24dp.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_login_white_24dp.xml	(date 1612252237122)
++++ app/src/main/res/drawable/ic_login_white_24dp.xml	(date 1612252237122)
+@@ -0,0 +1,9 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24dp"
++    android:height="24dp"
++    android:viewportWidth="24"
++    android:viewportHeight="24">
++  <path
++      android:pathData="M11,7L9.6,8.4l2.6,2.6H2v2h10.2l-2.6,2.6L11,17l5,-5L11,7zM20,19h-8v2h8c1.1,0 2,-0.9 2,-2V5c0,-1.1 -0.9,-2 -2,-2h-8v2h8V19z"
++      android:fillColor="#ffffff"/>
++</vector>
+Index: app/src/main/res/layout/activity_card_view.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<LinearLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:background=\"@color/white_ice\"\r\n    android:orientation=\"vertical\">\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"?attr/actionBarSize\"\r\n        android:orientation=\"horizontal\"\r\n        android:background=\"@color/verde_maggio\"\r\n        android:visibility=\"gone\">\r\n        <com.google.android.material.floatingactionbutton.FloatingActionButton\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"center\"\r\n            android:layout_marginLeft=\"15dp\"\r\n            app:fabSize=\"mini\"/>\r\n        <androidx.appcompat.widget.AppCompatTextView\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"center\"\r\n            android:layout_marginLeft=\"30dp\"\r\n            android:textColor=\"@color/white\"\r\n            android:text=\"Sconto del 20%\"\r\n            android:textSize=\"30dp\"/>\r\n\r\n    </LinearLayout>\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/title\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_marginTop=\"10dp\"\r\n        android:layout_gravity=\"center\"\r\n        android:textColor=\"@color/black\"\r\n        android:textStyle=\"bold\"\r\n        android:textAppearance=\"?attr/textAppearanceHeadline4\" />\r\n\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_gravity=\"center\"\r\n        android:orientation=\"vertical\">\r\n\r\n        <!-- Media -->\r\n\r\n        <androidx.constraintlayout.widget.ConstraintLayout\r\n            android:layout_width=\"wrap_content\"\r\n            android:background=\"@color/white\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"center\">\r\n\r\n            <ProgressBar\r\n                android:id=\"@+id/progerssBar\"\r\n                style=\"@style/CircularDeterminateprogressBar\"\r\n                android:layout_width=\"300dp\"\r\n                android:layout_height=\"300dp\"\r\n                app:layout_constraintBottom_toBottomOf=\"parent\"\r\n                app:layout_constraintEnd_toEndOf=\"parent\"\r\n                app:layout_constraintStart_toStartOf=\"parent\"\r\n                app:layout_constraintTop_toTopOf=\"parent\"\r\n                tools:progress=\"0\" />\r\n\r\n            <ImageView\r\n                android:layout_width=\"121dp\"\r\n                android:layout_height=\"113dp\"\r\n                android:src=\"@drawable/ic_directions_run_black_96dp\"\r\n                app:tint=\"@color/verde_opale\"\r\n                app:layout_constraintBottom_toBottomOf=\"@+id/progerssBar\"\r\n                app:layout_constraintEnd_toEndOf=\"@+id/progerssBar\"\r\n                app:layout_constraintStart_toStartOf=\"@+id/progerssBar\"\r\n                app:layout_constraintTop_toTopOf=\"@+id/progerssBar\" />\r\n\r\n        </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n        <LinearLayout\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"center\"\r\n            android:orientation=\"horizontal\">\r\n            <LinearLayout\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:orientation=\"vertical\">\r\n                <ImageView\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"10dp\"\r\n                    android:src=\"@drawable/ic_footsteps_silhouette_variant_svgrepo_com\"\r\n                    app:tint=\"@color/verde_maggio\" />\r\n                <ImageView\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"15dp\"\r\n                    android:src=\"@drawable/ic_calories_svgrepo_com\"\r\n                    app:tint=\"@color/verde_maggio\"/>\r\n\r\n                <ImageView\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginTop=\"20dp\"\r\n                    android:src=\"@drawable/ic_ruler_svgrepo_com\"\r\n                    app:tint=\"@color/verde_maggio\"/>\r\n\r\n\r\n            </LinearLayout>\r\n\r\n            <LinearLayout\r\n                android:layout_width=\"wrap_content\"\r\n                android:background=\"@color/white_ice\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:orientation=\"vertical\">\r\n\r\n                <TextView\r\n                    android:id=\"@+id/goalStepsRatio\"\r\n                    android:layout_marginLeft=\"20dp\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:textStyle=\"bold|italic\"\r\n                    android:text=\"0/10000\"\r\n                    android:textSize=\"30dp\"\r\n                    android:textColor=\"@color/verde_opale\"/>\r\n                <TextView\r\n                    android:id=\"@+id/kcal\"\r\n                    android:layout_marginLeft=\"20dp\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:textStyle=\"bold|italic\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"0 Kcal\"\r\n                    android:textSize=\"30dp\"\r\n                    android:textColor=\"@color/verde_opale\"/>\r\n                <TextView\r\n                    android:id=\"@+id/kilometers\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:textStyle=\"bold|italic\"\r\n                    android:layout_marginLeft=\"20dp\"\r\n                    android:text=\"0 Km\"\r\n                    android:textSize=\"30dp\"\r\n                    android:textColor=\"@color/verde_opale\"/>\r\n\r\n            </LinearLayout>\r\n\r\n        </LinearLayout>\r\n\r\n        <LinearLayout\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"center\"\r\n            android:layout_marginTop=\"15dp\"\r\n            android:orientation=\"horizontal\">\r\n            <ImageView\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_gravity=\"center\"\r\n                android:src=\"@drawable/ic_baseline_local_offer_24\"\r\n                android:tintMode=\"src_in\"\r\n                app:tint=\"@color/verde_maggio\" />\r\n            <TextView\r\n                android:id=\"@+id/sconto\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n\r\n                android:textColor=\"@color/black\"\r\n                android:text=\"Sconto:\"\r\n                android:textSize=\"25dp\"\r\n                android:textStyle=\"bold\" />\r\n        </LinearLayout>\r\n\r\n        <TextView\r\n        android:id=\"@+id/code\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:layout_gravity=\"center\"\r\n        android:background=\"@color/white\"\r\n        android:layout_marginTop=\"10dp\"\r\n        android:text=\"Descrizione dello sconto definito all'interno dell'adapter\"\r\n        android:textAppearance=\"?attr/textAppearanceBody2\"\r\n        android:textColor=\"@color/black\" />\r\n\r\n    </LinearLayout>\r\n\r\n    <ImageButton\r\n        android:id=\"@+id/shareButton\"\r\n        style=\"?attr/borderlessButtonStyle\"\r\n        android:layout_width=\"36dp\"\r\n        android:layout_height=\"36dp\"\r\n        android:layout_gravity=\"bottom|right\"\r\n        android:layout_marginRight=\"20dp\"\r\n        android:src=\"@drawable/ic_share_black_24dp\" />\r\n\r\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/activity_card_view.xml	(revision 006378d458085dd4b2220a562b48faa091fa9972)
++++ app/src/main/res/layout/activity_card_view.xml	(date 1612251602940)
+@@ -164,10 +164,9 @@
+                 android:tintMode="src_in"
+                 app:tint="@color/verde_maggio" />
+             <TextView
+-                android:id="@+id/sconto"
++                android:id="@+id/discount"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+-
+                 android:textColor="@color/black"
+                 android:text="Sconto:"
+                 android:textSize="25dp"
+Index: app/src/main/res/drawable/ic_add_people_interface_symbol_of_black_person_close_up_with_plus_sign_in_small_circle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/ic_add_people_interface_symbol_of_black_person_close_up_with_plus_sign_in_small_circle.xml	(date 1612252979174)
++++ app/src/main/res/drawable/ic_add_people_interface_symbol_of_black_person_close_up_with_plus_sign_in_small_circle.xml	(date 1612252979174)
+@@ -0,0 +1,5 @@
++<vector android:height="24.000889dp" android:viewportHeight="27.022"
++    android:viewportWidth="27.021" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
++    <path android:fillColor="#FF000000" android:pathData="M17.855,21.223c0,-1.902 1.049,-3.55 2.588,-4.44c-0.963,-0.308 -2,-0.552 -3.09,-0.722c2.342,-1.299 3.929,-3.794 3.929,-6.663c0,-4.207 -3.41,-7.617 -7.617,-7.617s-7.617,3.41 -7.617,7.617c0,2.868 1.587,5.364 3.929,6.663C4.223,16.958 0,19.897 0,23.389h18.35C18.041,22.727 17.855,22 17.855,21.223z"/>
++    <path android:fillColor="#FF000000" android:pathData="M23.004,17.206c-2.218,0 -4.018,1.797 -4.018,4.018c0,2.219 1.8,4.017 4.018,4.017c2.219,0 4.018,-1.798 4.018,-4.017C27.02,19.002 25.223,17.206 23.004,17.206zM25.627,21.936h-1.909v1.91h-1.427v-1.91h-1.91v-1.429h1.91v-1.911h1.427v1.911h1.909V21.936z"/>
++</vector>
+Index: app/src/main/java/com/example/walktoshop/Login_SignUp/SpashActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/walktoshop/Login_SignUp/SpashActivity.java	(date 1612260900758)
++++ app/src/main/java/com/example/walktoshop/Login_SignUp/SpashActivity.java	(date 1612260900758)
+@@ -0,0 +1,39 @@
++package com.example.walktoshop.Login_SignUp;
++
++import android.app.Activity;
++import android.os.Bundle;
++import android.os.Message;
++import android.os.SystemClock;
++import android.view.View;
++
++import androidx.annotation.Nullable;
++import androidx.appcompat.app.AppCompatActivity;
++
++import com.example.walktoshop.R;
++
++import java.util.logging.Handler;
++import java.util.logging.LogRecord;
++
++public class SpashActivity extends AppCompatActivity {
++
++    private static final long MIN_WAIT_INTERVAL = 1500L;
++    private static final long MAX_WAIT_INTERVAL = 3000L;
++    private static final int GO_AHEAD_WHAT = 1;
++    private long mStartTime;
++    private boolean mIsDone;
++
++    @Override
++    protected void onCreate(@Nullable Bundle savedInstanceState) {
++        super.onCreate(savedInstanceState);
++        setContentView(R.layout.splash_activity);
++        View decorView = getWindow().getDecorView();
++        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
++        decorView.setSystemUiVisibility(uiOptions);
++    }
++
++    @Override
++    protected void onStart() {
++        super.onStart();
++        mStartTime = SystemClock.uptimeMillis();
++    }
++}
+Index: app/src/main/java/com/example/walktoshop/User/UserMapView.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.walktoshop.User;\r\n\r\nimport android.app.Notification;\r\nimport android.app.NotificationChannel;\r\nimport android.app.NotificationManager;\r\nimport android.content.Intent;\r\nimport android.content.SharedPreferences;\r\nimport android.os.Build;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.Menu;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.ProgressBar;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.app.NotificationCompat;\r\n\r\nimport com.example.walktoshop.Login_SignUp.LogIn;\r\nimport com.example.walktoshop.Model.User;\r\nimport com.example.walktoshop.Utils.NetworkController;\r\nimport com.example.walktoshop.R;\r\nimport com.google.android.gms.maps.CameraUpdateFactory;\r\nimport com.google.android.gms.maps.GoogleMap;\r\nimport com.google.android.gms.maps.OnMapReadyCallback;\r\nimport com.google.android.gms.maps.SupportMapFragment;\r\nimport com.google.android.gms.maps.model.LatLng;\r\nimport com.google.android.gms.maps.model.Marker;\r\nimport com.google.android.gms.maps.model.MarkerOptions;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.android.material.bottomnavigation.BottomNavigationView;\r\nimport com.google.android.material.floatingactionbutton.FloatingActionButton;\r\nimport com.google.firebase.auth.FirebaseAuth;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\nimport com.google.firebase.firestore.QueryDocumentSnapshot;\r\nimport com.google.firebase.firestore.QuerySnapshot;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.Iterator;\r\nimport java.util.List;\r\n\r\n\r\npublic class UserMapView extends AppCompatActivity implements GoogleMap.OnMarkerClickListener,OnMapReadyCallback {\r\n    GoogleMap mMap;\r\n    ProgressBar progressBar;\r\n    List<LatLng> latLngs = new ArrayList<LatLng>();\r\n    double latitude;\r\n    double longitude;\r\n    String city;\r\n    String UID;\r\n    boolean isSatellite = false;\r\n    FloatingActionButton userMapFab;\r\n    ArrayList<String> name = new ArrayList<String>();\r\n    private int cache;\r\n    public static final String NOTIFICATION_CHANNEL_ID = \"notification_channel\";\r\n    SupportMapFragment mapFragment;\r\n    FirebaseFirestore db =FirebaseFirestore.getInstance();\r\n\r\n    @Override\r\n    protected void onCreate(@Nullable Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_user_map_view);\r\n        cache=getSharedPref();\r\n        mapFragment = (SupportMapFragment) getSupportFragmentManager()\r\n                .findFragmentById(R.id.map);\r\n        createNotificationChannel();\r\n        Toast.makeText(UserMapView.this,\"Apertura mappa in corso\", Toast.LENGTH_LONG).show();\r\n        Intent intent = getIntent();\r\n        if (intent.hasExtra(\"UID\") && intent.hasExtra(\"city\") && intent.hasExtra(\"latitude\") && intent.hasExtra(\"longitude\")) {\r\n            UID = intent.getStringExtra(\"UID\");\r\n            city=intent.getStringExtra(\"city\");\r\n            latitude= intent.getDoubleExtra(\"latitude\",0.0f);\r\n            longitude= intent.getDoubleExtra(\"longitude\",0.0f);\r\n            //Log.d(\"city\",latitude+city +longitude);\r\n            db.collection(\"attivita\").whereEqualTo(\"locality\", city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {\r\n                @Override\r\n                public void onComplete(@NonNull Task<QuerySnapshot> task) {\r\n                    int counter=0;\r\n                    if(task.isSuccessful()){\r\n                        for (QueryDocumentSnapshot document : task.getResult()){\r\n                            ArrayList<String> discounts= (ArrayList<String>) document.get(\"discountUID\");\r\n                            if(discounts == null ){\r\n                                discounts = new ArrayList<String>();\r\n                            }\r\n                            double lat = Double.parseDouble(document.getString(\"latitude\"));\r\n                            double longt = Double.parseDouble(document.getString(\"longitude\"));\r\n                            name.add(document.getString(\"name\"));\r\n                            latLngs.add(new LatLng(lat, longt));\r\n                            counter=counter+discounts.size();\r\n                        }\r\n                        boolean notification=writeSharedPref(counter);\r\n                        if(notification){\r\n                            Log.d(\"notification\",notification+\"\");\r\n                            sendNotification();\r\n                        }\r\n                    }\r\n                    mapFragment.getMapAsync(UserMapView.this);\r\n\r\n                }\r\n            });\r\n        }\r\n\r\n        BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);\r\n        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {\r\n            @Override\r\n            public boolean onNavigationItemSelected(@NonNull MenuItem item) {\r\n                switch (item.getItemId()) {\r\n                    case R.id.action_home:\r\n                        goHome();\r\n                        break;\r\n                    case R.id.action_statistics:\r\n                        goUserStatistics();\r\n                        break;\r\n                }\r\n                return true;\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    protected void onStart() {\r\n        super.onStart();\r\n        NetworkController networkController =new NetworkController();\r\n        if(!networkController.isConnected(UserMapView.this)){\r\n            networkController.connectionDialog(UserMapView.this);\r\n        }\r\n    }\r\n\r\n\r\n    private void goUserStatistics() {\r\n        final Intent intent = new Intent(this, UserStatistics.class);\r\n        User user = new User();\r\n        intent.putExtra(\"UID\", UID);\r\n        intent.putExtra(\"city\",city);\r\n        intent.putExtra(\"latitude\",latitude);\r\n        intent.putExtra(\"longitude\",longitude);\r\n        startActivity(intent);\r\n    }\r\n\r\n    private void goHome() {\r\n        final Intent intent = new Intent(this, UserView.class);\r\n        intent.putExtra(\"UID\", UID);\r\n        startActivity(intent);\r\n    }\r\n\r\n    public boolean onCreateOptionsMenu(Menu menu) {\r\n        getMenuInflater().inflate(R.menu.menu_action_bar, menu);\r\n        return true;\r\n    }\r\n\r\n    public boolean onOptionsItemSelected(MenuItem item) {\r\n        return super.onOptionsItemSelected(item);\r\n    }\r\n\r\n    public void OnItemSelected(MenuItem item) {\r\n        if(item.getItemId() == R.id.action_exit){\r\n            logOut();\r\n        }\r\n    }\r\n\r\n    private void logOut(){\r\n        FirebaseAuth.getInstance().signOut();\r\n        final Intent intent = new Intent(this, LogIn.class);\r\n        startActivity(intent);\r\n        finish();\r\n    }\r\n\r\n    @Override\r\n    public void onMapReady(GoogleMap googleMap) {\r\n        mMap = googleMap;\r\n        userMapFab = (FloatingActionButton) findViewById(R.id.userMapFab);\r\n        userMapFab.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                if(isSatellite == false){\r\n                    mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);\r\n                    isSatellite = true;\r\n                } else {\r\n                    mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);\r\n                    isSatellite = false;\r\n                }\r\n            }\r\n        });\r\n\r\n        Iterator<LatLng> iteratorLatLng = latLngs.listIterator();\r\n        Iterator<String> iteratorName = name.listIterator();\r\n        while(iteratorLatLng.hasNext() && iteratorName.hasNext()){\r\n            mMap.addMarker(new MarkerOptions().position(iteratorLatLng.next()).title(iteratorName.next()));\r\n        }\r\n        LatLng myPlace = new LatLng(latitude, longitude);\r\n        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(myPlace, 15));\r\n        mMap.setOnMarkerClickListener(this);\r\n\r\n    }\r\n\r\n    @Override\r\n    public boolean onMarkerClick(Marker marker) {\r\n        LatLng position= marker.getPosition();\r\n        double latitude= position.latitude;\r\n        double longitude= position.longitude;\r\n        FragmentUserMapBackDrop fragment=new FragmentUserMapBackDrop();\r\n        Bundle bundle=new Bundle();\r\n        String businessUID=calculateMyBusinessCustomUID(latitude,longitude);\r\n        bundle.putString(\"businessUID\",businessUID);\r\n        bundle.putString(\"UID\",UID);\r\n        fragment.setArguments(bundle);\r\n        getSupportFragmentManager().beginTransaction()\r\n                .add(R.id.coordinator, fragment).commit();\r\n        return false;\r\n    }\r\n    private String calculateMyBusinessCustomUID(Double latitude,Double longitude){\r\n        if(latitude!=null && longitude!=null){\r\n            String customUID=null;\r\n            customUID= String.valueOf(latitude+longitude);\r\n            customUID =customUID.replaceAll(\"[^0-9]\", \"\");\r\n            return customUID;\r\n        }else{\r\n            return null;\r\n        }\r\n    }\r\n\r\n    private int getSharedPref(){\r\n        SharedPreferences prefs = getApplicationContext().getSharedPreferences(\"details\", MODE_PRIVATE);\r\n        if(prefs.contains(\"discountNumber\")){\r\n            int value=prefs.getInt(\"discountNumber\", -1);\r\n            return value;\r\n        }else{\r\n            return -1;\r\n        }\r\n    }\r\n    private boolean writeSharedPref(int counter){\r\n        Log.d(\"counter\",counter+\" \"+cache);\r\n        if(cache<0){\r\n            SharedPreferences prefs = getApplicationContext().getSharedPreferences(\"details\", MODE_PRIVATE);\r\n            SharedPreferences.Editor editor = prefs.edit();\r\n            editor.putInt(\"discountNumber\", counter);\r\n            editor.commit();\r\n        }else{\r\n            SharedPreferences prefs = getApplicationContext().getSharedPreferences(\"details\", MODE_PRIVATE);\r\n            SharedPreferences.Editor editor = prefs.edit();\r\n            editor.putInt(\"discountNumber\", counter);\r\n            editor.apply();\r\n            if(counter>cache){\r\n                return true;\r\n            }\r\n        }\r\n        return false;\r\n    }\r\n    private void sendNotification(){\r\n        NotificationCompat.Builder b = new NotificationCompat.Builder(this);\r\n        b.setAutoCancel(true)\r\n                .setDefaults(android.app.Notification.DEFAULT_ALL)\r\n                .setWhen(System.currentTimeMillis())\r\n                .setSmallIcon(R.drawable.ic_baseline_shop_24)\r\n                .setContentTitle(\"Un nuovo sconto è stato aggiunto!\")\r\n                .setContentText(\"Clicca sui contrassegni rossi nella mappa per scoprirne altri.\")\r\n                .setDefaults(android.app.Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)\r\n                .setContentInfo(\"Info\")\r\n                .setChannelId(NOTIFICATION_CHANNEL_ID);\r\n        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);\r\n        notificationManager.notify(0,b.build());\r\n    }\r\n    private void createNotificationChannel(){\r\n        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {\r\n            NotificationManager manager =getSystemService(NotificationManager.class);\r\n            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {\r\n                NotificationChannel notification = new NotificationChannel(NOTIFICATION_CHANNEL_ID,\"WalkToShop\", NotificationManager.IMPORTANCE_DEFAULT);\r\n                manager.createNotificationChannel(notification);\r\n            }\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/walktoshop/User/UserMapView.java	(revision 006378d458085dd4b2220a562b48faa091fa9972)
++++ app/src/main/java/com/example/walktoshop/User/UserMapView.java	(date 1612251602971)
+@@ -11,13 +11,16 @@
+ import android.view.Menu;
+ import android.view.MenuItem;
+ import android.view.View;
++import android.widget.FrameLayout;
+ import android.widget.ProgressBar;
+ import android.widget.Toast;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.appcompat.app.AppCompatActivity;
++import androidx.coordinatorlayout.widget.CoordinatorLayout;
+ import androidx.core.app.NotificationCompat;
++import androidx.fragment.app.Fragment;
+ 
+ import com.example.walktoshop.Login_SignUp.LogIn;
+ import com.example.walktoshop.Model.User;
+@@ -63,12 +66,17 @@
+     @Override
+     protected void onCreate(@Nullable Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
++
+         setContentView(R.layout.activity_user_map_view);
+         cache=getSharedPref();
++
+         mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                 .findFragmentById(R.id.map);
++
+         createNotificationChannel();
++
+         Toast.makeText(UserMapView.this,"Apertura mappa in corso", Toast.LENGTH_LONG).show();
++
+         Intent intent = getIntent();
+         if (intent.hasExtra("UID") && intent.hasExtra("city") && intent.hasExtra("latitude") && intent.hasExtra("longitude")) {
+             UID = intent.getStringExtra("UID");
+@@ -210,6 +218,9 @@
+         fragment.setArguments(bundle);
+         getSupportFragmentManager().beginTransaction()
+                 .add(R.id.coordinator, fragment).commit();
++        Fragment coordinatorLayout = getSupportFragmentManager().findFragmentById(R.id.coordinatorLayout);
++        coordinatorLayout.getActivity().findViewById(R.id.backdropListView);
++
+         return false;
+     }
+     private String calculateMyBusinessCustomUID(Double latitude,Double longitude){
+Index: app/src/main/java/com/example/walktoshop/User/FragmentUserMapBackDrop.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.walktoshop.User;\r\n\r\nimport android.app.ActivityManager;\r\nimport android.content.Context;\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.LayoutInflater;\r\nimport android.view.View;\r\nimport android.view.ViewGroup;\r\nimport android.widget.ImageView;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.ListView;\r\nimport android.widget.TextView;\r\nimport android.widget.Toast;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.coordinatorlayout.widget.CoordinatorLayout;\r\nimport androidx.fragment.app.Fragment;\r\n\r\nimport com.example.walktoshop.R;\r\nimport com.example.walktoshop.Model.Discount;\r\nimport com.example.walktoshop.Utils.ViewAdapter;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.android.material.bottomsheet.BottomSheetBehavior;\r\nimport com.google.firebase.firestore.DocumentSnapshot;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.Calendar;\r\n\r\npublic class FragmentUserMapBackDrop extends Fragment {\r\n\r\n    BottomSheetBehavior sheetBehavior;\r\n    FirebaseFirestore db= FirebaseFirestore.getInstance();\r\n    private ListView backdropListview;\r\n    private ArrayList<Discount> discountArray= new ArrayList<>();\r\n    private ArrayList<String> businessUID=new ArrayList<>();\r\n    private String UID;\r\n    private TextView discountDescription;\r\n    @Nullable\r\n    @Override\r\n    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {\r\n\r\n        View coordinatorLayout = (CoordinatorLayout)inflater.inflate(R.layout.fragment_map_backdrop, container, false);\r\n        backdropListview = coordinatorLayout.findViewById(R.id.backdropListView);\r\n        discountDescription= coordinatorLayout.findViewById(R.id.discountDescription);\r\n\r\n        ImageView filterIcon = coordinatorLayout.findViewById(R.id.filterIcon);\r\n        LinearLayout contentLayout = coordinatorLayout.findViewById(R.id.contentLayout);\r\n        //vengono prese le informazioni passate cliccando sul marker\r\n        Bundle bundle = this.getArguments();\r\n        if (bundle != null) {\r\n            businessUID.add(bundle.getString(\"businessUID\"));\r\n            this.UID=bundle.getString(\"UID\");\r\n            getUserDiscount();\r\n        }\r\n        sheetBehavior = BottomSheetBehavior.from(contentLayout);\r\n        sheetBehavior.setFitToContents(false);\r\n        sheetBehavior.setHideable(false);//evita che il backdrop sia completamente oscurato\r\n        sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);//inizialmente il  backdrop parte esteso\r\n\r\n        filterIcon.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View v) {\r\n                toggleFilters();\r\n            }\r\n        });\r\n        return coordinatorLayout;\r\n    }\r\n\r\n\r\n    private void getUserDiscount() {\r\n        db.collection(\"utente\").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<DocumentSnapshot> task) {\r\n                if(task.isSuccessful()){\r\n                    DocumentSnapshot document = task.getResult();\r\n                    ArrayList<String> userDisUID = (ArrayList<String>) document.get(\"discountUID\");\r\n                    Log.d(\"disocunt uidArray\",userDisUID.size()+\"\");\r\n                    if (userDisUID!= null){\r\n                        getBusiness(userDisUID);\r\n                    } else{\r\n                        final ViewAdapter adapter=new ViewAdapter(getContext(),discountArray, UID,businessUID,\"backdropList\");\r\n                        backdropListview.setAdapter(adapter);\r\n                    }\r\n                    Log.d(\"disUID\", String.valueOf(userDisUID));\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    private void getBusiness(ArrayList<String> userDisUID) {\r\n        db.collection(\"attivita\").document(businessUID.get(0)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<DocumentSnapshot> task) {\r\n                if(task.isSuccessful())\r\n                {\r\n                    DocumentSnapshot document = task.getResult();\r\n                    ArrayList<String> discountUID = (ArrayList<String>) document.get(\"discountUID\");\r\n                    Log.d(\"disBusiness\", String.valueOf(discountUID));\r\n                    if(discountUID!=null){\r\n                        Log.d(\"discount\",discountUID.size()+\" \");\r\n                        Log.d(\"business\",businessUID.get(0));\r\n                        discountDescription.setText(\"Lista sconti disponibili\");\r\n                        if(!discountUID.isEmpty()){\r\n                            getDiscounts(discountUID, userDisUID);\r\n                        }else{\r\n                            discountDescription.setText(\"Nessuno sconto disponibile\");\r\n                            final ViewAdapter adapter=new ViewAdapter(getContext(),discountArray, UID,businessUID,\"backdropList\");\r\n                            backdropListview.setAdapter(adapter);\r\n                        }\r\n                    }else{\r\n                        discountDescription.setText(\"Nessuno sconto disponibile\");\r\n                    }\r\n                }else{\r\n                    Log.d(\"non successo\",\"non successo\");\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    private void getDiscounts(ArrayList<String> discountUID, ArrayList<String> userDisUID){\r\n\r\n        ArrayList<String> disUID = new ArrayList<String>();\r\n\r\n        for(int i=0;i<discountUID.size();i++){\r\n            if(!userDisUID.contains(discountUID.get(i))){\r\n                disUID.add(discountUID.get(i));\r\n            }\r\n        }\r\n        for(int k=0;k<disUID.size();k++){\r\n            Log.d(\"dis\",disUID.get(k).toString());\r\n            int finalK = k;\r\n            db.collection(\"sconti\").document(disUID.get(k)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {\r\n                @Override\r\n                public void onComplete(@NonNull Task<DocumentSnapshot> task) {\r\n                    if(task.isSuccessful()){\r\n                        Discount discount=new Discount();\r\n                        DocumentSnapshot document=task.getResult();\r\n                        if(document.exists()){\r\n                            discount.setUID(document.getString(\"uid\"));\r\n                            discount.setBusinessUID(document.getString(\"businessUID\"));\r\n                            discount.setExpiringDate(document.getString(\"expiringDate\"));\r\n                            discount.setDescription(document.getString(\"description\"));\r\n                            discount.setDiscountsQuantity(document.getString(\"discountsQuantity\"));\r\n                            if(discount!=null){\r\n                                if(Long.parseLong(discount.getExpiringDate()) > Calendar.getInstance().getTimeInMillis()){\r\n                                    discountArray.add(discount);\r\n                                } else {\r\n                                    disUID.remove(finalK);\r\n                                }\r\n                            }\r\n                        }\r\n                    }\r\n                }\r\n            }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {\r\n                @Override\r\n                public void onComplete(@NonNull Task<DocumentSnapshot> task) {\r\n                    final ViewAdapter adapter=new ViewAdapter(getContext(),discountArray, UID,businessUID,\"backdropList\");\r\n                    backdropListview.setAdapter(adapter);\r\n\r\n                }\r\n            });\r\n        }\r\n        if(disUID.isEmpty() || disUID == null){\r\n            discountDescription.setText(\"Nessuno sconto disponibile\");\r\n        }\r\n    }\r\n\r\n    private void toggleFilters() {\r\n        if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {\r\n            sheetBehavior.setHideable(true);\r\n            sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);\r\n        } else {\r\n            sheetBehavior.setHideable(true);\r\n            sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);\r\n        }\r\n    }\r\n    //killa il service se attivo\r\n    @Override\r\n    public void onDestroy() {\r\n        super.onDestroy();\r\n        killServiceIfRunning();\r\n    }\r\n    private boolean isMyServiceRunning(Class<?> serviceClass) {\r\n        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);\r\n        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {\r\n            if (serviceClass.getName().equals(service.service.getClassName())) {\r\n                return true;\r\n            }\r\n        }\r\n        return false;\r\n    }\r\n    private void killServiceIfRunning(){\r\n        if(isMyServiceRunning(ServiceStepCounter.class) == true){\r\n            Intent intent =new Intent(getActivity(), ServiceStepCounter.class);\r\n            Toast.makeText(getActivity(),\"Contapassi disattivato\",Toast.LENGTH_SHORT).show();\r\n            getActivity().stopService(intent);\r\n        }\r\n    }\r\n}\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/walktoshop/User/FragmentUserMapBackDrop.java	(revision 006378d458085dd4b2220a562b48faa091fa9972)
++++ app/src/main/java/com/example/walktoshop/User/FragmentUserMapBackDrop.java	(date 1612223988724)
+@@ -18,6 +18,7 @@
+ import androidx.annotation.Nullable;
+ import androidx.coordinatorlayout.widget.CoordinatorLayout;
+ import androidx.fragment.app.Fragment;
++import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+ 
+ import com.example.walktoshop.R;
+ import com.example.walktoshop.Model.Discount;
+@@ -39,6 +40,7 @@
+     private ArrayList<Discount> discountArray= new ArrayList<>();
+     private ArrayList<String> businessUID=new ArrayList<>();
+     private String UID;
++    private ArrayList<String> disUID = new ArrayList<String>();
+     private TextView discountDescription;
+     @Nullable
+     @Override
+@@ -57,11 +59,13 @@
+             this.UID=bundle.getString("UID");
+             getUserDiscount();
+         }
++
+         sheetBehavior = BottomSheetBehavior.from(contentLayout);
+         sheetBehavior.setFitToContents(false);
+         sheetBehavior.setHideable(false);//evita che il backdrop sia completamente oscurato
+         sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);//inizialmente il  backdrop parte esteso
+ 
++
+         filterIcon.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View v) {
+@@ -124,8 +128,6 @@
+ 
+     private void getDiscounts(ArrayList<String> discountUID, ArrayList<String> userDisUID){
+ 
+-        ArrayList<String> disUID = new ArrayList<String>();
+-
+         for(int i=0;i<discountUID.size();i++){
+             if(!userDisUID.contains(discountUID.get(i))){
+                 disUID.add(discountUID.get(i));
+Index: app/src/main/java/com/example/walktoshop/User/CardView.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.walktoshop.User;\r\n\r\nimport android.content.Intent;\r\nimport android.content.SharedPreferences;\r\nimport android.os.Bundle;\r\nimport android.util.Log;\r\nimport android.view.MenuItem;\r\nimport android.view.View;\r\nimport android.widget.ImageButton;\r\nimport android.widget.ProgressBar;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.annotation.NonNull;\r\nimport androidx.annotation.Nullable;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\n\r\nimport com.example.walktoshop.Utils.NetworkController;\r\nimport com.example.walktoshop.R;\r\nimport com.example.walktoshop.Model.Discount;\r\nimport com.google.android.gms.tasks.OnCompleteListener;\r\nimport com.google.android.gms.tasks.Task;\r\nimport com.google.firebase.firestore.DocumentSnapshot;\r\nimport com.google.firebase.firestore.FirebaseFirestore;\r\nimport com.google.gson.Gson;\r\n\r\npublic class CardView extends AppCompatActivity {\r\n    private ProgressBar progressBar;\r\n    private Discount d;\r\n    private String UID=null;\r\n    private long totalSteps=0;\r\n    private TextView goalStepRatio;\r\n    private TextView kcal;\r\n    private TextView kilometers;\r\n    private TextView code;\r\n    private String userWeight=null;\r\n    private String userHeight=null;\r\n    private ImageButton shareButton;\r\n    private String locality=null;\r\n    private String name=null;\r\n    int percentage=0;\r\n    private TextView title;\r\n    String discountCode=null;\r\n    FirebaseFirestore db=FirebaseFirestore.getInstance();\r\n\r\n\r\n    @Override\r\n    protected void onCreate(@Nullable Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        setContentView(R.layout.activity_card_view);\r\n        getSupportActionBar().setDisplayHomeAsUpEnabled(true);\r\n        getSupportActionBar().setHomeButtonEnabled(true);\r\n        progressBar = (ProgressBar) findViewById(R.id.progerssBar);\r\n        goalStepRatio= findViewById(R.id.goalStepsRatio);\r\n        shareButton=findViewById(R.id.shareButton);\r\n        kcal=findViewById(R.id.kcal);\r\n        code=findViewById(R.id.code);\r\n        kilometers = findViewById(R.id.kilometers);\r\n        title=findViewById(R.id.title);\r\n\r\n        Intent intent=getIntent();\r\n        if(intent.hasExtra(\"discount\") && intent.hasExtra(\"UID\")){\r\n            Gson gson = new Gson();\r\n            String jsonDiscount=intent.getStringExtra(\"discount\");\r\n            Log.d(\"d\",jsonDiscount);\r\n            this.d = gson.fromJson(jsonDiscount, Discount.class);\r\n            this.UID = intent.getStringExtra(\"UID\");\r\n        }\r\n        discountCode=UID+d.getUID();\r\n        code.setText(d.getDescription());\r\n        shareButton.setOnClickListener(new View.OnClickListener() {\r\n            @Override\r\n            public void onClick(View view) {\r\n                shareDiscount();\r\n            }\r\n        });\r\n\r\n    }\r\n\r\n    @Override\r\n    protected void onStart() {\r\n        super.onStart();\r\n        NetworkController networkController =new NetworkController();\r\n        if(!networkController.isConnected(CardView.this)){\r\n            networkController.connectionDialog(CardView.this);\r\n        }\r\n        long beginDiscountDate= Long.parseLong(d.getStartDiscountDate());\r\n        long expiringDiscountDate= Long.parseLong(d.getExpiringDate());\r\n        getBusinessInfo(d.getBusinessUID());\r\n        getUserInfo();\r\n        //getUserWalkInATimeRange(beginDiscountDate,expiringDiscountDate,goal,d);\r\n\r\n    }\r\n    private void updateUI(){\r\n        long goal= Long.parseLong(d.getDiscountsQuantity());\r\n        CardView.this.totalSteps=getSharedPrefDiscountSteps(d.getUID());\r\n        Log.d(\"totalSteps\",totalSteps+\"\");\r\n        if(totalSteps!=0 && goal!=0){\r\n            percentage=Math.round((float)(totalSteps*100)/goal);\r\n            if(percentage>=100){\r\n                goalStepRatio.setText(goal+\"/\"+goal);\r\n                code.setText(\"Ecco il tuo codice sconto: \"+discountCode);\r\n                updateDiscountStateSharedPref(d.getUID());\r\n            }else{\r\n                goalStepRatio.setText(totalSteps+\"/\"+goal);\r\n            }\r\n            progressBar.setProgress((int)percentage);\r\n            Log.d(\"peso altezzo\",userWeight+\" \"+userHeight);\r\n            float km=calculateKilometers(Integer.parseInt(CardView.this.userHeight), totalSteps);\r\n            kilometers.setText(km+\" Km\");\r\n            int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),totalSteps);\r\n            kcal.setText(calories+\" Kcal\");\r\n        }\r\n    }\r\n    private void updateDiscountStateSharedPref(String discountUID){\r\n        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);\r\n        SharedPreferences.Editor editor = prefs.edit();\r\n        editor.putString(\"state\", \"completed\");\r\n        editor.apply();\r\n    }\r\n    private int getSharedPrefDiscountSteps(String discountUID){\r\n        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);\r\n        if(prefs.contains(\"steps\")){\r\n            int value=prefs.getInt(\"steps\", -1);\r\n            return value;\r\n        }else{\r\n            return -1;\r\n        }\r\n    }\r\n    private void getBusinessInfo(String businessUID){\r\n        db.collection(\"attivita\").document(businessUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<DocumentSnapshot> task) {\r\n                if(task.isSuccessful()){\r\n                    DocumentSnapshot document= task.getResult();\r\n                    CardView.this.locality=document.getString(\"locality\");\r\n                    CardView.this.name=document.getString(\"name\");\r\n                    title.setText(name+\", \"+locality);\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    @Override\r\n    public boolean onOptionsItemSelected(@NonNull MenuItem item) {\r\n        if(item.getItemId() == android.R.id.home){\r\n            finish();\r\n        }\r\n        return super.onOptionsItemSelected(item);\r\n    }\r\n    private void getUserInfo(){\r\n        db.collection(\"utente\").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {\r\n            @Override\r\n            public void onComplete(@NonNull Task<DocumentSnapshot> task) {\r\n                if(task.isSuccessful()){\r\n                    DocumentSnapshot document= task.getResult();\r\n                    CardView.this.userWeight=document.getString(\"weight\");\r\n                    CardView.this.userHeight=document.getString(\"height\");\r\n                    updateUI();\r\n                }\r\n            }\r\n        });\r\n    }\r\n\r\n    private float calculateKilometers(int height,long steps){\r\n        float meters;\r\n        Log.d(\"hei\",height+\" \"+steps);\r\n        if(height<170){\r\n            meters=Math.round((float)600*steps/1000);\r\n        }else{\r\n            meters=Math.round((float)700*steps/1000);\r\n        }\r\n        float kilometers=meters/1000;\r\n        Log.d(\"km\",kilometers+\"\");\r\n        return kilometers;\r\n    }\r\n    private int calculateKcal(int weight,long steps){\r\n        int kcal;\r\n        Log.d(\"weight\",weight+\"\");\r\n        kcal= (int) Math.round((float)weight*0.0005*steps);\r\n        Log.d(\"kcal\",kcal+\"\");\r\n        return kcal;\r\n    }\r\n    private void shareDiscount(){\r\n        String message=name+\", \"+locality+\"\\n\"+d.getDescription()+\"\\n\"+\"Ecco il codice sconto che ti è stato regalato:\\n\"+discountCode+\"\\n\";\r\n        Intent sendIntent = new Intent();\r\n        sendIntent.setAction(Intent.ACTION_SEND);\r\n        sendIntent.putExtra(Intent.EXTRA_TEXT, message);\r\n        sendIntent.setType(\"text/plain\");\r\n\r\n        Intent shareIntent = Intent.createChooser(sendIntent, null);\r\n        startActivity(shareIntent);\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/walktoshop/User/CardView.java	(revision 006378d458085dd4b2220a562b48faa091fa9972)
++++ app/src/main/java/com/example/walktoshop/User/CardView.java	(date 1612251602952)
+@@ -1,28 +1,42 @@
+ package com.example.walktoshop.User;
+ 
++import android.app.ActivityManager;
++import android.content.ComponentName;
++import android.content.Context;
+ import android.content.Intent;
+ import android.content.SharedPreferences;
++import android.content.pm.LabeledIntent;
++import android.content.pm.PackageManager;
++import android.content.pm.ResolveInfo;
++import android.content.res.Resources;
+ import android.os.Bundle;
++import android.text.Html;
+ import android.util.Log;
+ import android.view.MenuItem;
+ import android.view.View;
++import android.widget.Button;
+ import android.widget.ImageButton;
+ import android.widget.ProgressBar;
+ import android.widget.TextView;
++import android.widget.Toast;
+ 
+ import androidx.annotation.NonNull;
+ import androidx.annotation.Nullable;
+ import androidx.appcompat.app.AppCompatActivity;
+ 
+-import com.example.walktoshop.Utils.NetworkController;
+-import com.example.walktoshop.R;
+ import com.example.walktoshop.Model.Discount;
++import com.example.walktoshop.R;
++import com.example.walktoshop.Utils.NetworkController;
+ import com.google.android.gms.tasks.OnCompleteListener;
+ import com.google.android.gms.tasks.Task;
+ import com.google.firebase.firestore.DocumentSnapshot;
+ import com.google.firebase.firestore.FirebaseFirestore;
+ import com.google.gson.Gson;
+ 
++import java.util.ArrayList;
++import java.util.Iterator;
++import java.util.List;
++
+ public class CardView extends AppCompatActivity {
+     private ProgressBar progressBar;
+     private Discount d;
+@@ -38,6 +52,7 @@
+     private String locality=null;
+     private String name=null;
+     int percentage=0;
++    private TextView discountTitle;
+     private TextView title;
+     String discountCode=null;
+     FirebaseFirestore db=FirebaseFirestore.getInstance();
+@@ -54,6 +69,7 @@
+         shareButton=findViewById(R.id.shareButton);
+         kcal=findViewById(R.id.kcal);
+         code=findViewById(R.id.code);
++        discountTitle = (TextView) findViewById(R.id.discount);
+         kilometers = findViewById(R.id.kilometers);
+         title=findViewById(R.id.title);
+ 
+@@ -98,7 +114,8 @@
+             percentage=Math.round((float)(totalSteps*100)/goal);
+             if(percentage>=100){
+                 goalStepRatio.setText(goal+"/"+goal);
+-                code.setText("Ecco il tuo codice sconto: "+discountCode);
++                discountTitle.setText("Ecco il tuo codice sconto:");
++                code.setText(discountCode);
+                 updateDiscountStateSharedPref(d.getUID());
+             }else{
+                 goalStepRatio.setText(totalSteps+"/"+goal);
+@@ -134,7 +151,7 @@
+                     DocumentSnapshot document= task.getResult();
+                     CardView.this.locality=document.getString("locality");
+                     CardView.this.name=document.getString("name");
+-                    title.setText(name+", "+locality);
++                    title.setText(name);
+                 }
+             }
+         });
+Index: app/src/main/res/drawable/sw_track.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/drawable/sw_track.xml	(date 1612257430511)
++++ app/src/main/res/drawable/sw_track.xml	(date 1612257430511)
+@@ -0,0 +1,16 @@
++<?xml version="1.0" encoding="utf-8"?>
++<selector xmlns:android="http://schemas.android.com/apk/res/android">
++    <item android:state_checked="true">
++        <shape android:shape="rectangle">
++            <solid android:color="@color/verde_maggio"/>
++            <corners android:radius="200dp"/>
++        </shape>
++    </item>
++
++    <item android:state_checked="false">
++        <shape android:shape="rectangle">
++            <solid android:color="@color/verde_maggio"/>
++            <corners android:radius="200dp"/>
++        </shape>
++    </item>
++</selector>
+\ No newline at end of file
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_28_01_2021_09_53__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_28_01_2021_09_53__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_30_01_2021_14_49__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_30_01_2021_14_49__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_28_01_2021_10_26__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_28_01_2021_10_26__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_29_01_2021_15_30__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_29_01_2021_15_30__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_29_01_2021_14_36__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_29_01_2021_14_36__Default_Changelist_.xml
+diff --git .idea/shelf/Uncommitted_changes_before_Update_at_01_02_2021_12_57__Default_Changelist_.xml .idea/shelf/Uncommitted_changes_before_Update_at_01_02_2021_12_57__Default_Changelist_.xml

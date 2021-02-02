@@ -1,27 +1,41 @@
 package com.example.walktoshop.User;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.LabeledIntent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.walktoshop.Utils.NetworkController;
-import com.example.walktoshop.R;
 import com.example.walktoshop.Model.Discount;
+import com.example.walktoshop.R;
+import com.example.walktoshop.Utils.NetworkController;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class CardView extends AppCompatActivity {
     private ProgressBar progressBar;
@@ -38,6 +52,7 @@ public class CardView extends AppCompatActivity {
     private String locality=null;
     private String name=null;
     int percentage=0;
+    private TextView discountTitle;
     private TextView title;
     String discountCode=null;
     FirebaseFirestore db=FirebaseFirestore.getInstance();
@@ -54,6 +69,7 @@ public class CardView extends AppCompatActivity {
         shareButton=findViewById(R.id.shareButton);
         kcal=findViewById(R.id.kcal);
         code=findViewById(R.id.code);
+        discountTitle = (TextView) findViewById(R.id.discount);
         kilometers = findViewById(R.id.kilometers);
         title=findViewById(R.id.title);
 
@@ -98,7 +114,8 @@ public class CardView extends AppCompatActivity {
             percentage=Math.round((float)(totalSteps*100)/goal);
             if(percentage>=100){
                 goalStepRatio.setText(goal+"/"+goal);
-                code.setText("Ecco il tuo codice sconto: "+discountCode);
+                discountTitle.setText("Ecco il tuo codice sconto:");
+                code.setText(discountCode);
                 updateDiscountStateSharedPref(d.getUID());
             }else{
                 goalStepRatio.setText(totalSteps+"/"+goal);
@@ -134,7 +151,7 @@ public class CardView extends AppCompatActivity {
                     DocumentSnapshot document= task.getResult();
                     CardView.this.locality=document.getString("locality");
                     CardView.this.name=document.getString("name");
-                    title.setText(name+", "+locality);
+                    title.setText(name);
                 }
             }
         });

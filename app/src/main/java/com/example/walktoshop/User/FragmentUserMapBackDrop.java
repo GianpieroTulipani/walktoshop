@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.walktoshop.R;
 import com.example.walktoshop.Model.Discount;
@@ -39,6 +40,7 @@ public class FragmentUserMapBackDrop extends Fragment {
     private ArrayList<Discount> discountArray= new ArrayList<>();
     private ArrayList<String> businessUID=new ArrayList<>();
     private String UID;
+    private ArrayList<String> disUID = new ArrayList<String>();
     private TextView discountDescription;
     @Nullable
     @Override
@@ -57,10 +59,12 @@ public class FragmentUserMapBackDrop extends Fragment {
             this.UID=bundle.getString("UID");
             getUserDiscount();
         }
+
         sheetBehavior = BottomSheetBehavior.from(contentLayout);
         sheetBehavior.setFitToContents(false);
         sheetBehavior.setHideable(false);//evita che il backdrop sia completamente oscurato
         sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);//inizialmente il  backdrop parte esteso
+
 
         filterIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,8 +127,6 @@ public class FragmentUserMapBackDrop extends Fragment {
     }
 
     private void getDiscounts(ArrayList<String> discountUID, ArrayList<String> userDisUID){
-
-        ArrayList<String> disUID = new ArrayList<String>();
 
         for(int i=0;i<discountUID.size();i++){
             if(!userDisUID.contains(discountUID.get(i))){

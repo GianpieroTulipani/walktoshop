@@ -122,6 +122,9 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void goSellerViewActivity(){
+        Toast toast = Toast.makeText(this,"Registrazione effettuata con succeso!",Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
         final Intent intent = new Intent(this, SellerView.class);
         intent.putExtra("UID", seller.getUID());
         startActivity(intent);
@@ -178,6 +181,9 @@ public class SignUp extends AppCompatActivity {
     }
 
     public void goHomeActivity() {
+        Toast toast = Toast.makeText(getApplicationContext(),"Registrazione effettuata con succeso!",Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
         final Intent intent = new Intent(SignUp.this, UserView.class);
         intent.putExtra("UID",user.getUID());
         startActivity(intent);
@@ -212,7 +218,6 @@ public class SignUp extends AppCompatActivity {
         db.collection("venditore").document(sellerUID).set(seller).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.d("SUCCESSO","successoo");
                 goSellerViewActivity();
             }
         }).addOnFailureListener(new OnFailureListener() {

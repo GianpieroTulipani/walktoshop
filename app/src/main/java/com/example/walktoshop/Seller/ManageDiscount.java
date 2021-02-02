@@ -145,6 +145,8 @@ public class ManageDiscount extends AppCompatActivity {
                     discount.setDiscountsQuantity(stringedQuantity);
                     discount.setStartDiscountDate(todayInMills);
                     addDiscount(customDiscountUID,discount);
+                    Toast toast = Toast.makeText(getApplicationContext(),"Inserimento sconto avvenuto con successo!",Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             }
         });

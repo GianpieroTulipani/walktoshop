@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,6 +80,10 @@ public class UserView extends AppCompatActivity {
         stepcounterFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(getSharedPrefDialog() == false){
+                    dialog();
+                    writeSharedPrefDialog();
+                }
                 startStepCounter();
             }
         });
@@ -236,6 +241,8 @@ public class UserView extends AppCompatActivity {
     }
 
     private void goToUserViewMap() {
+        Toast toast = Toast.makeText(getApplicationContext(),"Apertura mappa in corso",Toast.LENGTH_SHORT);
+        toast.show();
         final Intent intent = new Intent(UserView.this, UserMapView.class);
         intent.putExtra("UID", this.userUID);
         intent.putExtra("city",city);
@@ -375,5 +382,33 @@ public class UserView extends AppCompatActivity {
         }
         getUserPosition();
         service.requestLocationUpdates("gps", 500, 1000, locationListener);
+    }
+
+    private void dialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Add the buttons
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // User clicked OK button
+            }
+        }).setMessage(R.string.DialogFirstTime);
+        // Set other d
+        builder.show();
+    }
+
+    private boolean getSharedPrefDialog(){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("dialog", MODE_PRIVATE);
+        if(prefs.contains("State")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private void writeSharedPrefDialog(){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("dialog", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("State", true);
+        editor.commit();
     }
 }

@@ -50,7 +50,8 @@
     <string name="no">No</string>
     <string name="ok">Ok</string>
     <string name="businessNotFound">Ci dispiace!Località non trovata.Riprovare</string>
-    <string name="emptyBusiness">Non possiedi attività.Vuoi registrarne una?</string>
+    <string name="emptyBusiness">Non possiedi attività! Per registrarne una clicca il bottone in basso a destra!</string>
+    <string name="DialogFirstTime">Hai appena attivato il contapassi, questo vale per tutti i tuoi sconti nella Home. Per avere una accurata rilevazione deponi il dispositivo in tasca, fai le tue camminate e alla fine ricordati di disattivarlo per vedere i tuoi risultati!!</string>
     <string name="action_stepcounter">Pedometro</string>
     <string name="addBusinessDialog">Cliccare sul marker in rosso, per confermare l\'inserimento dell\'attività</string>
 </resources>

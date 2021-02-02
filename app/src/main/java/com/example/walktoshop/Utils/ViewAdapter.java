@@ -215,6 +215,9 @@ public class ViewAdapter extends ArrayAdapter {
                 }).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                Toast toast = Toast.makeText(getContext(),"Sconto cancellato con successo!",Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                toast.show();
                 ViewAdapter.this.discounts.remove(position);
                 ViewAdapter.this.notifyDataSetChanged();
             }

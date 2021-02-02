@@ -36,6 +36,7 @@ public class SellerView extends AppCompatActivity {
     private ListView listView;
     private TextView alert;
     private String UID=null;
+    private int counter= 0;
     private ProgressBar progressBar;
     private FloatingActionButton addActivityButton;
     private ImageButton editDiscount;
@@ -89,21 +90,20 @@ public class SellerView extends AppCompatActivity {
         getSellerBusinessUID();
         if(businessUID == null){
             businessUID = new ArrayList<String>();
-        }
-        if(discountUID==null){
+        }else if(businessUID.size()<= 0){
+            counter++;
+            addActivityButton.setVisibility(View.VISIBLE);
+            discountImage.setVisibility(View.GONE);
+            scontiAttivita.setVisibility(View.GONE);
+            alert.setText("Nessuna attività registrata");
+            if(counter == 1)
+                dialog();
+            addActivityButton.setVisibility(View.VISIBLE);
+            mFab.setVisibility(View.GONE);
+        }else if(discountUID==null){
             addActivityButton.setVisibility(View.INVISIBLE);
         }else if(discountUID.isEmpty()){
-            Log.d("bi",discountUID.toString());
             addActivityButton.setVisibility(View.INVISIBLE);
-            if(businessUID.size()<= 0){
-                Log.d("Busi", String.valueOf(businessUID.size()));
-                addActivityButton.setVisibility(View.VISIBLE);
-                discountImage.setVisibility(View.GONE);
-                scontiAttivita.setVisibility(View.GONE);
-                alert.setText("Nessuna attività registrata");
-                mFab.setVisibility(View.GONE);
-
-            }
         }
     }
 
@@ -196,8 +196,6 @@ public class SellerView extends AppCompatActivity {
                             discount.setDescription(document.getString("description"));
                             discount.setDiscountsQuantity(document.getString("discountsQuantity"));
                             discountArray.add(discount);
-                        }else{
-
                         }
                     }
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -212,15 +210,9 @@ public class SellerView extends AppCompatActivity {
     private void dialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Add the buttons
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked OK button
-                goSellerMapView();
-
-            }
-        }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User cancelled the dialog
             }
         }).setMessage(R.string.emptyBusiness);
         // Set other d

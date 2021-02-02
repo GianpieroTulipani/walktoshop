@@ -51,6 +51,7 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
     List<LatLng> latLngs = new ArrayList<LatLng>();
     double latitude;
     double longitude;
+    private boolean alreadyClicked=false;
     String city;
     String UID;
     boolean isSatellite = false;
@@ -203,13 +204,20 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         LatLng position= marker.getPosition();
         double latitude= position.latitude;
         double longitude= position.longitude;
-        Bundle bundle=new Bundle();
-        String businessUID=calculateMyBusinessCustomUID(latitude,longitude);
-        bundle.putString("businessUID",businessUID);
-        bundle.putString("UID",UID);
-        fragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().addToBackStack(null)
-                    .add(R.id.coordinator, fragment).commit();
+        if(!alreadyClicked){
+            UserMapView.this.alreadyClicked=true;
+            Bundle bundle=new Bundle();
+            String businessUID=calculateMyBusinessCustomUID(latitude,longitude);
+            bundle.putString("businessUID",businessUID);
+            bundle.putString("UID",UID);
+            fragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction().addToBackStack(null)
+                    .add(R.id.coordinator, fragment,"BackdropTag").commit();
+        }else{
+            getSupportFragmentManager().beginTransaction().
+                    remove(getSupportFragmentManager().findFragmentByTag("BackdropTag")).commit();
+            UserMapView.this.alreadyClicked=false;
+        }
 
         return false;
     }

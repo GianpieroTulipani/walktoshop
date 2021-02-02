@@ -105,7 +105,7 @@ public class CardView extends AppCompatActivity {
                 goalStepRatio.setText(goal+"/"+goal);
                 discountTitle.setText("Ecco il tuo codice sconto:");
                 code.setText(discountCode);
-                updateDiscountStateSharedPref(d.getUID());
+                shareButton.setVisibility(View.VISIBLE);
             }else{
                 goalStepRatio.setText(totalSteps+"/"+goal);
             }
@@ -117,21 +117,7 @@ public class CardView extends AppCompatActivity {
             kcal.setText(calories+" Kcal");
         }
     }
-    private void updateDiscountStateSharedPref(String discountUID){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID + UID, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("state", "completed");
-        editor.apply();
-    }
-    private int getSharedPrefDiscountSteps(String discountUID){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID + UID, MODE_PRIVATE);
-        if(prefs.contains("steps")){
-            int value=prefs.getInt("steps", -1);
-            return value;
-        }else{
-            return -1;
-        }
-    }
+
     private void getBusinessInfo(String businessUID){
         db.collection("attivita").document(businessUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

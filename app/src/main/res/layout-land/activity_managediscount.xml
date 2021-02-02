@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    android:layout_height="match_parent"
+    android:layout_width="match_parent" xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/white_ice">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:fitsSystemWindows="true">
+
+                <ImageView
+                    android:id="@+id/discountImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/_0943903"/>
+            </LinearLayout>
+
+            <EditText
+                android:layout_marginTop="75dp"
+                android:id="@+id/description"
+                android:layout_width="317dp"
+                android:layout_gravity="center"
+                android:textColor="@color/black"
+                android:layout_height="54dp"
+                android:background="@drawable/ic_text_box"
+                android:drawableTint="@color/verde_maggio"
+                android:drawableStart="@drawable/ic_description"
+                android:drawablePadding="4dp"
+                android:elevation="6dp"
+                android:ems="10"
+                android:hint="@string/description"
+                android:paddingStart="6dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.394" />
+
+            <EditText
+                android:id="@+id/disocuntsQuantity"
+                android:layout_width="317dp"
+                android:layout_height="54dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/ic_text_box"
+                android:drawableStart="@drawable/ic_walk"
+                android:drawablePadding="4dp"
+                android:elevation="6dp"
+                android:ems="10"
+                android:drawableTint="@color/verde_maggio"
+                android:hint="@string/disocuntsQuantity"
+                android:inputType="number"
+                android:paddingStart="6dp"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/verde_maggio" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="7dp">
+
+                <ImageButton
+                    android:id="@+id/addDate"
+                    android:layout_width="62dp"
+                    android:layout_height="44dp"
+                    app:tint="@color/verde_maggio"
+                    android:background="@color/white_ice"
+                    android:drawableStart="@drawable/ic_calendar"
+                    android:src="@android:drawable/ic_menu_my_calendar" />
+
+                <EditText
+                    android:id="@+id/expiringDate"
+                    android:layout_width="270dp"
+                    android:layout_height="wrap_content" android:textColor="@color/black"
+                    android:background="@drawable/ic_text_box"
+                    android:elevation="6dp"
+                    android:hint="@string/expiringDate"
+                    android:textSize="25dp"
+                    />
+            </LinearLayout>
+            <Button
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="bottom|end"
+                android:id="@+id/add"
+                android:background="@color/verde_maggio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add"
+                />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

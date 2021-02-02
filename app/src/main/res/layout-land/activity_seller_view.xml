@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sellerViewcontainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_ice">
+
+    <TextView
+        android:id="@+id/alertSeller"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"/>
+
+        <LinearLayout
+            android:id="@+id/sellerLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white_ice"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <ImageView
+                    android:id="@+id/discountImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_local_offer_24"
+                    app:tint="@color/black"/>
+
+                <TextView
+                    android:id="@+id/scontiAttivita"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sconti Attività"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textAppearance="?attr/textAppearanceHeadline4"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+               <ListView
+                    android:id="@+id/listView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:clickable="false"
+                    android:focusable="false">
+                </ListView>
+
+            </LinearLayout>
+        </LinearLayout>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addBusinessFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="@dimen/material_bottom_margin"
+        android:layout_marginBottom="@dimen/material_botton_margin"
+        android:src="@drawable/ic_add_location"
+        app:tint="@color/white"
+        app:backgroundTint="@color/verde_maggio"
+        app:backgroundTintMode="src_over"
+        app:fabSize="normal"
+        app:rippleColor="#00FF00" />
+    <ProgressBar
+        android:id="@+id/sellerViewProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="91dp"
+        android:layout_height="81dp"
+        android:layout_marginLeft="160dp"
+        android:layout_marginTop="350dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="@dimen/material_bottom_margin"
+        android:layout_marginBottom="@dimen/material_botton_margin"
+        android:longClickable="true"
+        android:src="@drawable/ic_add_white"
+        app:tint="@color/white"
+        app:backgroundTint="@color/verde_maggio"
+        app:backgroundTintMode="src_in"
+        app:fabSize="normal"
+        app:navigationIcon="@drawable/ic_add_white"
+        app:rippleColor="#00FF00" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

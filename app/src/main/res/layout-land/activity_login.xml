@@ -9,7 +9,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" >
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -22,10 +23,12 @@
                 android:layout_height="wrap_content"
                 android:text="WalkToShop"
                 android:textAlignment="center"
-                android:textSize="60sp"
+                android:textSize="55dp"
+                android:textColor="@color/verde_maggio"
                 android:textStyle="bold"
                 android:layout_marginVertical="50dp"
-                android:layout_gravity="center"/>
+                android:layout_gravity="center"
+                android:fitsSystemWindows="true"/>
 
             <EditText
                 android:id="@+id/emailLogIn"
@@ -36,9 +39,11 @@
                 android:drawablePadding="4dp"
                 android:elevation="6dp"
                 android:hint="Email"
+                android:drawableTint="@color/verde_maggio"
                 android:inputType="textEmailAddress"
                 android:paddingStart="6dp"
                 android:layout_below="@id/banner"
+                android:textColor="@color/black"
                 android:layout_centerHorizontal="true"
                 android:layout_marginVertical="50dp" />
 
@@ -50,7 +55,9 @@
                 android:drawableStart="@drawable/ic_psw"
                 android:drawablePadding="4dp"
                 android:layout_below="@id/banner"
+                android:drawableTint="@color/verde_maggio"
                 android:elevation="6dp"
+                android:textColor="@color/black"
                 android:layout_marginVertical="130dp"
                 android:hint="Password"
                 android:layout_centerHorizontal="true"
@@ -59,16 +66,16 @@
                 />
 
 
-            <Button
+            <ImageView
                 android:id="@+id/buttonlogIn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_button"
-                android:onClick="login"
-                android:text="Accedi"
+                android:layout_width="72dp"
+                android:layout_height="48dp"
                 android:layout_below="@id/emailLogIn"
                 android:layout_alignRight="@id/passwordLogIn"
                 android:layout_marginVertical="60dp"
+                android:background="@drawable/rounded_button"
+                android:onClick="login"
+                android:src="@drawable/ic_login_white_24dp"
                 android:textColor="@color/white_ice" />
 
             <TextView
@@ -86,12 +93,6 @@
 
         </RelativeLayout>
 
-
-
-
-
-
     </ScrollView>
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

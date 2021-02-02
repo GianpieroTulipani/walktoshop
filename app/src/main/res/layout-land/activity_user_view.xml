@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/userCoordinatorLayout"
+    android:background="@color/white_ice"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/sellerViewProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="91dp"
+        android:layout_height="81dp"
+        android:layout_marginLeft="160dp"
+        android:layout_marginTop="250dp"
+        android:visibility="gone"/>
+    <TextView
+        android:id="@+id/alert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="55dp"
+        android:layout_gravity="center"
+        android:text="Nessuno sconto attivato"
+        android:textSize="25dp"
+        android:visibility="gone"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white_ice"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/linearTitleLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_baseline_local_offer_24"
+                    app:tint="@color/black"/>
+
+                <TextView
+                    android:id="@+id/scontiAttivita"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:text="Sconti Attivi"
+                    android:textAppearance="?attr/textAppearanceHeadline4"/>
+            </LinearLayout>
+
+
+            <ListView
+                android:id="@+id/homeListView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="65dp"/>
+        </LinearLayout>
+    </LinearLayout>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
+        app:menu="@menu/menu_bottom_navigation_view"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/stepcounterFab"
+        android:src="@drawable/ic_footsteps_silhouette_variant_svgrepo_com"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/verde_maggio"
+        app:backgroundTintMode="src_over"
+        app:fabSize="normal"
+        app:rippleColor="#00FF00"
+        app:tint="@color/white"
+        android:layout_marginRight="@dimen/material_bottom_margin"
+        android:layout_marginBottom="@dimen/material_botton_margin"
+        app:layout_anchor="@+id/linearTitleLayout"
+        app:layout_anchorGravity="bottom|right"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,263 @@
+Index: app/src/main/res/layout-land/activity_signup.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    android:id=\"@+id/signUpLayout\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:background=\"@color/white_ice\">\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/banner\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"WalkToShop\"\r\n        android:textAlignment=\"center\"\r\n        android:textSize=\"60sp\"\r\n        android:textStyle=\"bold\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.048\"\r\n        tools:ignore=\"MissingConstraints\"\r\n        tools:layout_editor_absoluteX=\"0dp\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/email\"\r\n        android:layout_width=\"317dp\"\r\n        android:layout_height=\"54dp\"\r\n        android:background=\"@drawable/ic_text_box\"\r\n        android:drawableStart=\"@drawable/ic_email\"\r\n        android:ems=\"10\"\r\n        android:drawablePadding=\"4dp\"\r\n        android:elevation=\"6dp\"\r\n        android:hint=\"@string/email\"\r\n        android:inputType=\"textEmailAddress\"\r\n        android:paddingStart=\"6dp\"\r\n        android:paddingLeft=\"50dp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/username\"\r\n        app:layout_constraintVertical_bias=\"0.058\" />\r\n\r\n\r\n    <Button\r\n        android:id=\"@+id/nextButton\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:background=\"@color/verde_maggio\"\r\n        android:text=\"Avanti\"\r\n        android:textColor=\"#f8f8ff\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.838\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.955\" />\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/already_registered\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Sei già registrato? Clicca qui!\"\r\n        android:textColor=\"#7081DF\"\r\n        android:textSize=\"16sp\"\r\n        android:textStyle=\"bold\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.958\"\r\n        tools:ignore=\"MissingConstraints\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/password\"\r\n        android:layout_width=\"317dp\"\r\n        android:layout_height=\"54dp\"\r\n        android:background=\"@drawable/ic_text_box\"\r\n        android:drawableStart=\"@drawable/ic_psw\"\r\n        android:drawablePadding=\"4dp\"\r\n        android:elevation=\"6dp\"\r\n        android:paddingStart=\"6dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"Password\"\r\n        android:inputType=\"textPassword\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toBottomOf=\"@+id/email\"\r\n        app:layout_constraintVertical_bias=\"0.085\" />\r\n\r\n\r\n    <Switch\r\n        android:id=\"@+id/switch1\"\r\n        android:layout_width=\"139dp\"\r\n        android:layout_height=\"53dp\"\r\n        android:text=\"Utente\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.287\" />\r\n\r\n    <EditText\r\n        android:id=\"@+id/username\"\r\n        android:layout_width=\"317dp\"\r\n        android:layout_height=\"54dp\"\r\n        android:background=\"@drawable/ic_text_box\"\r\n        android:drawableStart=\"@drawable/ic_user\"\r\n        android:drawablePadding=\"4dp\"\r\n        android:elevation=\"6dp\"\r\n        android:ems=\"10\"\r\n        android:hint=\"UserName\"\r\n        android:inputType=\"textEmailAddress\"\r\n        android:paddingStart=\"6dp\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintVertical_bias=\"0.478\" />\r\n\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout-land/activity_signup.xml	(revision 699569f05612756815eafd09991819848016560d)
++++ app/src/main/res/layout-land/activity_signup.xml	(date 1611849149222)
+@@ -1,125 +1,141 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout
++<androidx.coordinatorlayout.widget.CoordinatorLayout
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res-auto"
+-    xmlns:tools="http://schemas.android.com/tools"
+-    android:id="@+id/signUpLayout"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
++    android:padding="16dp"
++    android:id="@+id/itemPage"
++    android:orientation="vertical"
+     android:background="@color/white_ice">
+ 
++    <ScrollView
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content">
+ 
+-    <TextView
+-        android:id="@+id/banner"
+-        android:layout_width="match_parent"
+-        android:layout_height="wrap_content"
+-        android:text="WalkToShop"
+-        android:textAlignment="center"
+-        android:textSize="60sp"
+-        android:textStyle="bold"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.048"
+-        tools:ignore="MissingConstraints"
+-        tools:layout_editor_absoluteX="0dp" />
++    <LinearLayout
++        android:layout_width="match_parent"
++        android:layout_height="wrap_content"
++        android:orientation="vertical">
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:orientation="vertical">
++            <TextView
++                android:id="@+id/banner"
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:text="WalkToShop"
++                android:textAlignment="center"
++                android:textSize="60dp"
++                android:textStyle="bold"
++                android:layout_marginVertical="50dp"
++                android:layout_gravity="center"/>
++
++
++            <Switch
++                android:id="@+id/switch1"
++                android:layout_width="139dp"
++                android:layout_height="53dp"
++                android:text="Utente"
++                android:layout_gravity="center"/>
++        </LinearLayout>
++
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="266dp"
++            android:orientation="vertical">
++
+ 
+-    <EditText
+-        android:id="@+id/email"
+-        android:layout_width="317dp"
+-        android:layout_height="54dp"
+-        android:background="@drawable/ic_text_box"
+-        android:drawableStart="@drawable/ic_email"
+-        android:ems="10"
+-        android:drawablePadding="4dp"
+-        android:elevation="6dp"
+-        android:hint="@string/email"
+-        android:inputType="textEmailAddress"
+-        android:paddingStart="6dp"
+-        android:paddingLeft="50dp"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/username"
+-        app:layout_constraintVertical_bias="0.058" />
+-
+-
+-    <Button
+-        android:id="@+id/nextButton"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:background="@color/verde_maggio"
+-        android:text="Avanti"
+-        android:textColor="#f8f8ff"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.838"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.955" />
+-
+-
+-    <TextView
+-        android:id="@+id/already_registered"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:text="Sei già registrato? Clicca qui!"
+-        android:textColor="#7081DF"
+-        android:textSize="16sp"
+-        android:textStyle="bold"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.958"
+-        tools:ignore="MissingConstraints" />
++            <EditText
++                android:id="@+id/email"
++                android:layout_width="317dp"
++                android:layout_height="54dp"
++                android:layout_gravity="center"
++                android:layout_marginVertical="10dp"
++                android:background="@drawable/ic_text_box"
++                android:drawableStart="@drawable/ic_email"
++                android:drawablePadding="4dp"
++                android:elevation="6dp"
++                android:ems="10"
++                android:hint="@string/email"
++                android:inputType="textEmailAddress"
++                android:paddingStart="6dp" />
+ 
+-    <EditText
+-        android:id="@+id/password"
+-        android:layout_width="317dp"
+-        android:layout_height="54dp"
+-        android:background="@drawable/ic_text_box"
+-        android:drawableStart="@drawable/ic_psw"
+-        android:drawablePadding="4dp"
+-        android:elevation="6dp"
+-        android:paddingStart="6dp"
+-        android:ems="10"
+-        android:hint="Password"
+-        android:inputType="textPassword"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/email"
+-        app:layout_constraintVertical_bias="0.085" />
++            <EditText
++                android:id="@+id/password"
++                android:layout_width="317dp"
++                android:layout_height="54dp"
++                android:layout_gravity="center"
++                android:background="@drawable/ic_text_box"
++                android:drawableStart="@drawable/ic_psw"
++                android:drawablePadding="4dp"
++                android:elevation="6dp"
++                android:hint="Password"
++                android:inputType="textPassword"
++                android:paddingStart="6dp" />
+ 
+-
+-    <Switch
+-        android:id="@+id/switch1"
+-        android:layout_width="139dp"
+-        android:layout_height="53dp"
+-        android:text="Utente"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.287" />
++            <EditText
++                android:id="@+id/height"
++                android:layout_width="317dp"
++                android:layout_height="54dp"
++                android:layout_gravity="center"
++                android:layout_marginVertical="10dp"
++                android:background="@drawable/ic_text_box"
++                android:drawableStart="@drawable/ic_height"
++                android:drawablePadding="4dp"
++                android:elevation="6dp"
++                android:inputType="number"
++                android:hint="@string/height"
++                android:paddingStart="6dp" />
+ 
+-    <EditText
+-        android:id="@+id/username"
+-        android:layout_width="317dp"
+-        android:layout_height="54dp"
+-        android:background="@drawable/ic_text_box"
+-        android:drawableStart="@drawable/ic_user"
+-        android:drawablePadding="4dp"
+-        android:elevation="6dp"
+-        android:ems="10"
+-        android:hint="UserName"
+-        android:inputType="textEmailAddress"
+-        android:paddingStart="6dp"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.478" />
++            <EditText
++                android:id="@+id/weight"
++
++                android:layout_width="317dp"
++                android:layout_height="54dp"
++                android:layout_gravity="center"
++                android:background="@drawable/ic_text_box"
++                android:drawableStart="@drawable/ic_balance"
++                android:drawablePadding="4dp"
++                android:elevation="6dp"
++                android:inputType="number"
++                android:hint="@string/weight"
++                android:paddingStart="6dp" />
++
++        </LinearLayout>
++
++
++        <LinearLayout
++            android:layout_width="match_parent"
++            android:layout_height="wrap_content"
++            android:orientation="vertical">
++
++            <Button
++                android:id="@+id/nextButton"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:layout_gravity="right"
++                android:layout_marginVertical="10dp"
++                android:background="@drawable/rounded_button"
++                android:text="Avanti"
++                android:textColor="@color/white_ice" />
++
++            <TextView
++                android:id="@+id/already_registered"
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:layout_gravity="center"
++                android:text="Sei già registrato? Clicca qui!"
++                android:textColor="#7081DF"
++                android:textSize="16sp"
++                android:textStyle="bold" />
++
++
++        </LinearLayout>
+ 
++    </LinearLayout>
+ 
+-</androidx.constraintlayout.widget.ConstraintLayout>
++    </ScrollView>
++
++</androidx.coordinatorlayout.widget.CoordinatorLayout>
+\ No newline at end of file

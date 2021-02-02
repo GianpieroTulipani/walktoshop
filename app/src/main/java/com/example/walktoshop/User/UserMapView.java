@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
+import androidx.fragment.app.Fragment;
 
 import com.example.walktoshop.Login_SignUp.LogIn;
 import com.example.walktoshop.Model.User;
@@ -68,7 +69,6 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         createNotificationChannel();
-        Toast.makeText(UserMapView.this,"Apertura mappa in corso", Toast.LENGTH_LONG).show();
         Intent intent = getIntent();
         if (intent.hasExtra("UID") && intent.hasExtra("city") && intent.hasExtra("latitude") && intent.hasExtra("longitude")) {
             UID = intent.getStringExtra("UID");
@@ -199,17 +199,18 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        FragmentUserMapBackDrop fragment=new FragmentUserMapBackDrop();
         LatLng position= marker.getPosition();
         double latitude= position.latitude;
         double longitude= position.longitude;
-        FragmentUserMapBackDrop fragment=new FragmentUserMapBackDrop();
         Bundle bundle=new Bundle();
         String businessUID=calculateMyBusinessCustomUID(latitude,longitude);
         bundle.putString("businessUID",businessUID);
         bundle.putString("UID",UID);
         fragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.coordinator, fragment).commit();
+        getSupportFragmentManager().beginTransaction().addToBackStack(null)
+                    .add(R.id.coordinator, fragment).commit();
+
         return false;
     }
     private String calculateMyBusinessCustomUID(Double latitude,Double longitude){

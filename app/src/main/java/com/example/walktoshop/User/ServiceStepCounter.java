@@ -28,21 +28,26 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
-
+/*
+    ServiceStepCounter è un service che viene richiamato nella UserView e implementa runnable di modo che questo possa lavorare
+    su un thread separato alleggerendo il lavoro del thread principale che altrimenti sarebbe sovraccaricato di lavoro.
+    Esso come dice il nome, svolge la funzione di contapassi e salvataggio dati sia su file che su db.
+    Alcuni commenti sono stati volutamente lasciati per mostrare come sarebbe stato l'algoritmo implementando il codice del professor Buono
+    Questo è stato commentato poichè i sensori stepDetector e stepCounter sono meno presenti rispetto all'accelerometro dalle nostre prove.
+ */
 public class ServiceStepCounter extends Service implements Runnable{
     //definisco manager sensori, counter e detector
     FirebaseFirestore db=FirebaseFirestore.getInstance();
     private String today=null;
     private SensorManager mSensorManager;
     //private Sensor mStepDetectorSensor;
-    private int mySteps=0;
-    private ArrayList<String> myDiscounts;
+    private int mySteps = 0;//passi che verranno aggiornati quando sarà acceso lo step-counter
+    private ArrayList<String> myDiscounts;//array di sconti
     private SensorEventListener eventListener;
-    private String UID=null;
-    private static final String CHANNEL_ID="StepCounter_notification_channel";
+    private String UID=null;//uid utente
+    private static final String CHANNEL_ID="StepCounter_notification_channel";//costante per la creazione del background channel
     //accelerometer
-    private Boolean stepDetectorAbsent=false;
-    private double magitudePrevious=0;
+    private double magitudePrevious=0; 
     private Sensor accel;
 
     @Override
@@ -50,8 +55,6 @@ public class ServiceStepCounter extends Service implements Runnable{
         super.onCreate();
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         //Log.d("sensor","detector"+mStepDetectorSensor);
-
-
         accel=mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         /*if(accel==null){
             mStepDetectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);

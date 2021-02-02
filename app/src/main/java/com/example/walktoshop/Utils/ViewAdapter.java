@@ -44,7 +44,7 @@ public class ViewAdapter extends ArrayAdapter {
     FirebaseFirestore db =FirebaseFirestore.getInstance();
 
     public ViewAdapter(Context context, ArrayList<Discount> discounts, String UID, ArrayList businessUID, String usage) {
-        super(context, R.layout.activity_sellerviewadapter);
+        super(context, R.layout.activity_viewadapter);
         this.context=context;
         this.discounts=discounts;
         this.UID = UID;
@@ -82,7 +82,7 @@ public class ViewAdapter extends ArrayAdapter {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         LayoutInflater layoutInflater=(LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final View activity = layoutInflater.inflate(R.layout.activity_sellerviewadapter,parent,false);
+        final View activity = layoutInflater.inflate(R.layout.activity_viewadapter,parent,false);
         //caratteristiche card di sconto
         TextView disocuntDescription= activity.findViewById(R.id.disocuntDescription);
         TextView date = activity.findViewById(R.id.date);
@@ -93,6 +93,7 @@ public class ViewAdapter extends ArrayAdapter {
         ImageView difficultyColor = activity.findViewById(R.id.difficultyColor);
         ImageButton arrow = (ImageButton) activity.findViewById(R.id.arrow);
         ImageView addDiscount = (ImageView) activity.findViewById(R.id.addButton);
+        View card = activity.findViewById(R.id.card);
 
         //bottone attivazione contapassi
         //bottone abilitazione
@@ -166,6 +167,7 @@ public class ViewAdapter extends ArrayAdapter {
                         saveDiscountSharedPref(d);
                         killServiceIfRunning();
                         addDiscounts(d.getUID());
+                        card.setVisibility(View.GONE);
                         Toast toast =  Toast.makeText(getContext(),"Sconto aggiunto con successo!Visita la Home",Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();

@@ -179,27 +179,6 @@ public class FragmentUserMapBackDrop extends Fragment {
             sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         }
     }
-    //killa il service se attivo
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        killServiceIfRunning();
-    }
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private void killServiceIfRunning(){
-        if(isMyServiceRunning(ServiceStepCounter.class) == true){
-            Intent intent =new Intent(getActivity(), ServiceStepCounter.class);
-            Toast.makeText(getActivity(),"Contapassi disattivato",Toast.LENGTH_SHORT).show();
-            getActivity().stopService(intent);
-        }
-    }
+
 }
 

@@ -10,6 +10,6 @@
         android:layout_width="@dimen/splash_size"
         android:layout_height="@dimen/splash_size"
         android:layout_gravity="center"
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/wtsicon" />
 
 </FrameLayout>

@@ -189,9 +189,9 @@ public class ServiceStepCounter extends Service implements Runnable{
     Metodo che restituisce i file dello sharedpref altrimenti restituisce -1 se assente
      */
     private int getSharedPrefDiscountSteps(String discountUID){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID + UID, MODE_PRIVATE);
         if(prefs.contains("steps")){
-            int value=prefs.getInt("steps", -1);
+            int value=prefs.getInt("steps", 0);
             return value;
         }else{
             return -1;
@@ -201,7 +201,7 @@ public class ServiceStepCounter extends Service implements Runnable{
         Metodo che una volta aggiornati i passi sovrascrive questi nel corrispettivo file sharedpref all'id dello sconto che è usato come chiave
      */
     private void writeSharedPrefDiscountSteps(String discountUID,int newSteps){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID + UID, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("steps", newSteps);
         editor.apply();

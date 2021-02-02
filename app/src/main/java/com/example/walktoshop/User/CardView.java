@@ -1,14 +1,7 @@
 package com.example.walktoshop.User;
 
-import android.app.ActivityManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.LabeledIntent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
@@ -129,13 +122,13 @@ public class CardView extends AppCompatActivity {
         }
     }
     private void updateDiscountStateSharedPref(String discountUID){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID + UID, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("state", "completed");
         editor.apply();
     }
     private int getSharedPrefDiscountSteps(String discountUID){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID + UID, MODE_PRIVATE);
         if(prefs.contains("steps")){
             int value=prefs.getInt("steps", -1);
             return value;

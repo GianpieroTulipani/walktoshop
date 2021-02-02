@@ -212,7 +212,9 @@ public class UserView extends AppCompatActivity {
                             }else{
                                 Log.d("non success",finalK+"");
                                 discountUID.remove(finalK);
-                                deleteSharedPref((String) discountUID.get(finalK));
+                                if(!discountUID.isEmpty()){
+                                    deleteSharedPref((String) discountUID.get(finalK));
+                                }
 
                             }
                             setUpdatedArray(discountUID);
@@ -230,8 +232,8 @@ public class UserView extends AppCompatActivity {
             }
         }
     }
-    private void deleteSharedPref(String uid){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(uid, MODE_PRIVATE);
+    private void deleteSharedPref(String disUid){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(disUid + userUID, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.clear();
         editor.apply();
@@ -397,7 +399,7 @@ public class UserView extends AppCompatActivity {
     }
 
     private boolean getSharedPrefDialog(){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("dialog", MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("dialog" + userUID, MODE_PRIVATE);
         if(prefs.contains("State")){
             return true;
         }else{
@@ -406,7 +408,7 @@ public class UserView extends AppCompatActivity {
     }
 
     private void writeSharedPrefDialog(){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("dialog", MODE_PRIVATE);
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences("dialog" + userUID, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("State", true);
         editor.commit();

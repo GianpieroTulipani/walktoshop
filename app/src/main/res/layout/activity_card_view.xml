@@ -124,7 +124,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textStyle="bold|italic"
-                    android:text="0/10000"
+                    android:text="0/0"
                     android:textSize="30dp"
                     android:textColor="@color/verde_opale"/>
                 <TextView
@@ -193,6 +193,7 @@
         android:layout_height="36dp"
         android:layout_gravity="bottom|right"
         android:layout_marginRight="20dp"
-        android:src="@drawable/ic_share_black_24dp" />
+        android:src="@drawable/ic_share_black_24dp"
+        android:visibility="gone"/>
 
 </LinearLayout>

@@ -142,6 +142,7 @@ public class ViewAdapter extends ArrayAdapter {
                     }
                 });
             }else if(this.usage=="userHome"){
+
                 arrow.setVisibility(View.VISIBLE);
                 addDiscount.setVisibility(View.GONE);
                 if(getSharedPrefDiscountState(d.getUID())=="completed"){
@@ -182,14 +183,14 @@ public class ViewAdapter extends ArrayAdapter {
         return activity;
     }
     private void saveDiscountSharedPref(Discount d){
-        SharedPreferences prefs = getContext().getSharedPreferences(d.getUID(), MODE_PRIVATE);
+        SharedPreferences prefs = getContext().getSharedPreferences(d.getUID() + UID, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("steps", 0);
         editor.putString("state",null);
         editor.commit();
     }
     private String getSharedPrefDiscountState(String discountUID){
-        SharedPreferences prefs = getContext().getSharedPreferences(discountUID, MODE_PRIVATE);
+        SharedPreferences prefs = getContext().getSharedPreferences(discountUID + UID, MODE_PRIVATE);
         if(prefs.contains("state")){
             String value=prefs.getString("state",null);
             return value;

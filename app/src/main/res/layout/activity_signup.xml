@@ -47,6 +47,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:layout_marginTop="40dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -142,8 +143,8 @@
 
             <ImageView
                 android:id="@+id/nextButton"
-                android:layout_width="96dp"
-                android:layout_height="36dp"
+                android:layout_width="72dp"
+                android:layout_height="48dp"
                 android:layout_gravity="right"
                 android:layout_marginVertical="10dp"
                 android:background="@drawable/rounded_button"
@@ -153,6 +154,7 @@
 
             <TextView
                 android:id="@+id/already_registered"
+                android:layout_marginTop="20dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

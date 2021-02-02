@@ -33,7 +33,7 @@ import java.util.Iterator;
     su un thread separato alleggerendo il lavoro del thread principale che altrimenti sarebbe sovraccaricato di lavoro.
     Esso come dice il nome, svolge la funzione di contapassi e salvataggio dati sia su file che su db.
     Alcuni commenti sono stati volutamente lasciati per mostrare come sarebbe stato l'algoritmo implementando il codice del professor Buono
-    Questo è stato commentato poichè i sensori stepDetector e stepCounter sono meno presenti rispetto all'accelerometro dalle nostre prove.
+    Questo è stato commentato poichè i sensori stepDetector e stepCounter sono meno presenti rispetto all'accelerometro sugli smartphone, dalle nostre prove.
  */
 public class ServiceStepCounter extends Service implements Runnable{
     //definisco manager sensori, counter e detector
@@ -54,24 +54,27 @@ public class ServiceStepCounter extends Service implements Runnable{
     public void onCreate() {
         super.onCreate();
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        //Log.d("sensor","detector"+mStepDetectorSensor);
         accel=mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         /*if(accel==null){
+            //spesso assente negli smartphone testati per cui è stato disattivato,avere 2 tipi di rilevazioni avrebbe portato ad una maggiore inconsistenza tra dispositivi
             mStepDetectorSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         }*/
         Log.d("sensor","accel"+accel);
         this.today=getTodayInMills();
-        Log.d("thread", String.valueOf(Looper.myLooper() == Looper.getMainLooper()));
+        //Log.d("thread", String.valueOf(Looper.myLooper() == Looper.getMainLooper()));// stampa di verifica su che thread sta lavorando
         //ottengo riferimento al servizio SENSOR_SERVICE
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        /*
+        ricevo l'array di sconti che viene passato dalla home e l'ide dell'utente per poter fare le query e salvare i dati
+         */
         if(intent.hasExtra("UID") && intent.hasExtra("myDiscountsUID")){
             this.UID=intent.getStringExtra("UID");
             this.myDiscounts=intent.getStringArrayListExtra("myDiscountsUID");
             Log.d("dis",myDiscounts.get(0));
-            //function
+            //creazione background notification channel
             makeNotificationIntent();
             //crea un thread separato e fa partire il contapassi
             new Thread(this).start();
@@ -80,7 +83,6 @@ public class ServiceStepCounter extends Service implements Runnable{
     }
     @Override
     public void run() {
-        Log.d("started","started");
         eventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent event) {
@@ -108,12 +110,18 @@ public class ServiceStepCounter extends Service implements Runnable{
                     StepCounter.this.mySteps++;
                     Log.d("Step Detector"," Detector:" + StepCounter.this.mySteps);
                 }*/
+                /*
+                    presupponendo che sia posto in tasca
+                 */
                 float x=event.values[0];
                 float y=event.values[1];
                 float z=event.values[2];
-                double magnitude = Math.sqrt(x*x+y*y+z*z);
-                double magnitudeDelta=magnitude-magitudePrevious;
-                magitudePrevious=magnitude;
+                double magnitude = Math.sqrt(x*x+y*y+z*z); //creo la velocità angolare del dispositivo sfruttando i valori ottenuti dall'accelerometro lungo l'asse x,y,z
+                double magnitudeDelta=magnitude-magitudePrevious;//sottraggo a questa quella precedente
+                magitudePrevious=magnitude;//quella precedente è inizlizzata alla nuova velocità angolare e così ad ogni rilevazione
+                /*
+                 se il delta è superiore a 6(valore di sensibilità provato empiricamente) allora è passo altrimenti la rilevazione continua
+                 */
                 if(magnitudeDelta>6){
                     ServiceStepCounter.this.mySteps++;
                     Log.d("Accel"," Accelerometer:" + ServiceStepCounter.this.mySteps);
@@ -145,8 +153,6 @@ public class ServiceStepCounter extends Service implements Runnable{
                 .setContentTitle("WalkToShop")
                 .setContentIntent(pendingIntent)
                 .build();
-        //.setContentText("Registrazione in corso")
-        ;//.setSmallIcon(R.id.drawable)
         startForeground(1,notification);
     }
     @Nullable
@@ -158,11 +164,16 @@ public class ServiceStepCounter extends Service implements Runnable{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //spegnimento da background service
+        //spegnimento da background service,oppure qualora il service vada in onDestroy
         Log.d("des","destroy");
+        //vengono allora aggiornati i passi di tutti gli sconti in possesso
         updateSharedPrefDiscounts(mySteps,myDiscounts);
+        //vengono scritti sul db i passi effettuati giornalmente e la data
         getUserWalkArray();
     }
+    /*
+    Metodo che per ogni sconto in possesso nella home aggiorna lo sharedpref precedentemente creato con i nuovi passi
+     */
     private void updateSharedPrefDiscounts(int mySteps,ArrayList<String> myDiscounts){
         Iterator it1= myDiscounts.iterator();
         while (it1.hasNext()){
@@ -174,6 +185,9 @@ public class ServiceStepCounter extends Service implements Runnable{
             }
         }
     }
+    /*
+    Metodo che restituisce i file dello sharedpref altrimenti restituisce -1 se assente
+     */
     private int getSharedPrefDiscountSteps(String discountUID){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);
         if(prefs.contains("steps")){
@@ -183,12 +197,18 @@ public class ServiceStepCounter extends Service implements Runnable{
             return -1;
         }
     }
+    /*
+        Metodo che una volta aggiornati i passi sovrascrive questi nel corrispettivo file sharedpref all'id dello sconto che è usato come chiave
+     */
     private void writeSharedPrefDiscountSteps(String discountUID,int newSteps){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(discountUID, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt("steps", newSteps);
         editor.apply();
     }
+    /*
+    Metodo che restituisce il giorno attuale in millisecondi
+     */
     private String getTodayInMills(){
         Calendar cal = Calendar.getInstance();
         int year  = cal.get(Calendar.YEAR);
@@ -199,7 +219,10 @@ public class ServiceStepCounter extends Service implements Runnable{
         long todayMillis2 = cal.getTimeInMillis();
         return String.valueOf(todayMillis2);
     }
-    //query
+    /*
+    Metodo che prende le camminate già fatte dall'utente,se nuova la aggiunge all'array altrimenti viene verificata se la data corrisponde ad oggi e
+    eventualmente aggiornati i passi(caso di più rilevazioni in una stessa giornata)
+     */
     private void getUserWalkArray(){
         db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -211,13 +234,17 @@ public class ServiceStepCounter extends Service implements Runnable{
                         for(int i=0;i<walksArray.size();i++){
                             Log.d("walksArray",walksArray.get(i));
                         }
+                        //verifica se la camminata deve essere aggiunta all'array o sovrasctitta con i passi aggiornati
                         checkIfNewWalk(walksArray);
                     }
                 }
             }
         });
     }
-    //verifica che quando effettuato l'ultima registrazione e quindi se sovrascrivere le informazioni o aggiungere in un altro oggetto da salvare
+    /*
+    verifica l'ultima registrazione effettuata e quindi se sovrascrivere le informazioni nell'array  o  aggiungere la camminata,q
+    questo metodo verifica l'ultima data in cui è avvenuta la rilevazione prendendola dal db
+     */
     private void checkIfNewWalk(ArrayList<String> walksArray){
         db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -230,7 +257,6 @@ public class ServiceStepCounter extends Service implements Runnable{
                         //funzione per l'upload delle camminate
                         long lastWalkDateLong= Long.parseLong(lastWalkDate);
                         long todayLong= Long.parseLong(ServiceStepCounter.this.today);
-                        Log.d("diff",todayLong + " "+lastWalkDateLong);
                         //l'ha fatta oggi?
                         if(lastWalkDateLong>=todayLong){
                             int lastWalkIndex;
@@ -246,28 +272,25 @@ public class ServiceStepCounter extends Service implements Runnable{
                             String oldSteps=oldWalk.getNumberOfSteps();
                             //Log.d("oldsteps",oldSteps);
                             int updatedSteps= ServiceStepCounter.this.mySteps+ Integer.parseInt(oldSteps);
-                            Log.d("updatedsteps",updatedSteps+"");
                             String todayPlusUpdatedSteps=today + ","+updatedSteps;
                             walksArray.set(lastWalkIndex,todayPlusUpdatedSteps);
                         }else{
                             walksArray.add(todayPlusSteps);
                         }
                     }else{
-                        Log.d("newWalk",todayPlusSteps);
                         walksArray.add(todayPlusSteps);
                     }
+                    //aggiorna la camminata
                     updateWalk(walksArray);
                 }
             }
         });
     }
     private void updateWalk(ArrayList<String> walksArray){
-        for(int i=0;i<walksArray.size();i++){
-            Log.d("walksarray",walksArray.get(i));
-        }
         db.collection("utente").document(UID).update("walk",walksArray).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
+                //aggiorna la data di rilevazione essendo appena terminata una
                 setLastWalkDate();
             }
         });
@@ -276,18 +299,17 @@ public class ServiceStepCounter extends Service implements Runnable{
         db.collection("utente").document(UID).update("lastWalkDate",today).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                //forse qui va lo spegnimento e l'unregistering fare una funzione
-                /*
-                if(eventListener!=null && mStepDetectorSensor!=null){
-                    mSensorManager.unregisterListener(eventListener, mStepDetectorSensor);
-                }else if(eventListener!=null && mStepDetectorSensor==null){
-                    mSensorManager.unregisterListener(eventListener, accel);
-                }*/
+                //essendo l'ultima azione da compiere viene staccato l'accelerometro e interrotto il thread
+                //tutto questo avviene nell'oncomplete poichè firebase asincrono
                 mSensorManager.unregisterListener(eventListener, accel);
                 new Thread(ServiceStepCounter.this).interrupt();
             }
         });
     }
+    /*
+    Metodo che prende la stringa salvata sul db e converte la parte prima della virgola nella data e dopo la virgola in passi.
+    I dati vengono poi racchiusi in un oggetto camminata
+     */
     private Walk getWalkInfoFromString(String info){
         String[] todayAndSteps =info.split(",");
         Walk walk =new Walk();

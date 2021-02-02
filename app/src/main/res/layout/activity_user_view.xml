@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_gravity="center"
                 android:layout_height="190dp"
-                android:src="@drawable/_707919" />
+                android:src="@drawable/_707919"/>
 
         </LinearLayout>
 

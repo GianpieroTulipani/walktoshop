@@ -55,6 +55,14 @@ public class ManageDiscount extends AppCompatActivity {
     //DatePickerDialog.OnDateSetListener listener;
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("description", description.getText().toString());
+        outState.putString("quantity", quantity.getText().toString());
+        outState.putString("expiringDate", expiringDate.getText().toString());
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_managediscount);
@@ -71,6 +79,13 @@ public class ManageDiscount extends AppCompatActivity {
         quantity=(EditText)findViewById(R.id.disocuntsQuantity);
         add=(Button)findViewById(R.id.add);
         //setting date picker
+
+        if(savedInstanceState != null){
+            description.setText(savedInstanceState.getString("description"));
+            quantity.setText(savedInstanceState.getString("quantity"));
+            expiringDate.setText(savedInstanceState.getString("expiringDate"));
+        }
+
         cal=Calendar.getInstance();
         this.todayInMills=getTodayInMills();
         expiringDate.setEnabled(false);

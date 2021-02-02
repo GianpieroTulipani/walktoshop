@@ -1,7 +1,5 @@
 package com.example.walktoshop.Seller;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,7 +34,6 @@ public class SellerView extends AppCompatActivity {
     private ListView listView;
     private TextView alert;
     private String UID=null;
-    private int counter= 0;
     private ProgressBar progressBar;
     private FloatingActionButton addActivityButton;
     private ImageButton editDiscount;
@@ -91,13 +88,10 @@ public class SellerView extends AppCompatActivity {
         if(businessUID == null){
             businessUID = new ArrayList<String>();
         }else if(businessUID.size()<= 0){
-            counter++;
             addActivityButton.setVisibility(View.VISIBLE);
             discountImage.setVisibility(View.GONE);
             scontiAttivita.setVisibility(View.GONE);
             alert.setText("Nessuna attività registrata");
-            if(counter == 1)
-                dialog();
             addActivityButton.setVisibility(View.VISIBLE);
             mFab.setVisibility(View.GONE);
         }else if(discountUID==null){
@@ -207,17 +201,7 @@ public class SellerView extends AppCompatActivity {
                 });
             }
     }
-    private void dialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        // Add the buttons
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                // User clicked OK button
-            }
-        }).setMessage(R.string.emptyBusiness);
-        // Set other d
-        builder.show();
-    }
+
     private void goSellerMapView(){
         final Intent intent = new Intent(this, SellerMapView.class);
         intent.putExtra("UID",UID);

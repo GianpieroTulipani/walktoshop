@@ -59,6 +59,15 @@ public class SignUp extends AppCompatActivity {
     private User user=new User();
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("email", email.getText().toString());
+        outState.putString("password", password.getText().toString());
+        outState.putString("height", height.getText().toString());
+        outState.putString("weight", weight.getText().toString());
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
@@ -71,6 +80,14 @@ public class SignUp extends AppCompatActivity {
         height = (EditText) findViewById(R.id.height);
         weight = (EditText) findViewById(R.id.weight);
         already_registered = (TextView) findViewById(R.id.already_registered);
+
+        if(savedInstanceState != null){
+            email.setText(savedInstanceState.getString("email"));
+            password.setText(savedInstanceState.getString("password"));
+            height.setText(savedInstanceState.getString("height"));
+            weight.setText(savedInstanceState.getString("weight"));
+        }
+
         goNext.setVisibility(View.VISIBLE);
         seller.setUID(mAuth.getUid());
 

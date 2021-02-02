@@ -43,6 +43,13 @@ public class LogIn extends AppCompatActivity {
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+            outState.putString("emailLogIn", emailLogIn.getText().toString());
+            outState.putString("passwordLogIn", passwordLogIn.getText().toString());
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
@@ -51,6 +58,11 @@ public class LogIn extends AppCompatActivity {
         passwordLogIn = (EditText) findViewById(R.id.passwordLogIn);
         buttonLogIn = (ImageView) findViewById(R.id.buttonlogIn);
         notRegistered = (TextView) findViewById(R.id.not_registered);
+
+        if(savedInstanceState != null){
+            emailLogIn.setText(savedInstanceState.getString("emailLogIn"));
+            passwordLogIn.setText(savedInstanceState.getString("passwordLogIn"));
+        }
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -62,8 +74,6 @@ public class LogIn extends AppCompatActivity {
         });
 
     }
-
-
 
     @Override
     public void onStart() {

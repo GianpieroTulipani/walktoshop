@@ -45,7 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarkerClickListener,OnMapReadyCallback {
+public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarkerClickListener, OnMapReadyCallback {
     GoogleMap mMap;
     ProgressBar progressBar;
     List<LatLng> latLngs = new ArrayList<LatLng>();
@@ -66,17 +66,36 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_map_view);
-        cache=getSharedPref();
+
+        cache=getSharedPref();//viene preso il numero di socnti precedentemente visibile all'interno della mappa
+
+        /**
+         * il getSupportFragment il fragment contenente la mappa, all'interno del layout  dell'activity
+         */
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        createNotificationChannel();
+
+        createNotificationChannel();//crea il canale per inviare le notifiche
+
+        /**
+         * L'applicazione, riceve l'intent proveniente dall'activity UserView contenente  i parametri relativi alla città in cui l'utente è stato geolocalizzazto insieme alle
+         * coordinate della città, l'UID che identifica univocamente l'utente che utilizza l'applicazione e verifica che questi parametri esistano e siano stati effettivamente
+         * ricevuti.
+         */
         Intent intent = getIntent();
         if (intent.hasExtra("UID") && intent.hasExtra("city") && intent.hasExtra("latitude") && intent.hasExtra("longitude")) {
             UID = intent.getStringExtra("UID");
             city=intent.getStringExtra("city");
             latitude= intent.getDoubleExtra("latitude",0.0f);
             longitude= intent.getDoubleExtra("longitude",0.0f);
-            //Log.d("city",latitude+city +longitude);
+
+            /**
+             * Viene eseguita una query al db in cui vengono prelevate tutte le attività, aventi come località, la città in cui l'utente è stato geolocalizzato.
+             * Successivamente vengono salvati in degli ArrayList l'identificatore degli sconti relativi ad ogni attività nella determinata località, la latitudine e la longitudine ed
+             * il nome dell'attività.
+             * Poi viene aggiornato il numero di sconti rispetto all'ultimo ingresso nell'activity se esso è maggiore rispetto all'ultima volta, viene inviata una notifica per informare
+             * l'utente della presenza dei nuovi sconti ed infine viene chiamato il metodo di callback che viene attivato quando la google map è pronta all'utilizzo.
+             */
             db.collection("attivita").whereEqualTo("locality", city).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -104,7 +123,10 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
                 }
             });
         }
-
+        /**
+         * viene preso un riferimento alla bottom navigation view dell'xml tramite la classe delle risorse R e viene posto un listener che verifica
+         * quale item è stato selezionato ed invia un intent per aprire una nuova activity
+         */
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -122,6 +144,9 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         });
     }
 
+    /**
+     * viene controllato che il dispositivo sia connesso ad internet altrimenti l'utnete riceve un dialog di avviso
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -131,7 +156,12 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         }
     }
 
-
+    /**
+     * Intent esplicito per spostare il controllo dell'applicazione dalla UserMapView all'activity contente le statistiche relative
+     * alle attività dell'utente. Sono inviati come parametri dell'intent le informazioni di latitudine, longitudine, città ed identificativo dell'utente
+     * perchè in questo modo è possibile dalle statistiche ritornare alla mappa senza dover ripassare dalla home per geolocalizzare nuovamente.
+     * Mentre l'UID ci permette semppre di capire a quale utente ci riferiamo.
+     */
     private void goUserStatistics() {
         final Intent intent = new Intent(this, UserStatistics.class);
         User user = new User();
@@ -142,6 +172,8 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         startActivity(intent);
     }
 
+
+    //Intent esplicito per spostare il controllo dell'applicazione dalla UserMapView all'activity della home, viene inviato come parametro l'identifictivo dell'utente
     private void goHome() {
         final Intent intent = new Intent(this, UserView.class);
         intent.putExtra("UID", UID);

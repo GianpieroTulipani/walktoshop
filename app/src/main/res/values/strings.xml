@@ -86,4 +86,14 @@
     //UserMapView
     <string name="allert_discount_creation">Un nuovo sconto è stato aggiunto!</string>
     <string name="allert_click_on_marker">Clicca sui contrassegni rossi nella mappa per scoprirne altri.</string>
+    //UserView
+    <string name="loading">Rilevamento della posizione in corso</string>
+    <string name="noDiscountActive">Nessuno sconto attivato</string>
+    <string name="addedDiscount">Sconto aggiunto con successo</string>
+    <string name="easy">Facile</string>
+    <string name="mediumDifficulty">Media difficoltà</string>
+    <string name="difficult">Difficile</string>
+    <string name="deletedDiscount">Sconto eliminato</string>
+    <string name="denyLocalization">Negando la geolocalizzazione non potrai utilizzare a pieno  l\'app</string>
+    <string name="permission">Permesso di geolocalizzazione</string>
 </resources>

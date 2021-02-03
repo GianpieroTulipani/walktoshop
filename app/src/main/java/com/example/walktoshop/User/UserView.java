@@ -52,7 +52,14 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-
+/**
+ * Activity che mostra all'utente gli sconti aggiunti dalla mappa e gli da la possibilità di attivare un contapassi che in assenza di sconti
+ * registra i passi nelle statistiche altrimenti è mostrata un progressione degli sconti nella home fino a raggiungimento del rispettivo
+ * goal.Qui inoltre avviene anche la geolocalizzazione poichè impossibile in UserMapView,si è riscontrato infatti che il caricamento della
+ * mappa e la geolocalizzazioe insieme avrebbe causato un drastico abbassamento delle performance con eventuale crash del sistema in particolare
+ * a causa di problemi di asincronia tra geolocalizzazione e caricamento mappa.
+ * Per questo motivo latitudine,longitudine e città vengo poi passate via intent alla userMapView
+ */
 public class UserView extends AppCompatActivity {
     FirebaseFirestore db =FirebaseFirestore.getInstance();
     private TextView alert;
@@ -77,6 +84,8 @@ public class UserView extends AppCompatActivity {
         alert=findViewById(R.id.alert);
         alert.setVisibility(View.GONE);
         stepcounterFab = (FloatingActionButton) findViewById(R.id.stepcounterFab);
+        //se l'utente usa per la prima volta l'app si apre un dialog esplicativo poi si accende il contapassi premendo questo bottone
+        //se il contapassi è già attivato viene disattivato
         stepcounterFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,7 +98,7 @@ public class UserView extends AppCompatActivity {
         });
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         homeListview= findViewById(R.id.homeListView);
-        //setting del channel per quando partirà il service
+        //localizzazione utente
         localizeUser();
         createNotificationChannel();
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -98,7 +107,7 @@ public class UserView extends AppCompatActivity {
                 switch (item.getItemId()) {
                     case R.id.action_map:
                         if(city==null && latitude==0 && longitude==0){
-                            Toast.makeText(UserView.this,"Rilevamento della posizione in corso",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UserView.this,getResources().getString(R.string.loading),Toast.LENGTH_SHORT).show();
                             askGPSpermission();
                         }else{
                             goToUserViewMap();
@@ -111,11 +120,18 @@ public class UserView extends AppCompatActivity {
                 return true;
             }
         });
+        /*
+        Viene preso l'uid utente dalla registrazione o dal login per effettuare le query richieste
+         */
         Intent intent =getIntent();
         if(intent.hasExtra("UID")){
             this.userUID = intent.getStringExtra("UID");
         }
     }
+
+    /**
+     * Metodo per la geolocalizzazione utente che setta latitudine longitudine e città in cui è localizzato
+     */
     private void localizeUser(){
         if(ActivityCompat.checkSelfPermission(UserView.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             Task<Location> task = fusedLocationClient.getLastLocation();
@@ -139,11 +155,14 @@ public class UserView extends AppCompatActivity {
                 }
             });
         } else {
-
+            //richiesta permessi
             ActivityCompat.requestPermissions(UserView.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
         }
     }
-
+    /*
+        Metodo che passa il controllo all'activity UserStatistics passando anche le informazioni relative a città,latitudine e longitudione
+        di modo che l'utente non debba ogni volta andare nella home per geolocalizzarsi
+     */
     private void goUserStatistics() {
         final Intent intent = new Intent(UserView.this, UserStatistics.class);
         intent.putExtra("UID", this.userUID);
@@ -156,13 +175,18 @@ public class UserView extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //controllo connessione ad internet
         NetworkController networkController =new NetworkController();
         if(!networkController.isConnected(UserView.this)){
             networkController.connectionDialog(UserView.this);
         }
+        //query che prende gli sconti aggiunti nella home se esistenti
         getUserDiscounts();
     }
 
+    /**
+     *  Query che prende gli sconti aggiunti nella home se esistenti
+     */
     private void getUserDiscounts(){
         db.collection("utente").document(userUID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -172,20 +196,26 @@ public class UserView extends AppCompatActivity {
                     ArrayList<String> discountUID = (ArrayList) document.get("discountUID");
                     if(discountUID!=null){
                         UserView.this.uidDiscount=discountUID;
+                        //se vi sono sconti questa query prende le info relative a ciascuno sconto che verrà poi passato nel viewAdapter
                         getMyDiscounts(discountUID);
                     }else  if(discountUID==null){
                         alert.setVisibility(View.VISIBLE);
-                        alert.setText("Nessuno sconto attivato");
+                        alert.setText(R.string.noDiscountActive);
                     }else if(discountUID.isEmpty()){
                         alert.setVisibility(View.VISIBLE);
-                        alert.setText("Nessuno sconto attivato");
+                        alert.setText(R.string.noDiscountActive);
                     }
                 }
             }
         });
     }
-    private void getMyDiscounts(ArrayList discountUID){
 
+    /**
+     * Query al db che prende gli oggetti di tipo sconto e se uno sconto è stato eliminato dal venditore viene rimosso da quelli
+     * in possesso dell'utente e sovrascritto il nuovo array di id di sconti in modo consistente
+     * @param discountUID
+     */
+    private void getMyDiscounts(ArrayList discountUID){
         if(!discountUID.isEmpty()){
             int k=0;
             Iterator it =discountUID.iterator();
@@ -210,20 +240,15 @@ public class UserView extends AppCompatActivity {
                                     myDiscounts.add(discount);
                                 }
                             }else{
-                                Log.d("non success",finalK+"");
                                 discountUID.remove(finalK);
-                                if(!discountUID.isEmpty()){
-                                    deleteSharedPref((String) discountUID.get(finalK));
-                                }
-
                             }
                             setUpdatedArray(discountUID);
-
                         }
                     }
                 }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        //viene settato l 'adapter e passati gli sconti e il tipo di utilizzo
                         final ViewAdapter adapter=new ViewAdapter(UserView.this,myDiscounts, userUID,null,"userHome");
                         homeListview.setAdapter(adapter);
                     }
@@ -232,18 +257,21 @@ public class UserView extends AppCompatActivity {
             }
         }
     }
-    private void deleteSharedPref(String disUid){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(disUid + userUID, MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.clear();
-        editor.apply();
-    }
+
+
+    /**
+     * Metodo che sovrascrive l'array passato sul db
+     * @param discountUID
+     */
     private void setUpdatedArray(ArrayList<String> discountUID){
         db.collection("utente").document(UserView.this.userUID).update("discountUID",discountUID);
     }
 
+    /**
+     * Metodo che sposta il controllo all'activity userMapView inviandogli le informazioni necessarie via intent
+     */
     private void goToUserViewMap() {
-        Toast toast = Toast.makeText(getApplicationContext(),"Apertura mappa in corso",Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getApplicationContext(),getResources().getString(R.string.loading),Toast.LENGTH_SHORT);
         toast.show();
         final Intent intent = new Intent(UserView.this, UserMapView.class);
         intent.putExtra("UID", this.userUID);
@@ -261,6 +289,10 @@ public class UserView extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item){
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * Metodo che attiva il service dello step counter se esso non è già attivo altrimenti lo termina
+     */
     private  void startStepCounter(){
         if(userUID!=null  ){
             Intent intent =new Intent(this, ServiceStepCounter.class);
@@ -280,13 +312,13 @@ public class UserView extends AppCompatActivity {
            logOut();
        }
     }
-
     private void logOut(){
         FirebaseAuth.getInstance().signOut();
         final Intent intent = new Intent(this, LogIn.class);
         startActivity(intent);
         finish();
     }
+
     private void createNotificationChannel(){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
@@ -298,6 +330,9 @@ public class UserView extends AppCompatActivity {
         }
     }
 
+    /**
+     * Metodo che disattiva il contapassi se attivo
+     */
     private void killServiceIfRunning(){
         if(isMyServiceRunning(ServiceStepCounter.class) == true){
             Intent intent =new Intent(this, ServiceStepCounter.class);
@@ -305,6 +340,12 @@ public class UserView extends AppCompatActivity {
             stopService(intent);
         }
     }
+
+    /**
+     * Metodo che restituisce trye se il service del contapassi è attivo altrimenti false
+     * @param serviceClass
+     * @return
+     */
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -314,27 +355,48 @@ public class UserView extends AppCompatActivity {
         }
         return false;
     }
+
+    /**
+     * Metodo che quando all'utente viene nuovamente richiesto il permesso di geolocalizzazione se negato mostra un dialog esplicativo
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(requestCode == 44){
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
-            }
-        }else if(requestCode==10){
-            if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                localizeUser();
             }else if(grantResults[0]==PackageManager.PERMISSION_DENIED){
                 if(ActivityCompat.shouldShowRequestPermissionRationale(UserView.this,Manifest.permission.ACCESS_FINE_LOCATION)){
                     //dialog in cui spiego
                     new AlertDialog.Builder(UserView.this)
-                            .setTitle("Permission")
-                            .setMessage("Denying permission you can't use geo-localization")
+                            .setTitle(R.string.permission)
+                            .setMessage(R.string.denyLocalization)
+                            .setNeutralButton("ok",null)
+                            .show();
+                }
+            }
+        }else if(requestCode==10){
+            if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                askGPSpermission();
+            }else if(grantResults[0]==PackageManager.PERMISSION_DENIED){
+                if(ActivityCompat.shouldShowRequestPermissionRationale(UserView.this,Manifest.permission.ACCESS_FINE_LOCATION)){
+                    //dialog in cui spiego
+                    new AlertDialog.Builder(UserView.this)
+                            .setTitle(R.string.permission)
+                            .setMessage(R.string.denyLocalization)
                             .setNeutralButton("ok",null)
                             .show();
                 }
             }
         }
     }
-    //debug mode
+
+    /**
+     * I metodi di geolocalizzazione sono 2 poichè un metodo funzionava sull'emulatore e non sul device e viceversa per cui per ragioni di
+     * affidabilità sono stati usati entrambi in caso uno dei due fallisca essendo molto delicato il sistema
+     */
     private void getUserPosition() {
         service = (LocationManager) getSystemService(LOCATION_SERVICE);
         locationListener = new LocationListener() {
@@ -350,7 +412,6 @@ public class UserView extends AppCompatActivity {
                     String country=addresses.get(0).getCountryName();
                     city=addresses.get(0).getLocality();
                     goToUserViewMap();
-                    //Log.d("city",city);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -361,6 +422,10 @@ public class UserView extends AppCompatActivity {
 
             }
 
+            /**
+             * Metodo che in caso di rifiuto permessi effettua il popup di un dialog
+             * @param provider
+             */
             @Override
             public void onProviderDisabled(@NonNull String provider) {
                 new AlertDialog.Builder(UserView.this).setTitle("GPS dialog").setMessage("Do you want to turn on gps?")
@@ -375,6 +440,9 @@ public class UserView extends AppCompatActivity {
         };
     }
 
+    /**
+     * Metodo di richiesta permessi,se accettati si prosegue con la geolocalizzazione
+     */
     private void askGPSpermission() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -398,6 +466,10 @@ public class UserView extends AppCompatActivity {
         builder.show();
     }
 
+    /**
+     * Metodo che consente di capire se è la prima volta che un utente va nella home
+     * @return
+     */
     private boolean getSharedPrefDialog(){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("dialog" + userUID, MODE_PRIVATE);
         if(prefs.contains("State")){

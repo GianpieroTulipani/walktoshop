@@ -204,6 +204,7 @@ public class ServiceStepCounter extends Service implements Runnable{
         }
         db.collection("utente").document(UID).update("discountSteps",newDsp);
     }
+    
     private Discount getDiscountInfoFromString(String info){
         Discount d = new Discount();
         String[] uidAndSteps =info.split(",");

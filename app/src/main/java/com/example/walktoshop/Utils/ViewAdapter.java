@@ -117,7 +117,7 @@ public class ViewAdapter extends ArrayAdapter {
         /*
         A seguito se vi sono sconti dall'array passato
          */
-        if(this.discounts.get(position) != null && position>=0 && !discounts.isEmpty()){
+        if(position>=0 && position<=discounts.size()  && !discounts.isEmpty() && this.discounts.get(position) != null){
             Discount d=this.discounts.get(position);
             //viene settata la data di scadenza
             date.setText("scadenza: "+d.millisecondsToDate(d.getExpiringDate()));

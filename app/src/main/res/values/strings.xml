@@ -69,4 +69,15 @@
     <string name="connect">Connettiti</string>
     <string name="Undo">Annulla</string>
     <string name="internetFail">Connessione internet troppo debole o assente.</string>
+    //manageDiscount
+    <string name="correctInfo">Inserimento sconto avvenuto con successo!</string>
+    <string name="expiringDialog">Data di scadenza(gg/mm/aaaa)</string>
+    <string name="notSupportedVersion">Inserire la data manualmente, poichè la versione del tuo dispositivo non supporta l inserimento automatico tramite calendario</string>
+    <string name="dateFormat">Rispettare formato: gg/mm/aaaa</string>
+    <string name="stepRange">Inserire un numero passi che sia compreso tra 2000 e 100000</string>
+    <string name="invalidDate">Data non valida</string>
+    //SellerView
+    <string name="noActivity">Nessuna attività registrata</string>
+    <string name="discount"> Sconti </string>
+    <string name="noDiscount">Nessuno sconto disponibile</string>
 </resources>

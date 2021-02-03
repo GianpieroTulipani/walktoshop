@@ -83,4 +83,10 @@
     //CardView
     <string name="share">Ecco il codice sconto che ti è stato regalato:</string>
     <string name="hereDiscount">"Ecco il tuo codice sconto:"</string>
+    //viewAdapter
+    <string name="easy">Facile</string>
+    <string name="mediumDifficulty">Difficoltà Media</string>
+    <string name="difficult">Difficile</string>
+    <string name="addedDiscount">Sconto aggiunto con successo!Visita la Home</string>
+    <string name="deletedDiscount">Sconto cancellato con successo!</string>
 </resources>

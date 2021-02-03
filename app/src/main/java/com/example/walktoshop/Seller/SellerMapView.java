@@ -51,19 +51,26 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_map_view);
+
+        //riceve l'intent contenente l'identificatore univoco dell'utente
         Intent intent = getIntent();
         if(intent.hasExtra("UID")){
             UID=intent.getStringExtra("UID");
-//            Log.d("uid",UID);
             SellerMapView.this.business.setOwnerUID(UID);
         }
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+
+        //il getSupportFragment il fragment contenente la mappa, all'interno del layout  dell'activity
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
         search = findViewById(R.id.search_bar);
+        //inizializzazione delle places API
         if(!Places.isInitialized()){
             Places.initialize(getApplicationContext(),API_KEY);
         }
         PlacesClient client=Places.createClient(this);
+        /**
+         * viene settato un listener sulla
+         */
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {

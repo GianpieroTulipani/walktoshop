@@ -67,11 +67,10 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_map_view);
 
-        cache=getSharedPref();//viene preso il numero di socnti precedentemente visibile all'interno della mappa
+        cache=getSharedPref();//viene preso il numero di sconti precedentemente visibile all'interno della mappa
 
-        /**
-         * il getSupportFragment il fragment contenente la mappa, all'interno del layout  dell'activity
-         */
+
+        //il getSupportFragment il fragment contenente la mappa, all'interno del layout  dell'activity
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
@@ -180,6 +179,7 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         startActivity(intent);
     }
 
+    //viene fatto l'inflate del menu della ActionBar
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_action_bar, menu);
         return true;
@@ -189,12 +189,14 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         return super.onOptionsItemSelected(item);
     }
 
+    //viene chiamato questo metodo da xml quando l'utente clicca sull'item. ed effettua il log out lanciando un intent che sposta il controllo dell'applicazione sull'activity di login
     public void OnItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_exit){
             logOut();
         }
     }
 
+    //intent esplicito che sposta il controllo dell'applicazione all'activity di login
     private void logOut(){
         FirebaseAuth.getInstance().signOut();
         final Intent intent = new Intent(this, LogIn.class);
@@ -202,6 +204,15 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         finish();
     }
 
+    /**
+     * metodo chiamato dal getMapAsync quando la Google map è pronta per l'utilizzo, viene utilizzato un booleano per cambiare la visuale della mappa da satellite a normale e viceversa
+     * in corrispondenza del click sul Floating Action Button.
+     * Vengono definiti due iteratori uno per la lista contenente i nomi delle attività ed uno per la lista contenente le coordinate dell'attività, questi due iterator vengono fatti scorrere,
+     * e ad ogni iterazione viene posizionato un marker sulle coordinate, avente come titolo il nome dell'attività.
+     * Successivamente facciamo uno zoom sulla città che abbiamo ottenuto come parametro dell'intent, ossia la città in cui l'utente è stato geolocalizzato, in cui saranno visibili tutti i marker
+     * relativi alle attività precedentemente inseriti, infine viene settato un listener sui marker.
+     * @param googleMap
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -230,6 +241,12 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
 
     }
 
+    /**
+     * Quando clicchiamo su un marker viene chiamato questo metodo, che consente l'apertura del backdrop in modo controllato,
+     * non consentendo all'utente di premere più volte sullo stesso marker, in modo da eviatre l'inserimento di uno stesso sconto varie volte.
+     * @param marker
+     * @return
+     */
     @Override
     public boolean onMarkerClick(Marker marker) {
         FragmentUserMapBackDrop fragment=new FragmentUserMapBackDrop();
@@ -253,6 +270,7 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
 
         return false;
     }
+    //viene calcolato l'uid dell'attività come somma delle coordinate di latitudine e longitudine
     private String calculateMyBusinessCustomUID(Double latitude,Double longitude){
         if(latitude!=null && longitude!=null){
             String customUID=null;
@@ -264,6 +282,7 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         }
     }
 
+    //viene preso dal file il precedente numero di sconti presenti all'interno dell'attività
     private int getSharedPref(){
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("details", MODE_PRIVATE);
         if(prefs.contains("discountNumber")){
@@ -273,6 +292,8 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
             return -1;
         }
     }
+
+    //viene aggiornato il file con il nuovo numero di sconti relativo all'attività
     private boolean writeSharedPref(int counter){
         Log.d("counter",counter+" "+cache);
         if(cache<0){
@@ -291,20 +312,25 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         }
         return false;
     }
+
+    /**
+     * metodo che notifica l'utente dell'aggiunta di un nuovo sconto da parte di un venditore tramite una notifica personalizzata
+     */
     private void sendNotification(){
         NotificationCompat.Builder b = new NotificationCompat.Builder(this);
         b.setAutoCancel(true)
                 .setDefaults(android.app.Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.ic_baseline_shop_24)
-                .setContentTitle("Un nuovo sconto è stato aggiunto!")
-                .setContentText("Clicca sui contrassegni rossi nella mappa per scoprirne altri.")
+                .setContentTitle(getResources().getString(R.string.allert_discount_creation))
+                .setContentText(getResources().getString(R.string.allert_click_on_marker))
                 .setDefaults(android.app.Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
                 .setContentInfo("Info")
                 .setChannelId(NOTIFICATION_CHANNEL_ID);
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(0,b.build());
     }
+    //metodo che apre il canale di connessione per le notifiche
     private void createNotificationChannel(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             NotificationManager manager =getSystemService(NotificationManager.class);

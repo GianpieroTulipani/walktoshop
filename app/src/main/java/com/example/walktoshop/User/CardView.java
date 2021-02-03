@@ -105,6 +105,7 @@ public class CardView extends AppCompatActivity {
                 goalStepRatio.setText(goal+"/"+goal);
                 discountTitle.setText("Ecco il tuo codice sconto:");
                 code.setText(discountCode);
+                writeInSharedPref(d.getUID());
                 shareButton.setVisibility(View.VISIBLE);
             }else{
                 goalStepRatio.setText(totalSteps+"/"+goal);
@@ -116,6 +117,13 @@ public class CardView extends AppCompatActivity {
             int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),totalSteps);
             kcal.setText(calories+" Kcal");
         }
+    }
+
+    private void writeInSharedPref( String discountUID) {
+        SharedPreferences sharedPreferences = getSharedPreferences(UID + discountUID, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("c", true);
+        editor.apply();
     }
 
     private void getBusinessInfo(String businessUID){

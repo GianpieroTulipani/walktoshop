@@ -156,6 +156,8 @@ public class SellerView extends AppCompatActivity {
                             if (document.exists()) {
                                 //Log.d("TAG", "DocumentSnapshot data: " + document.getData());
                                 discountUID=(ArrayList) document.get("discountUID");
+                                String name = document.getString("name");
+                                scontiAttivita.setText( "Sconti " + name + ":");
                                 //Log.d("TAG", "uid dello sconto" + discountUID.toString());
                                 if(discountUID!=null && !discountUID.isEmpty()){
                                     getDiscounts();

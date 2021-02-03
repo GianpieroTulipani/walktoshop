@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nestedScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,72 +8,200 @@
     android:background="@color/white_ice"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/card_shape">
-            <TextView
-                android:id="@+id/report"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="15dp"
-                android:textColor="@color/black"
-                android:layout_marginTop="10dp"
-                android:text=""/>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barChart"
+            android:orientation="vertical">
+
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="300dp" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/card_shape">
-            <TextView
-                android:id="@+id/report1"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="15dp"
-                android:textColor="@color/black"
-                android:layout_marginTop="10dp"
-                android:text=""/>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barChartKcal"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|center"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/white">
+
+                    <ProgressBar
+                        android:id="@+id/progerssBar"
+                        style="@style/CircularDeterminateprogressBar"
+                        android:layout_width="300dp"
+                        android:layout_height="300dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0"
+                        tools:progress="0" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="@+id/progerssBar"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="@+id/progerssBar"
+                        app:layout_constraintTop_toTopOf="@+id/progerssBar"
+                        tools:ignore="MissingConstraints">
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:src="@drawable/ic_directions_run_black_96dp"
+                            app:layout_constraintBottom_toBottomOf="@+id/progerssBar"
+                            app:layout_constraintEnd_toEndOf="@+id/progerssBar"
+                            app:layout_constraintStart_toStartOf="@+id/progerssBar"
+                            app:layout_constraintTop_toTopOf="@+id/progerssBar"
+                            app:tint="@color/verde_opale" />
+
+                        <TextView
+                            android:id="@+id/dailySteps"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/verde_opale"
+                            android:textSize="30dp"
+                            android:textStyle="bold|italic" />
+
+                    </LinearLayout>
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_calories_svgrepo_com"
+                        app:tint="@color/verde_maggio" />
+
+                    <TextView
+                        android:id="@+id/kcal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="20dp"
+                        android:text="0 Kcal"
+                        android:textColor="@color/verde_opale"
+                        android:textSize="30dp"
+                        android:textStyle="bold|italic" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_ruler_svgrepo_com"
+                        app:tint="@color/verde_maggio" />
+
+                    <TextView
+                        android:id="@+id/kilometers"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="0 Km"
+                        android:textColor="@color/verde_opale"
+                        android:textSize="30dp"
+                        android:textStyle="bold|italic" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_height="300dp" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/card_shape">
-            <TextView
-                android:id="@+id/report2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="15dp"
-                android:textColor="@color/black"
-                android:layout_marginTop="10dp"
-                android:text=""/>
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/barChartKm"
-                android:layout_width="match_parent"
-                android:layout_marginTop="10dp"
-                android:layout_height="300dp" />
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/card_shape"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/report"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="10dp"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:textSize="15dp" />
+
+                        <com.github.mikephil.charting.charts.BarChart
+                            android:id="@+id/barChart"
+                            android:layout_width="400dp"
+                            android:layout_height="300dp"
+                            android:layout_gravity="center" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/card_shape">
+                        <TextView
+                            android:id="@+id/report1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textSize="15dp"
+                            android:textColor="@color/black"
+                            android:layout_marginTop="10dp"
+                            android:text=""/>
+
+                        <com.github.mikephil.charting.charts.BarChart
+                            android:id="@+id/barChartKcal"
+                            android:layout_width="400dp"
+                            android:layout_height="300dp" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/card_shape">
+                        <TextView
+                            android:id="@+id/report2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textSize="15dp"
+                            android:textColor="@color/black"
+                            android:layout_marginTop="10dp"
+                            android:text=""/>
+                        <com.github.mikephil.charting.charts.BarChart
+                            android:id="@+id/barChartKm"
+                            android:layout_width="400dp"
+                            android:layout_height="300dp" />
+
+                    </LinearLayout>
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottom_navigation"
                 android:layout_width="match_parent"
@@ -80,9 +209,10 @@
                 android:layout_gravity="bottom"
                 style="@style/Widget.MaterialComponents.BottomNavigationView.Colored"
                 app:menu="@menu/menu_bottom_navigation_view" />
+
         </LinearLayout>
 
-    </LinearLayout>
+    </ScrollView>
 
 
-</androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

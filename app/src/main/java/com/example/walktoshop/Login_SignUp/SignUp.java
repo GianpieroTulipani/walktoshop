@@ -1,5 +1,6 @@
 package com.example.walktoshop.Login_SignUp;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -45,7 +46,7 @@ public class SignUp extends AppCompatActivity {
     private EditText confpassword;
     private EditText email;
     private SwitchCompat switchButton;
-    private ImageView goNext;
+    private Button goNext;
     private TextView already_registered;
     private EditText height;
     private EditText weight;
@@ -67,6 +68,7 @@ public class SignUp extends AppCompatActivity {
         outState.putString("weight", weight.getText().toString());
     }
 
+    @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +78,7 @@ public class SignUp extends AppCompatActivity {
         email=(EditText) findViewById(R.id.email);
         switchButton=(SwitchCompat)findViewById(R.id.switch1);
         switchButton.setHintTextColor(Color.WHITE);
-        goNext=(ImageView)findViewById(R.id.nextButton);
+        goNext=(Button)findViewById(R.id.nextButton);
         height = (EditText) findViewById(R.id.height);
         weight = (EditText) findViewById(R.id.weight);
         already_registered = (TextView) findViewById(R.id.already_registered);

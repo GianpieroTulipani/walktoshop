@@ -101,16 +101,22 @@
                     android:textSize="25dp"
                     />
             </LinearLayout>
-            <Button
+
+            <LinearLayout
+                android:layout_width="317dp"
                 android:layout_marginTop="30dp"
-                android:layout_marginRight="20dp"
-                android:layout_gravity="bottom|end"
-                android:id="@+id/add"
-                android:background="@color/verde_maggio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/add"
-                />
+                android:layout_gravity="end|center"
+                android:layout_height="wrap_content">
+                <Button
+                    android:id="@+id/add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/verde_maggio"
+                    android:background="@drawable/rounded_button"
+                    android:text="@string/add" />
+
+            </LinearLayout>
+
 
 
         </LinearLayout>

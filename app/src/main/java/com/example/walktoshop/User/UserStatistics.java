@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -30,10 +31,14 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.sql.Wrapper;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import static com.github.mikephil.charting.utils.ColorTemplate.MATERIAL_COLORS;
 
@@ -51,6 +56,10 @@ public class UserStatistics extends AppCompatActivity {
     private ArrayList<BarEntry> dailyKm=new ArrayList<>();
     private ArrayList<BarEntry> dailyKcal= new ArrayList<BarEntry>();
     private ArrayList<String> days = new ArrayList<>();
+    private TextView daily_steps;
+    private TextView daily_meter;
+    private TextView daily_kcal;
+    private ProgressBar progressBar;
     private TextView report;
     private TextView report1;
     private TextView report2;
@@ -72,6 +81,11 @@ public class UserStatistics extends AppCompatActivity {
         report = findViewById(R.id.report);
         report1 = findViewById(R.id.report1);
         report2 = findViewById(R.id.report2);
+        daily_steps = (TextView) findViewById(R.id.dailySteps);
+        daily_kcal = (TextView) findViewById(R.id.kcal);
+        daily_meter = (TextView) findViewById(R.id.kilometers);
+        progressBar = (ProgressBar) findViewById(R.id.progerssBar);
+        progressBar.setProgress(100);
 
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -143,8 +157,14 @@ public class UserStatistics extends AppCompatActivity {
                                 long steps= Long.parseLong((walk.getNumberOfSteps()));
                                 float meters= calculateKilometers(userHeight,steps)*1000;//trasformare in metri per il grafico
                                 int kcal= calculateKcal(userWeight,steps);
-                                Log.d("index",days.get(i)+" "+steps);
 
+                                String day = millisecondsToDate(Long.toString(Calendar.getInstance().getTimeInMillis()));
+                                Log.d("daily", day);
+                                if( days.get(i).equals(day)){
+                                    daily_steps.setText(""+ steps);
+                                    daily_meter.setText((calculateKilometers(userHeight,steps)) + "Km");
+                                    daily_kcal.setText(""+ calculateKcal(userWeight,steps) + "Kcal");
+                                }
                                 UserStatistics.this.dailySteps.add(new BarEntry(i,steps));
                                 UserStatistics.this.dailyKm.add(new BarEntry(i,meters));
                                 UserStatistics.this.dailyKcal.add(new BarEntry(i,kcal));

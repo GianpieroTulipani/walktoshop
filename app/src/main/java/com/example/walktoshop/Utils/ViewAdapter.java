@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -86,8 +87,8 @@ public class ViewAdapter extends ArrayAdapter {
         LayoutInflater layoutInflater=(LayoutInflater) context.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View activity = layoutInflater.inflate(R.layout.activity_viewadapter,parent,false);
         //caratteristiche card di sconto
-        TextView disocuntDescription= activity.findViewById(R.id.disocuntDescription);
         TextView date = activity.findViewById(R.id.date);
+        TextView disocuntDescription= activity.findViewById(R.id.disocuntDescription);
         //bottone eliminazione
         ImageButton deleteDiscount =activity.findViewById(R.id.deleteDiscount);
         //modifica
@@ -128,7 +129,7 @@ public class ViewAdapter extends ArrayAdapter {
                 arrow.setVisibility(View.GONE);
                 addDiscount.setVisibility(View.GONE);
                 deleteDiscount.setVisibility(View.VISIBLE);
-                if(d != null){
+                if(d != null && d.getExpiringDate() != null){
                     if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
                         date.setText("Scaduto");
                     }
@@ -145,6 +146,10 @@ public class ViewAdapter extends ArrayAdapter {
 
                 arrow.setVisibility(View.VISIBLE);
                 addDiscount.setVisibility(View.GONE);
+                getBusinessName(d, d.getDescription(), activity);
+                if(getSharedPrefDiscountState(d.getUID()) == true){
+                    date.setText("Completato");
+                }
                 arrow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -179,6 +184,16 @@ public class ViewAdapter extends ArrayAdapter {
         }
         return activity;
     }
+
+    private boolean getSharedPrefDiscountState(String discountUID) {
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences(UID + discountUID, MODE_PRIVATE);
+        if(sharedPreferences.contains("c")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     private void saveDiscountSteps(Discount d){
         db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -240,6 +255,21 @@ public class ViewAdapter extends ArrayAdapter {
                     updateBusiness(discountUID,position);
                 }else{
                     Log.d("non successo","non successo");
+                }
+            }
+        });
+    }
+    private void getBusinessName(Discount d, String description, View activity){
+        db.collection("attivita").document(d.getBusinessUID()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if(document.exists()){
+                        String name = document.getString("name");
+                        TextView disocuntDescription= activity.findViewById(R.id.disocuntDescription);
+                        disocuntDescription.setText(name + ": " + "\n" + description);
+                    }
                 }
             }
         });

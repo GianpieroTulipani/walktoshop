@@ -145,14 +145,14 @@
                 android:layout_gravity="center"
                 android:orientation="vertical">
 
-                <ImageView
+                <Button
                     android:id="@+id/nextButton"
-                    android:layout_width="72dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="48dp"
                     android:layout_gravity="right"
                     android:layout_marginVertical="10dp"
                     android:background="@drawable/rounded_button"
-                    android:src="@drawable/ic_add_people_interface_symbol_of_black_person_close_up_with_plus_sign_in_small_circle"
+                    android:text="registrati"
                     android:textColor="@color/white_ice"
                     app:tint="@color/white" />
 

@@ -42,7 +42,6 @@
                     android:id="@+id/scontiAttivita"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sconti Attività"
                     android:textColor="@color/black"
                     android:textStyle="bold"
                     android:textAppearance="?attr/textAppearanceHeadline4"/>

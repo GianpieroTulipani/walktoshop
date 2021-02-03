@@ -108,19 +108,17 @@ public class FragmentUserMapBackDrop extends Fragment {
                     if(discountUID!=null){
                         Log.d("discount",discountUID.size()+" ");
                         Log.d("business",businessUID.get(0));
-                        discountDescription.setText("Lista sconti disponibili");
+                        discountDescription.setText(R.string.discount_list);
                         if(!discountUID.isEmpty()){
                             getDiscounts(discountUID, userDisUID);
                         }else{
-                            discountDescription.setText("Nessuno sconto disponibile");
+                            discountDescription.setText(R.string.no_discount_available);
                             final ViewAdapter adapter=new ViewAdapter(getContext(),discountArray, UID,businessUID,"backdropList");
                             backdropListview.setAdapter(adapter);
                         }
                     }else{
-                        discountDescription.setText("Nessuno sconto disponibile");
+                        discountDescription.setText(R.string.no_discount_available);
                     }
-                }else{
-                    Log.d("non successo","non successo");
                 }
             }
         });
@@ -168,7 +166,7 @@ public class FragmentUserMapBackDrop extends Fragment {
             });
         }
         if(disUID.isEmpty() || disUID == null){
-            discountDescription.setText("Nessuno sconto disponibile");
+            discountDescription.setText(R.string.no_discount_available);
         }
     }
 

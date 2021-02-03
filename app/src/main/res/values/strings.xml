@@ -94,6 +94,11 @@
     <string name="mediumDifficulty">Media difficoltà</string>
     <string name="difficult">Difficile</string>
     <string name="deletedDiscount">Sconto eliminato</string>
-    <string name="denyLocalization">Negando la geolocalizzazione non potrai utilizzare a pieno  l\'app</string>
+    <string name="denyLocalization">Negando la geolocalizzazione non potrai utilizzare a pieno questa app</string>
     <string name="permission">Permesso di geolocalizzazione</string>
+    //SellerMapView
+    <string name="allert_business_exist">Attività già esistente, inseriscine un\'altra.</string>
+    //FragmentMapBackdrop
+    <string name="discount_list">Lista sconti disponibili</string>
+    <string name="no_discount_available">Nessuno sconto disponibile</string>
 </resources>

@@ -69,7 +69,9 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
         }
         PlacesClient client=Places.createClient(this);
         /**
-         * viene settato un listener sulla
+         * viene settato un listener sulla SearchView che prende il nome della attività digitata dall'utente e utilizzando l'oggetto geodecoder
+         * ottiene la latitudine e la longitudine dell'attività altrimenti se la stringa digitata è vuota, non esiste oppure è stata digitata un attività già esistente
+         * verra mostrato un dialog che avvisa l'utente dell'errore commesso.
          */
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -83,15 +85,12 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                         if(addresses.isEmpty()){
                             dialog();
                         }
-                        Log.d("ADDRESS", String.valueOf(addresses));
                     }catch(Exception e){
                         e.printStackTrace();
                     }
                     if (addresses!=null && !addresses.isEmpty()){
                         Address addr=addresses.get(0);
                         verifyBusiness(addr);
-                        Log.d("isExisting", String.valueOf(isExisting));
-
                     }
                 }
                 return false;
@@ -105,13 +104,20 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
+    /**
+     * Usa l'oggetto di tipo Address contenente latitudine, longitudine e locality di un determinato luogo per fare una query al db
+     * prendendo tutte le attività aventi come locality quella definita all'interno dell'oggetto di tipo Addresses, successivamente controlla
+     * le latitudini e longitudini di queste attività estratte dal db con quella dell'oggetto di tipo  Address e verifica se l'attività digitata dall'utente
+     * è già esistente o meno, nel caso in cui esista mostra all'utente un dialog che indica l'errore commesso, se invece è la prima volta che viene inserita, la mappa
+     * esegue uno  zoom sul marker corrispondente a latitudine e longitudine contenute nell'oggetto di tipo Address.
+     * @param addr
+     */
     private void verifyBusiness(Address addr) {
 
         double latitude = addr.getLatitude();
         double longitude = addr.getLongitude();
         LatLng placeLatLng = new LatLng(latitude,longitude);
         String locality = addr.getLocality();
-        Log.d("PLACE", latitude+"-"+longitude+"-"+locality);
 
         db.collection("attivita").whereEqualTo("locality", locality).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -133,8 +139,7 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                             public void onClick(DialogInterface dialog, int id) {
 
                             }
-                        }).setMessage("Attività già esistente, inseriscine un'altra.");
-                        // Set other d
+                        }).setMessage(R.string.allert_business_exist);
                         builder.show();
                         isExisting = false;
                     } else {
@@ -143,6 +148,11 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                         mMap.addMarker(new MarkerOptions().position(place).title(location));
                         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place,15));
                         Toast.makeText(SellerMapView.this, R.string.addBusinessDialog, Toast.LENGTH_LONG).show();
+
+                        /**
+                         *   quando l'utente clicca sul marker viene caricato l'oggetto di tipo business con le informazioni relative a latitudine
+                         *   longitudine, localita e business UID creato sommando la latitudine e la longitudine.
+                         */
 
                         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                             @Override
@@ -156,12 +166,10 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
                                 SellerMapView.this.business.setLatitude(String.valueOf(addr.getLatitude()));
                                 SellerMapView.this.business.setLocality(addr.getLocality());
                                 SellerMapView.this.business.setUID(calculateMyBusinessCustomUID(addr.getLatitude(),addr.getLongitude()));
-                                Log.d("customuid",SellerMapView.this.business.getUID());
                                 setBusiness(SellerMapView.this.business);
                                 return false;
                             }
                         });
-                        //inizalizzazione oggetto da scrivere
                     }
 
                 }
@@ -169,15 +177,16 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
         });
     }
 
+    //in questo metodo viene settata la camera sull'italia
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
         LatLng italy = new LatLng(43.06103001266056, 12.882105287940128);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(italy));
     }
 
+    //il metodo riceve l'oggetto business in input ed esegue una query che setta l' attività corrispondente all' identificatore univoco del business
     private void setBusiness(Business business){
 
         db.collection("attivita").document(business.getUID()).set(this.business).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -189,6 +198,11 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
             }
         });
     }
+
+    /**
+     * metodo che aggiunge l'attività del venditore sul db con un custom UID
+     * @param businessCustomUID
+     */
     private void getSeller(String businessCustomUID){
         db.collection("venditore").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -207,18 +221,23 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
             }
         });
     }
+
+    /**
+     * L'array di attività viene sovrascritto sul db con un nuovo array contenente l'attività agguiunta
+     * @param businessUID
+     */
     private void updateSeller(ArrayList<String> businessUID){
         db.collection("venditore").document(UID).update("businessUID",businessUID).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful())
                 {
-                    Log.d("venditore","successo");
                     finish();
                 }
             }
         });
     }
+    //dialog mostrato quando la stringa digitata è vuota oppure non è stata trovata
     private void dialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Add the buttons
@@ -230,6 +249,7 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
         // Set other d
         builder.show();
     }
+    //viene calcolato l'UID del business appena digitato dall'utente come somma delle sue coordinate di latitudine e longitudine
     private String calculateMyBusinessCustomUID(Double latitude,Double longitude){
         if(latitude!=null && longitude!=null){
             String customUID=null;

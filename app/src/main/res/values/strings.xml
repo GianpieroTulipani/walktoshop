@@ -80,4 +80,7 @@
     <string name="noActivity">Nessuna attività registrata</string>
     <string name="discount"> Sconti </string>
     <string name="noDiscount">Nessuno sconto disponibile</string>
+    //CardView
+    <string name="share">Ecco il codice sconto che ti è stato regalato:</string>
+    <string name="hereDiscount">"Ecco il tuo codice sconto:"</string>
 </resources>

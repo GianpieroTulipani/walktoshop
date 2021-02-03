@@ -42,6 +42,11 @@ public class LogIn extends AppCompatActivity {
     private FirebaseAuth mAuth;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    /**
+     * all'interno di questo metodo vengono salvati i dati riguardo email e password
+     * in prevenzione di un cambio di configurazione
+     * @param outState
+     */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -49,6 +54,12 @@ public class LogIn extends AppCompatActivity {
             outState.putString("passwordLogIn", passwordLogIn.getText().toString());
     }
 
+    /**
+     * all'interno del metodo onCreate() oltre alla definizione del layout e dei riferimenti alle componenti del layout
+     * viene fatto un controllo nel caso in cui ci fosse un cambio di configurazione, per mantenere i dati all'interno degli editText
+     * viene creata un'istanza di FirebaseAuth per effettuare l'Authentication e definito un link che porta all'activity della registrazione
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +70,8 @@ public class LogIn extends AppCompatActivity {
         buttonLogIn = (ImageView) findViewById(R.id.buttonlogIn);
         notRegistered = (TextView) findViewById(R.id.not_registered);
 
+
+        //controllo sul cambio di configurazione
         if(savedInstanceState != null){
             emailLogIn.setText(savedInstanceState.getString("emailLogIn"));
             passwordLogIn.setText(savedInstanceState.getString("passwordLogIn"));
@@ -66,6 +79,7 @@ public class LogIn extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        //controllo che se il link viene cliccato, l'utente viene rimandato all'activity di registrazione
         notRegistered.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,18 +89,28 @@ public class LogIn extends AppCompatActivity {
 
     }
 
+    /**
+     * All'interno del metodo onStart() viene effettuato un controllo sulla connessione
+     * e un controllo per quanto riguarda il currentUser, ovvero se l'utente quando è entrato nell'applicazione
+     * non ha effettuato il LogOut, l'utente nel momento in cui riapre l'app viene rispedito nella rispettiva home
+     * altrimenti viene lasciato nel LogIn
+     */
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
+        //qui viene effettuato il controllo sullo stato della connessione
         NetworkController networkController =new NetworkController();
         if(!networkController.isConnected(LogIn.this)){
             networkController.connectionDialog(LogIn.this);
         }
+
+        /*qui viene effettuato il controllo sullo stato dell'utente se è ancora loggato o meno
+        * il controllo viene fatto prendendo il currentUser attraverso l'mAuth e se questo non è vuoto, quindi è rimasto loggato
+        * viene fatta una chiamata al db controllando se l'uid(identificativo dell'utente) corrisponde a quello di un venditore
+        * se così non è allora sarà sicuramente un utente*/
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
            Uid = mAuth.getUid();
-           Log.d("loggato",Uid);
            db.collection("venditore").document(Uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                @Override
                public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -100,17 +124,24 @@ public class LogIn extends AppCompatActivity {
         }
     }
 
-    //questo metodo effettua l'autenticazione dell'utente
+    /**
+     * all'interno di questo metodo viene effettuato il log-in dell'utente
+     * controllando prima che le credenziali siano corrette
+     * @param v
+     */
     public void login(View v){
 
         this.email = this.emailLogIn.getText().toString().trim();
         this.password = this.passwordLogIn.getText().toString().trim();
 
-        //qui viene effettuata l'autenticazione che se va a buon fine, controlla la tipologia di utente
-        //e lo manda alla home rispettiva
-        //altrimenti segnala degli errori rispetto ai campi
+        /*qui viene effettuato il controllo dei campi, che non possono essere vuoti
+        * e l'email deve rispettare il pattern standard
+          */
         if(checkInfo()) {
-
+            /*qui viene effettuato il log-in tramite mAuth, che:
+            * in caso di successo richiama il metodo checkTypeUser() per capire che tipo di utente è, e mandarlo alla home corrispettiva
+            * salvando anche l'uid(identificativo dell'utente)
+            * altrimenti mostra degli errori*/
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -123,7 +154,7 @@ public class LogIn extends AppCompatActivity {
                             {
                                 emailLogIn.setError(getResources().getString(R.string.InvalidEmail));
                                 passwordLogIn.setError(getResources().getString(R.string.InvalidPassword));
-                                Toast toast = Toast.makeText(LogIn.this,"EMAIL O PASSWORD ERRATI",Toast.LENGTH_LONG);
+                                Toast toast = Toast.makeText(LogIn.this,getResources().getString(R.string.emailOrPassWrong),Toast.LENGTH_LONG);
                                 toast.setGravity(Gravity.CENTER, 0, 0);
                                 toast.show();
                             }
@@ -132,15 +163,18 @@ public class LogIn extends AppCompatActivity {
         }
     }
 
-    // questo metodo controlla che tipo di utente si sta loggando e quindi in che home indirizzarlo
+    /**
+     * questo metodo si occupa di verificare che tipo di utente sta effettuando il log-in
+     * e quindi in quale home indirizzarlo
+     */
     public void  checkTypeUser()
     {
+        /*qui viene effettuato il controllo, tramite confronto di uid, ovvero:
+        * viene controllato che l'uid(identificativo dell'utente) precedentemente salvato corrisponda ad un venditore
+        * nel caso in cui questo sia vero e quindi esiste un documento, l'utente viene rimandato alla home venditore
+        * altrimenti viene rimandato alla home utente*/
         db.collection("venditore").document(Uid).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 
-            //dopo aver confrontato l'uid dell'utente dell'utente loggato  con quello dei venditori
-            //controlliamo che il documento effettivamente esista e se esiste
-            //questo logga come venditore, andando alla home venditore
-            //altrimenti come utente, andando alla home utente
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()) {
@@ -154,21 +188,40 @@ public class LogIn extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * all'interno di questo metodo viene definito l'intent per mandare l'utente nella home venditore
+     */
     private void goSellerViewActivity(){
         final Intent intent = new Intent(this, SellerView.class);
         intent.putExtra("UID", Uid);
         startActivity(intent);
     }
+
+    /**
+     * all'interno di questo metodo viene definito l'intent per mandare l'utente nella home utente
+     */
     private void goUserViewActivity() {
         final Intent intent = new Intent(this, UserView.class);
         intent.putExtra("UID", Uid);
         startActivity(intent);
     }
+
+    /**
+     * all'interno di questo metodo viene definito l'intent per mandare l'utente nell'activity di registrazione
+     */
     private void goUserRegistrationActivity(){
         final Intent intent = new Intent(this, SignUp.class);
         startActivity(intent);
     }
 
+    /**
+     * all'interno di questo metodo vengono effettuati controlli sui campi email e password
+     * in modo particolare viene controllato che i due campi non siano vuoti
+     * e che l'email rispetti il pattern standard di un'email, se ciò è vero viene ritornato il valore true
+     * altrimenti viene ritornato false nel momento in cui anche una sola di queste condizioni non venga rispettata
+     * @return
+     */
     private boolean checkInfo(){
 
         if(email.isEmpty() ){

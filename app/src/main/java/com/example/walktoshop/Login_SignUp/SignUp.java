@@ -59,6 +59,11 @@ public class SignUp extends AppCompatActivity {
     Seller seller=new Seller();
     private User user=new User();
 
+    /**
+     * all'interno di questo metodo vengono salvati i dati riguardo email, password, altezza e peso
+     * in prevenzione di un cambio di configurazione
+     * @param outState
+     */
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -68,6 +73,14 @@ public class SignUp extends AppCompatActivity {
         outState.putString("weight", weight.getText().toString());
     }
 
+    /**
+     * all'interno del metodo onCreate() oltre alla definizione del layout e dei riferimenti alle componenti del layout
+     * viene fatto un controllo nel caso in cui ci fosse un cambio di configurazione, per mantenere i dati all'interno degli editText
+     * viene definito un link che porta al log-in, nel caso in cui l'utente sia già registrato e sia andato per sbaglio nella registrazione
+     * oltre che a uno switch button che permette di capire quale tipologia di utente si sta registrando
+     * e il bottone per concludere la registrazione
+     * @param savedInstanceState
+     */
     @SuppressLint("WrongViewCast")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +96,7 @@ public class SignUp extends AppCompatActivity {
         weight = (EditText) findViewById(R.id.weight);
         already_registered = (TextView) findViewById(R.id.already_registered);
 
+        //controllo sul cambio di configurazione
         if(savedInstanceState != null){
             email.setText(savedInstanceState.getString("email"));
             password.setText(savedInstanceState.getString("password"));
@@ -93,6 +107,7 @@ public class SignUp extends AppCompatActivity {
         goNext.setVisibility(View.VISIBLE);
         seller.setUID(mAuth.getUid());
 
+        //controllo che se il link viene cliccato, l'utente viene rimandato all'activity di log-in
         already_registered.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,6 +115,9 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
+        /*controllo che se lo switch è checked l'utente è un venditore, altrimenti è un'utente.
+        * Vengono gestite le visibilità di altezza e peso che sono relative solo alla registrazione lato utente
+        * e quindi in caso di switch checked queste non devono essere mostrate, altrimenti si'*/
         switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -115,6 +133,10 @@ public class SignUp extends AppCompatActivity {
             }
         });
 
+        /*qui viene controllato che se il buttone di registrazione viene cliccato allora vengono controllati i dati inseriti nei vari editText
+        * e in caso di sucesso parte la creazione dell'utente o del venditore in base allo stato dello switchButton,
+        * quindi se è checked viene creato un venditore
+        * altrimenti un'utente*/
         goNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,17 +153,25 @@ public class SignUp extends AppCompatActivity {
         });
     }
 
+    /**
+     * All'interno del metodo onStart() viene effettuato un controllo sulla connessione
+     */
     @Override
     protected void onStart() {
         super.onStart();
+        //qui avviene il controllo sullo stato della connessione
         NetworkController networkController =new NetworkController();
         if(!networkController.isConnected(SignUp.this)){
             networkController.connectionDialog(SignUp.this);
         }
     }
 
+    /**
+     * all'interno di questo metodo viene definito l'intent per mandare l'utente nella home venditore
+     * con relativo messaggio di successo della registrazione
+     */
     private void goSellerViewActivity(){
-        Toast toast = Toast.makeText(this,"Registrazione effettuata con succeso!",Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(this,getResources().getString(R.string.RegistrationSuccess),Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
         final Intent intent = new Intent(this, SellerView.class);
@@ -149,14 +179,26 @@ public class SignUp extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * all'interno di questo metodo viene definito l'intent per mandare l'utente nell'activity di log-in
+     */
     private void goUserLogInActivity(){
         final Intent intent = new Intent(this, LogIn.class);
         startActivity(intent);
     }
 
+    /**
+     * all'interno di questo metodo viene effettuate la creazione dell'utente sul db prima tramite Auth
+     * e successivamente viene richiamato il metodo uploadUser che si occupa di caricare tutti i dati
+     * relativi all'utente nella raccolta utente
+     */
     private void createUser() {
         user.setEmail(stringEmail);
         user.setPassword(stringPassword);
+
+        /*qui viene richiamato l'mAuth per creare un utente provvisto di email e password tramite mAuth
+        * verificando che l'email inserita nella registrazione non corrisponda ad un'email già esistente,
+        * in caso di successo viene chiamato il metodo uploadUser per il caricamento nella raccolta utente dei dati*/
         mAuth.createUserWithEmailAndPassword(user.getEmail(),user.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -177,6 +219,10 @@ public class SignUp extends AppCompatActivity {
         });
     }
 
+    /**
+     * questo metodo si occupa del caricamento dei dati dell'utente nella raccolta utente del db
+     * e di mandare poi l'utente nella home utente
+     */
     private void uploadUser() {
         user.setDiscountSteps(new ArrayList<String>());
         user.setHeight(stringHeight);
@@ -185,6 +231,8 @@ public class SignUp extends AppCompatActivity {
         user.setWalk(new ArrayList<String>());
         user.setDiscountUID(new ArrayList<>());
 
+        /*qui viene effettuata la query al db che si occupa di inserire i dati dell'utente nella raccolta utente del db
+        * e in caso di successo dell'operazione l'utente viene mandato nella home utente*/
         db.collection("utente").document(user.getUID()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -194,13 +242,17 @@ public class SignUp extends AppCompatActivity {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                Log.d("FALLIMENTO","fallito");
             }
         });
     }
 
+    /**
+     * all'interno di questo metodo viene definito l'intent per mandare l'utente nella home utente
+     * con rispettivo messaggio di successo nella registrazione
+     */
     public void goHomeActivity() {
-        Toast toast = Toast.makeText(getApplicationContext(),"Registrazione effettuata con succeso!",Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getApplicationContext(),getResources().getString(R.string.RegistrationSuccess),Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
         final Intent intent = new Intent(SignUp.this, UserView.class);
@@ -208,9 +260,18 @@ public class SignUp extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * all'interno di questo metodo viene effettuate la creazione del venditore sul db prima tramite Auth
+     * e successivamente viene richiamato il metodo uploadSeller che si occupa di caricare tutti i dati
+     * relativi all'utente nella raccolta venditore
+     */
     private void createSeller() {
         seller.setEmail(stringEmail);
         seller.setPassword(stringPassword);
+
+        /*qui viene richiamato l'mAuth per creare un venditore provvisto di email e password tramite mAuth
+         * verificando che l'email inserita nella registrazione non corrisponda ad un'email già esistente,
+         * in caso di successo viene chiamato il metodo uploaSeller per il caricamento nella raccolta venditore dei dati*/
         mAuth.createUserWithEmailAndPassword(seller.getEmail(),seller.getPassword()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -231,9 +292,16 @@ public class SignUp extends AppCompatActivity {
         });
     }
 
+    /**
+     * questo metodo si occupa del caricamento dei dati del venditore nella raccolta venditore del db
+     * e di mandare poi il venditore nella home venditore
+     */
     private void uploadSeller() {
         String sellerUID=mAuth.getUid();
         seller.setUID(sellerUID);
+
+        /*qui viene effettuata la query al db che si occupa di inserire i dati del venditore nella raccolta venditore del db
+         * e in caso di successo dell'operazione il venditore viene mandato nella home venditore*/
         db.collection("venditore").document(sellerUID).set(seller).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
@@ -247,6 +315,19 @@ public class SignUp extends AppCompatActivity {
         });
     }
 
+    /**
+     * all'interno di questo metodo vengono effettuati i controlli sui campi email, password, altezza e peso
+     * (altezza e peso vengono controllati solo nel momento in cui chi si sta iscrivendo sia un utente e non un venditore tramite variabile isSeller)
+     * in modo  particolare viene prima controllato che nessuno di questi campi sia vuoto
+     * in caso contrario viene mostrato un'errore; viene controllato che la mail corrisponda al pattern standard delle email
+     * altrimenti viene mostrato errore; viene controllato che la password rispetti uno specifico pattern
+     * (almeno una minuscola,una maiuscola, un numero ed un carattere speciale(@#$%&?!_) e che sia lunga almeno 8),
+     * altrimenti da errore; viene controllato che nel caso un utente si stia registrando, che l'altezza non sia al di sotto dei 100 cm
+     * o al di sopra dei 270cm, altrimenti da errore; viene controllato che il peso non sia al di sotto dei 40kg e al di sopra dei 250kg,
+     * altrimenti da errore.
+     * In caso di errore viene ritornato un valore false, altrimenti se tutte le condizioni sono rispettate viene  ritornato un valore true
+     * @return
+     */
     private boolean checkUserInfo(){
         stringEmail=this.email.getText().toString().trim();
         stringPassword= this.password.getText().toString().trim();
@@ -282,7 +363,7 @@ public class SignUp extends AppCompatActivity {
             this.weight.requestFocus();
             return false;
         }else if(!PASSWORD_PATTERN.matcher(stringPassword).matches()){
-            Toast toast = Toast.makeText(this,"La password deve essere lunga almeno 8 caratteri e inserire almeno: una lettera minuscola,una maiuscola, un carattere speciale[@,#,$,%,&,?,!,_] e un numero",Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this,getResources().getString(R.string.WrongPasswordFormat),Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             this.password.setError(getResources().getString(R.string.InvalidPassword));
@@ -295,14 +376,14 @@ public class SignUp extends AppCompatActivity {
             this.password.requestFocus();
             return false;
         }else  if(!isSeller && (Long.parseLong(stringHeight) < 100 || Long.parseLong(stringHeight) > 270)){
-            Toast toast = Toast.makeText(this,"inserire un'altezza compresa tra 100cm e 278cm",Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this,getResources().getString(R.string.wrongHeight),Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             this.height.setError( getResources().getString(R.string.InvalidHeight));
             this.height.requestFocus();
             return false;
         }else if(!isSeller && (Long.parseLong(stringWeight) < 40 || Long.parseLong(stringWeight) > 250)){
-            Toast toast = Toast.makeText(this,"inserire un peso che sia compreso tra 40kg e 250kg",Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this,getResources().getString(R.string.wrongWeight),Toast.LENGTH_LONG);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
             this.weight.setError(getResources().getString(R.string.InvalidWeight));

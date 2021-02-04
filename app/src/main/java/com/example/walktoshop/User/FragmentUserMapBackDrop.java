@@ -42,10 +42,12 @@ public class FragmentUserMapBackDrop extends Fragment {
     private String UID;
     private ArrayList<String> disUID = new ArrayList<String>();
     private TextView discountDescription;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        //viene fatto un inflate del fragment all'interno del layout della activity
         View coordinatorLayout = (CoordinatorLayout)inflater.inflate(R.layout.fragment_map_backdrop, container, false);
         backdropListview = coordinatorLayout.findViewById(R.id.backdropListView);
         discountDescription= coordinatorLayout.findViewById(R.id.discountDescription);
@@ -60,12 +62,13 @@ public class FragmentUserMapBackDrop extends Fragment {
             getUserDiscount();
         }
 
-        sheetBehavior = BottomSheetBehavior.from(contentLayout);
-        sheetBehavior.setFitToContents(false);
+        sheetBehavior = BottomSheetBehavior.from(contentLayout);//permette al linear layout all'interno di un coordinator layout di ottenere il comportamento di una bottomSheetView
+        sheetBehavior.setFitToContents(false);//fa in modo che l'altezza del backdrop sia contenuta nella grandezza del contenitore
         sheetBehavior.setHideable(false);//evita che il backdrop sia completamente oscurato
-        sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);//inizialmente il  backdrop parte esteso
+        sheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);//inizialmente il  backdrop parte a metà della sua massima altezza
 
 
+        //quando si clicca sull'ImageView c'è un listener che sull'onClick chiama un metodo
         filterIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,6 +79,10 @@ public class FragmentUserMapBackDrop extends Fragment {
     }
 
 
+    /**
+     * esegue una query per prendere dalla collection utente, in corrispondenza dell'identificatore univoco ottenuto nell'onCreate tutti
+     * gli sconti corrispondenti a quell'utente
+     */
     private void getUserDiscount() {
         db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -96,6 +103,11 @@ public class FragmentUserMapBackDrop extends Fragment {
         });
     }
 
+    /**
+     * questo metodo prende in input gli sconti corrispondenti all'UID dell'utente ottenuto nell'onCreate, successivamente esegue una query
+     * per ottenere dalla attività selezionata dall'utente nel backdrop, corrispondente ad un determinato business UID tutti gli sconti corrispondenti ad essa.
+     * @param userDisUID
+     */
     private void getBusiness(ArrayList<String> userDisUID) {
         db.collection("attivita").document(businessUID.get(0)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -124,6 +136,14 @@ public class FragmentUserMapBackDrop extends Fragment {
         });
     }
 
+    /**
+     * questo metodo prende in input gli sconti relativi ad una determinata attività selezionata dal backdrop, e gli sconti relativi all'utente
+     * che sta utilizzando l'applicazione e verifica all'inizio che non ci siano all'interno dell' backdrop sconti già presenti all'interno della home, se ci sono
+     * essi vengono eliminati dal backdrop in modo tale da non essere più selezionabili e poi successivamente caricati in un ArrayList di tipo discount
+     * che successivamente sarà caricato all'interno del backdrop.
+     * @param discountUID
+     * @param userDisUID
+     */
     private void getDiscounts(ArrayList<String> discountUID, ArrayList<String> userDisUID){
 
         for(int i=0;i<discountUID.size();i++){
@@ -170,6 +190,9 @@ public class FragmentUserMapBackDrop extends Fragment {
         }
     }
 
+    /**
+     * quuesto metodo cambia lo stato del backdrop quando viene cliccata l'image view facendolo passare da esteso o metà esteso ad invisibile.
+     */
     private void toggleFilters() {
         if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             sheetBehavior.setHideable(true);

@@ -109,6 +109,7 @@
                 android:layout_height="wrap_content">
                 <Button
                     android:id="@+id/add"
+                    android:elevation="2dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/verde_maggio"

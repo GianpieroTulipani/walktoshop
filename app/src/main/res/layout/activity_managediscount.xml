@@ -96,6 +96,7 @@
         android:layout_marginTop="30dp"
         android:layout_marginRight="20dp"
         android:layout_gravity="bottom|end"
+        android:elevation="2dp"
         android:id="@+id/add"
         android:backgroundTint="@color/verde_maggio"
         android:background="@drawable/rounded_button"

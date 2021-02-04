@@ -85,6 +85,7 @@
         android:layout_height="wrap_content"
         app:backgroundTint="@color/verde_maggio"
         app:backgroundTintMode="src_over"
+        android:elevation="6dp"
         app:fabSize="normal"
         app:rippleColor="#00FF00"
         app:tint="@color/white"

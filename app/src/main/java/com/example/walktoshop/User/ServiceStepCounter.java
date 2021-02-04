@@ -122,9 +122,9 @@ public class ServiceStepCounter extends Service implements Runnable{
                 double magnitudeDelta=magnitude-magitudePrevious;//sottraggo a questa quella precedente
                 magitudePrevious=magnitude;//quella precedente è inizlizzata alla nuova velocità angolare e così ad ogni rilevazione
                 /*
-                 se il delta è superiore a 6(valore di sensibilità provato empiricamente) allora è passo altrimenti la rilevazione continua
+                 se il delta è superiore a 7(valore di sensibilità provato empiricamente) allora è passo altrimenti la rilevazione continua
                  */
-                if(magnitudeDelta>6){
+                if(magnitudeDelta>7){
                     ServiceStepCounter.this.mySteps++;
                     Log.d("Accel"," Accelerometer:" + ServiceStepCounter.this.mySteps);
                 }

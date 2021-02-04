@@ -155,6 +155,7 @@
             <TextView
                 android:id="@+id/already_registered"
                 android:layout_marginTop="20dp"
+                android:elevation="2dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

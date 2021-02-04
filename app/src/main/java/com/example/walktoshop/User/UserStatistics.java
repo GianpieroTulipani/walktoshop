@@ -186,10 +186,12 @@ public class UserStatistics extends AppCompatActivity {
                             }
 
                         }
-                        //plurals
-                        report.setText(getResources().getQuantityString(R.plurals.statisticsStepsr,stringedWalks.size(),stringedWalks.size()));
-                        report1.setText(getResources().getQuantityString(R.plurals.statisticsKcal,stringedWalks.size(),stringedWalks.size()));
-                        report2.setText(getResources().getQuantityString(R.plurals.statsticsKm,stringedWalks.size(),stringedWalks.size()));
+                        if(stringedWalks != null){
+                            //plurals
+                            report.setText(getResources().getQuantityString(R.plurals.statisticsStepsr,stringedWalks.size(),stringedWalks.size()));
+                            report1.setText(getResources().getQuantityString(R.plurals.statisticsKcal,stringedWalks.size(),stringedWalks.size()));
+                            report2.setText(getResources().getQuantityString(R.plurals.statsticsKm,stringedWalks.size(),stringedWalks.size()));
+                        }
 
                         String[] daysArray = new String[UserStatistics.this.days.size()];
                         daysArray = UserStatistics.this.days.toArray(daysArray);

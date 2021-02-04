@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.Gravity;
@@ -171,6 +172,7 @@ public class ViewAdapter extends ArrayAdapter {
                 //se viene letto il file precedentemente scritto con chiave UID+uidsconto allora è completato e viene mostrato a schermo
                 if(getSharedPrefDiscountState(d.getUID()) == true){
                     date.setText("Completato");
+                    date.setTextColor(activity.getResources().getColor(R.color.verde_maggio));
                 }
                 //freccia per i dettagli sconto in cui si passa l'oggetto di tipo sconto tramite intent
                 arrow.setOnClickListener(new View.OnClickListener() {

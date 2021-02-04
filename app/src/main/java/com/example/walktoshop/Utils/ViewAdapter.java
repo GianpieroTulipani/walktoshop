@@ -121,7 +121,7 @@ public class ViewAdapter extends ArrayAdapter {
         if(position>=0 && position<=discounts.size()  && !discounts.isEmpty() && this.discounts.get(position) != null){
             Discount d=this.discounts.get(position);
             //viene settata la data di scadenza
-            date.setText("scadenza: "+d.millisecondsToDate(d.getExpiringDate()));
+            date.setText(getContext().getResources().getString(R.string.expiringd)+d.millisecondsToDate(d.getExpiringDate()));
             disocuntDescription.setText(d.getDescription());
             //viene settato il goal
             String stringedGoal=d.getDiscountsQuantity();
@@ -129,12 +129,12 @@ public class ViewAdapter extends ArrayAdapter {
             if(stringedGoal != null){
                 int goal= Integer.parseInt(stringedGoal);
                 if(goal<5000){
-                    difficulty.setText(R.string.easy);
+                    difficulty.setText(getContext().getResources().getString(R.string.easy));
                 }else if(goal>=5000 && goal<=20000){
-                    difficulty.setText(R.string.mediumDifficulty);
+                    difficulty.setText(getContext().getResources().getString(R.string.mediumDifficulty));
                     difficultyColor.setImageResource(R.drawable.ic_yellow);
                 }else if(goal>20000){
-                    difficulty.setText(R.string.difficult);
+                    difficulty.setText(getContext().getResources().getString(R.string.difficult));
                     difficultyColor.setImageResource(R.drawable.ic_red);
                 }
             }
@@ -149,7 +149,7 @@ public class ViewAdapter extends ArrayAdapter {
                 //controllo che la data non sia già scaduta
                 if(d != null && d.getExpiringDate() != null){
                     if(Long.parseLong(d.getExpiringDate()) < Calendar.getInstance().getTimeInMillis()){
-                        date.setText("Scaduto");
+                        date.setText(getContext().getResources().getString(R.string.exp));
                     }
                 }
                 //bottone di eliminazione sconto
@@ -171,7 +171,7 @@ public class ViewAdapter extends ArrayAdapter {
                 getBusinessName(d, d.getDescription(), activity);
                 //se viene letto il file precedentemente scritto con chiave UID+uidsconto allora è completato e viene mostrato a schermo
                 if(getSharedPrefDiscountState(d.getUID()) == true){
-                    date.setText("Completato");
+                    date.setText(getContext().getResources().getString(R.string.completed));
                     date.setTextColor(activity.getResources().getColor(R.color.verde_maggio));
                 }
                 //freccia per i dettagli sconto in cui si passa l'oggetto di tipo sconto tramite intent

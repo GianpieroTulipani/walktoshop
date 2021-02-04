@@ -232,17 +232,17 @@ public class UserStatistics extends AppCompatActivity {
      */
     private void setBarChart(ArrayList<BarEntry> dailyKm, ArrayList<BarEntry> dailyKcal, ArrayList<BarEntry> dailySteps, String[] days){
 
-        BarDataSet steps = new BarDataSet(dailySteps,"Passi giornalieri");
+        BarDataSet steps = new BarDataSet(dailySteps,getResources().getString(R.string.dailysteps));
         steps.setColors(MATERIAL_COLORS);
         steps.setValueTextColor(Color.BLACK);
         steps.setValueTextSize(12f);
 
-        BarDataSet kcal = new BarDataSet(dailyKcal,"Kcal giornaliere");
+        BarDataSet kcal = new BarDataSet(dailyKcal,getResources().getString(R.string.dailykilocal));
         kcal.setColors(ColorTemplate.MATERIAL_COLORS);
         kcal.setValueTextColor(Color.BLACK);
         kcal.setValueTextSize(12f);
 
-        BarDataSet km = new BarDataSet(dailyKm,"Metri giornalieri");
+        BarDataSet km = new BarDataSet(dailyKm,getResources().getString(R.string.dailymeters));
         km.setColors(ColorTemplate.MATERIAL_COLORS);
         km.setValueTextColor(Color.BLACK);
         km.setValueTextSize(12f);

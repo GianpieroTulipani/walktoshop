@@ -18,4 +18,6 @@
         <item  quantity="two">%d rilevazioni relative ai Km giornalieri</item>
         <item  quantity="other">%d rilevazioni relative ai Km giornalieri</item>
     </plurals>
+
+
 </resources>

@@ -97,10 +97,40 @@
     <string name="deletedDiscount">Discount deleted</string>
     <string name="denyLocalization">By denying the geolocation you will not be able to fully use this app</string>
     <string name="permission">Geolocation permission</string>
+    <string name="activediscount">Active Discounts</string>
+    <string name="noactivediscount">No discount activated</string>
+    <string name="completed">Completed</string>
     //SellerMapView
     <string name="allert_business_exist">Existing business, enter another one.</string>
     //FragmentMapBackdrop
     <string name="discount_list">Discount list available</string>
     <string name="no_discount_available">No discount available</string>
+    <string name="expiringd">expiration :</string>
+    <string name="exp">Expired</string>
+    //Statistics
+    <string name="dailysteps">Daily steps</string>
+    <string name="dailykilocal">Daily Kcal</string>
+    <string name="dailymeters">Daily meters</string>
+    //Plurals
+    <plurals name="statisticsStepsr">
+        <item quantity="zero">%d measurements relating to daily steps</item>
+        <item quantity="one">%d measurement relating to daily steps</item>
+        <item quantity="two">%d measurements relating to daily steps</item>
+        <item quantity="other">%d measurements relating to daily steps</item>
+    </plurals>
+    <plurals name="statisticsKcal">
+        <item quantity="zero">%d measurements relating to Kcal steps</item>
+        <item quantity="one">%d measurement relating to Kcal steps</item>
+        <item quantity="two">%d measurements relating to Kcal steps</item>
+        <item quantity="other">%d measurements relating to Kcal steps</item>
+    </plurals>
+    <plurals name="statsticsKm">
+        <item  quantity="zero">%d measurements relating to Km steps</item>
+        <item  quantity="one">%d measurement relating to Km steps</item>
+        <item  quantity="two">%d measurements relating to Km steps</item>
+        <item  quantity="other">%d measurements relating to Km steps</item>
+    </plurals>
+
+
 
 </resources>

@@ -146,7 +146,7 @@ public class ServiceStepCounter extends Service implements Runnable{
         }else{
             mSensorManager.registerListener(eventListener, mStepDetectorSensor, SensorManager.SENSOR_DELAY_FASTEST);
         }*/
-        Log.d("thread", String.valueOf(Looper.myLooper() == Looper.getMainLooper()));
+        //Log.d("thread", String.valueOf(Looper.myLooper() == Looper.getMainLooper()));
     }
     private void makeNotificationIntent(){
         Intent notificationIntent =new Intent(this,UserView.class);
@@ -163,18 +163,21 @@ public class ServiceStepCounter extends Service implements Runnable{
         return null;
     }
 
+    /**
+     * Nell'onDestroy del service vengono sempre salvati i dati sia, relativi ai passi per il completamento dello sconto e sia
+     * al fine di statistiche giornaliere
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         //spegnimento da background service,oppure qualora il service vada in onDestroy
-        Log.d("des","destroy");
         //vengono allora aggiornati i passi di tutti gli sconti in possesso
         getDiscountSteps(mySteps);
-        //vengono scritti sul db i passi effettuati giornalmente e la data
+        //vengono scritti sul db i passi effettuati giornalmente e la data per le statistiche
         getUserWalkArray();
     }
-    /*
-    Metodo che restituisce i file dello sharedpref altrimenti restituisce -1 se assente
+    /**
+    Metodo che  prende il numero dei passi dello sconto  per poi aggiornarlo attraverso query innestate
      */
     private void getDiscountSteps(int mySteps){
        db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -190,8 +193,8 @@ public class ServiceStepCounter extends Service implements Runnable{
            }
        });
     }
-    /*
-        Metodo che una volta aggiornati i passi sovrascrive questi nel corrispettivo file sharedpref all'id dello sconto che è usato come chiave
+    /**
+        Metodo che una volta aggiornati i passi sovrascrive questi sul database
      */
     private void updateDiscountSteps(int mySteps, ArrayList<String> dsp){
         Iterator<String> it1 = dsp.iterator();
@@ -204,7 +207,13 @@ public class ServiceStepCounter extends Service implements Runnable{
         }
         db.collection("utente").document(UID).update("discountSteps",newDsp);
     }
-    
+
+    /**
+     * Metodo che data una stringa scritta sul db è in grado di dividerla in due sottostringhe contenenti l'uid dello sconto
+     * e il numero di passi,restituendo un oggetto di tipo discount riempito con questi attributi
+     * @param info
+     * @return
+     */
     private Discount getDiscountInfoFromString(String info){
         Discount d = new Discount();
         String[] uidAndSteps =info.split(",");
@@ -212,7 +221,7 @@ public class ServiceStepCounter extends Service implements Runnable{
         d.setDiscountsQuantity(uidAndSteps[1]);
         return d;
     }
-    /*
+    /**
     Metodo che restituisce il giorno attuale in millisecondi
      */
     private String getTodayInMills(){
@@ -225,7 +234,7 @@ public class ServiceStepCounter extends Service implements Runnable{
         long todayMillis2 = cal.getTimeInMillis();
         return String.valueOf(todayMillis2);
     }
-    /*
+    /**
     Metodo che prende le camminate già fatte dall'utente,se nuova la aggiunge all'array altrimenti viene verificata se la data corrisponde ad oggi e
     eventualmente aggiornati i passi(caso di più rilevazioni in una stessa giornata)
      */
@@ -247,7 +256,7 @@ public class ServiceStepCounter extends Service implements Runnable{
             }
         });
     }
-    /*
+    /**
     verifica l'ultima registrazione effettuata e quindi se sovrascrivere le informazioni nell'array  o  aggiungere la camminata,q
     questo metodo verifica l'ultima data in cui è avvenuta la rilevazione prendendola dal db
      */
@@ -292,6 +301,11 @@ public class ServiceStepCounter extends Service implements Runnable{
             }
         });
     }
+
+    /**
+     * Metodo che sovrascrive l'array aggiornato di camminate sul db per le statistiche
+     * @param walksArray
+     */
     private void updateWalk(ArrayList<String> walksArray){
         db.collection("utente").document(UID).update("walk",walksArray).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -301,6 +315,10 @@ public class ServiceStepCounter extends Service implements Runnable{
             }
         });
     }
+
+    /**
+     * Metodo che sovrascrive l'ultima data di registrazione ed essendo l'ultima query termina il thread e stacca l'accelerometro
+     */
     private void setLastWalkDate(){
         db.collection("utente").document(UID).update("lastWalkDate",today).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -312,9 +330,9 @@ public class ServiceStepCounter extends Service implements Runnable{
             }
         });
     }
-    /*
+    /**
     Metodo che prende la stringa salvata sul db e converte la parte prima della virgola nella data e dopo la virgola in passi.
-    I dati vengono poi racchiusi in un oggetto camminata
+    I dati vengono poi racchiusi in un oggetto walk
      */
     private Walk getWalkInfoFromString(String info){
         String[] todayAndSteps =info.split(",");

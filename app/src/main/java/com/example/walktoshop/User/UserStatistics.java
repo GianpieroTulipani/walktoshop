@@ -42,6 +42,12 @@ import java.util.Date;
 
 import static com.github.mikephil.charting.utils.ColorTemplate.MATERIAL_COLORS;
 
+/**
+ * Activity che mostra a schermo le statistiche giornaliere per un massimo di 7 giorni di modo tale che un utente utlizzando l'app ogni giorno
+ * possiede uno storico settimanale per seguire i suoi progressi e volendo adottare una strategia di allenamento.
+ * Le statistiche sono fatte importando una libreria che semplicemente crea istogrammi dato un asse x e un asse y.
+ * L'asse x sarà composto dalle date delle registrazioni avvenute mentre l'asse y dal numero dei passi,dalle kcal bruciate e dai km percorsi
+ */
 public class UserStatistics extends AppCompatActivity {
     FirebaseFirestore db =FirebaseFirestore.getInstance();//istanziazione al database
     String UID;
@@ -68,6 +74,9 @@ public class UserStatistics extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_statistics);
         Intent intent = getIntent();
+        /*
+        Vengono prese le informazioni necessarie per effettuare le query
+         */
         if (intent.hasExtra("UID") && intent.hasExtra("city") && intent.hasExtra("latitude") && intent.hasExtra("longitude")) {
             UID = intent.getStringExtra("UID");
             city = intent.getStringExtra("city");
@@ -132,11 +141,17 @@ public class UserStatistics extends AppCompatActivity {
         if(!networkController.isConnected(UserStatistics.this)){
             networkController.connectionDialog(UserStatistics.this);
         }
-        Log.d("connection state",networkController.isConnected(UserStatistics.this)+"");
+       /*
+       Vengono prese le informazioni riguardo data e numero passi della cammianata
+        */
         getDailyWalk();
 
     }
 
+    /**
+     * Query al db che prende attraverso query innestate altezza e peso utente oltre che le camminate giornaliere per poter calcolare le kcal e i km
+     * e settarle
+     */
     private void getDailyWalk(){
         db.collection("utente").document(UID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -159,7 +174,6 @@ public class UserStatistics extends AppCompatActivity {
                                 int kcal= calculateKcal(userWeight,steps);
 
                                 String day = millisecondsToDate(Long.toString(Calendar.getInstance().getTimeInMillis()));
-                                Log.d("daily", day);
                                 if( days.get(i).equals(day)){
                                     daily_steps.setText(""+ steps);
                                     daily_meter.setText((calculateKilometers(userHeight,steps)) + "Km");
@@ -172,19 +186,10 @@ public class UserStatistics extends AppCompatActivity {
                             }
 
                         }
-                        if(stringedWalks.size() == 1){
-                            report.setText("prima rilevazione relativa ai passi giornalieri");
-                            report1.setText("prima rilevazione relativa alle Kcal giornaliere");
-                            report2.setText("prima rilevazione relativa ai Km giornalieri");
-                        } else if(stringedWalks.size() <= 7){
-                            report.setText("ultime "+stringedWalks.size()+" rilevazioni relative ai passi giornalieri");
-                            report1.setText("ultime "+stringedWalks.size()+" rilevazioni relative alle Kcal giornaliere");
-                            report2.setText("ultime "+stringedWalks.size()+" rilevazioni relative ai Km giornalieri");
-                        } else if(stringedWalks.size() > 7){
-                            report.setText("ultime 7 rilevazioni relative ai passi giornalieri");
-                            report1.setText("ultime 7 rilevazioni relative alle Kcal giornaliere");
-                            report2.setText("ultime 7 rilevazioni relative ai Km giornalieri");
-                        }
+                        //plurals
+                        report.setText(getResources().getQuantityString(R.plurals.statisticsStepsr,stringedWalks.size(),stringedWalks.size()));
+                        report1.setText(getResources().getQuantityString(R.plurals.statisticsKcal,stringedWalks.size(),stringedWalks.size()));
+                        report2.setText(getResources().getQuantityString(R.plurals.statsticsKm,stringedWalks.size(),stringedWalks.size()));
 
                         String[] daysArray = new String[UserStatistics.this.days.size()];
                         daysArray = UserStatistics.this.days.toArray(daysArray);
@@ -195,13 +200,18 @@ public class UserStatistics extends AppCompatActivity {
         });
     }
 
+    /**
+     * Metodo che riporta l'utente alla home
+     */
     private void goHome() {
-        final Intent intent = new Intent(this, UserView.class);
-        User user = new User();
+        final Intent intent = new Intent(this, UserView.class);;
         intent.putExtra("UID", UID);
         startActivity(intent);
     }
 
+    /**
+     * Metodo che sposta il controllo alla UserMapView
+     */
     private void goToUserViewMap() {
         final Intent intent = new Intent(UserStatistics.this, UserMapView.class);
         intent.putExtra("UID", UID);
@@ -210,6 +220,14 @@ public class UserStatistics extends AppCompatActivity {
         intent.putExtra("longitude",longitude);
         startActivity(intent);
     }
+
+    /**
+     * Metodo che dati in input i vari array setta le barre dell'istogramma
+     * @param dailyKm
+     * @param dailyKcal
+     * @param dailySteps
+     * @param days
+     */
     private void setBarChart(ArrayList<BarEntry> dailyKm, ArrayList<BarEntry> dailyKcal, ArrayList<BarEntry> dailySteps, String[] days){
 
         BarDataSet steps = new BarDataSet(dailySteps,"Passi giornalieri");
@@ -263,6 +281,12 @@ public class UserStatistics extends AppCompatActivity {
         kmBarChart.setVisibleXRangeMaximum(3);
         kmBarChart.invalidate();
     }
+
+    /**
+     * Metodo che data una string in input viene restituito un oggetto di tipo walk contenente il numero dei passi della camminata e la data di rilevazione
+     * @param info
+     * @return
+     */
     private Walk getWalkInfoFromString(String info){
         String[] todayAndSteps =info.split(",");
         Walk walk =new Walk();
@@ -270,6 +294,13 @@ public class UserStatistics extends AppCompatActivity {
         walk.setNumberOfSteps(todayAndSteps[1]);
         return walk;
     }
+
+    /**
+     * Metodo per il calcolo dei km data l'altezza utente e il numero dei passi
+     * @param height
+     * @param steps
+     * @return
+     */
     private float calculateKilometers(int height,long steps){
         float meters;
         if(height<170){
@@ -281,6 +312,13 @@ public class UserStatistics extends AppCompatActivity {
         Log.d("km",kilometers+"");
         return kilometers;
     }
+
+    /**
+     * Metodo per calcolare le calorie bruciate in base al peso utente e al numero di passi
+     * @param weight
+     * @param steps
+     * @return
+     */
     private int calculateKcal(int weight,long steps){
         int kcal;
         Log.d("weight",weight+"");
@@ -288,6 +326,12 @@ public class UserStatistics extends AppCompatActivity {
         Log.d("kcal",kcal+"");
         return kcal;
     }
+
+    /**
+     * Metodo che restituisce una data in un determinato formato dati i millisecondi in input
+     * @param milliseconds
+     * @return
+     */
     private String millisecondsToDate(String milliseconds){
         if(milliseconds!=null){
             DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");

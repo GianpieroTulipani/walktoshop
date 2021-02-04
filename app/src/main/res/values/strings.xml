@@ -101,4 +101,7 @@
     //FragmentMapBackdrop
     <string name="discount_list">Lista sconti disponibili</string>
     <string name="no_discount_available">Nessuno sconto disponibile</string>
+    //Statistics
+
+
 </resources>

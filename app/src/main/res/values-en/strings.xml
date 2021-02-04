@@ -1,5 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WalkToShop</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_exit">Exit</string>
+    <string name="search">search</string>
+    <string name="content_description_search">content</string>
+    <string name="action_home">home</string>
+    <string name="action_map">map</string>
+    <string name="action_statistics">statistics</string>
+    <string name="action_discount">my discounts</string>
+    <string name="action_notification">notifications</string>
+    <string name="action_search">search</string>
+    <string name="snackbar_message">Loading bar for discount code entry</string>
+    <string name="snackbar_action">CLOSE</string>
+    <string name="user">User</string>
+    <string name="seller">Seller</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confPassword">Confirm Password</string>
+    <string name="register">Sign in</string>
+    <string name="emailOrPassWrong">WRONG EMAIL OR PASSWORD</string>
+    <string name="emailEmpty">Enter email</string>
+    <string name="passwordEmpty">Enter password</string>
+    <string name="WrongPasswordFormat">The password must be at least 8 characters long and enter at least: a lowercase letter, an uppercase letter, a special character [@, #, $,%, amp;,?,!, _] And a number</string>
+    <string name="usernameEmpty">Enter username</string>
+    <string name="heightEmpty">Enter height</string>
+    <string name="weightEmpty">Enter weight</string>
+    <string name="wrongHeight">enter a height between 100cm and 278cm</string>
+    <string name="wrongWeight">enter a weight between 40kg and 250kg</string>
+    <string name="numStepsEmpty">Enter number of steps</string>
+    <string name="InvalidPassword">Invalid password</string>
+    <string name="EqualPassword">Password does not match</string>
+    <string name="InvalidEmail">Invalid email</string>
+    <string name="InvalidUsername">Invalid password</string>
+    <string name="emailExists">Email already exists</string>
+    <string name="usernameExists">Username already exists</string>
+    <string name="weight">Weight</string>
+    <string name="height">Height</string>
+    <string name="InvalidWeight">wrong weight format</string>
+    <string name="InvalidHeight">wrong height format</string>
+    <string name="title_activity_seller_maps_view">Map</string>
+    <string name="numStepsNotValid">Invalid number of steps</string>
+    <string name="notRegistered">Are you not registered? Click here!</string>
+    <string name="alreadyRegistered">Are you already registered? Click here!</string>
+    <string name="RegistrationSuccess">Registration successful!</string>
+    <string name="InvalidDescription">Invalid description</string>
+    <string name="InvalidDateFormat">Incorrect Date Format</string>
+    <string name="InvalidDate">Wrong date</string>
+    <string name="EmptyDate">Enter expiration date</string>
+    <string name="NotADay">Day does not exist</string>
+    <string name="NotAMonth">Month does not exist</string>
+    <string name="NotAYearFree">Wrong year</string>
+    //framgent_manageDiscount
+    <string name="disocuntsQuantity">Steps to take for the discount</string>
+    <string name="percentage">Percentage</string>
+    <string name="description">Description</string>
+    <string name="expiringDate">Expiration date</string>
+    <string name="add">Add</string>
+    //dialog
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">Ok</string>
+    <string name="businessNotFound">Sorry! Location not found. Please try again</string>
+    <string name="emptyBusiness">You have no business! To register one click the button at the bottom right!</string>
+    <string name="DialogFirstTime">You have just activated the steps counter, this applies to all your discounts in the Home. To have an accurate detection, place the device in your pocket, do your walks and at the end remember to deactivate it to see your results !!</string>
+    <string name="action_stepcounter">Steps counter</string>
+    <string name="addBusinessDialog">Click on the marker in red to confirm the entry of the activity</string>
+    //networkcontroller
+    <string name="connect">Connect</string>
+    <string name="Undo">Cancel</string>
+    <string name="internetFail">Internet connection too weak or absent.</string>
+    //manageDiscount
+    <string name="correctInfo">Successful discount entry!</string>
+    <string name="expiringDialog">Expiration date(dd/mm/yyyy)</string>
+    <string name="notSupportedVersion">Enter the date manually, as your device version does not support automatic entry through calendar</string>
+    <string name="dateFormat">Respect format: dd/mm/yyyy</string>
+    <string name="stepRange">Enter a number of steps between 2000 and 100000</string>
+    <string name="invalidDate">Invalid date</string>
+    //SellerView
+    <string name="noActivity">No business recorded</string>
+    <string name="discount"> Discounts </string>
+    <string name="noDiscount">No discount available</string>
+    //CardView
+    <string name="share">Here is the discount code that was given to you:</string>
+    <string name="hereDiscount">"Here is your discount code:"</string>
+    //UserMapView
+    <string name="allert_discount_creation">A new discount has been added!</string>
+    <string name="allert_click_on_marker">Click on the red marks on the map to discover more.</string>
+    //UserView
+    <string name="loading">Position detection in progress</string>
+    <string name="noDiscountActive">No discount activated</string>
+    <string name="addedDiscount">Discount added successfully</string>
+    <string name="easy">Easy</string>
+    <string name="mediumDifficulty">Medium difficulty</string>
+    <string name="difficult">Hard</string>
+    <string name="deletedDiscount">Discount deleted</string>
+    <string name="denyLocalization">By denying the geolocation you will not be able to fully use this app</string>
+    <string name="permission">Geolocation permission</string>
+    //SellerMapView
+    <string name="allert_business_exist">Existing business, enter another one.</string>
+    //FragmentMapBackdrop
+    <string name="discount_list">Discount list available</string>
+    <string name="no_discount_available">No discount available</string>
 
 </resources>

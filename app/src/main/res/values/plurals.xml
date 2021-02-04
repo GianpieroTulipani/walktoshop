@@ -13,9 +13,9 @@
         <item quantity="other">%d rilevazioni relative alle Kcal giornaliere</item>
     </plurals>
     <plurals name="statsticsKm">
-        <item  quantity="zero">%d rilevazioni relative alle Km giornalieri</item>
-        <item  quantity="one">%d rilevazione relativa alle Km giornalieri</item>
-        <item  quantity="two">%d rilevazioni relative alle Km giornalieri</item>
-        <item  quantity="other">%d rilevazioni relative alle Km giornalieri</item>
+        <item  quantity="zero">%d rilevazioni relative ai Km giornalieri</item>
+        <item  quantity="one">%d rilevazione relativa ai Km giornalieri</item>
+        <item  quantity="two">%d rilevazioni relative ai Km giornalieri</item>
+        <item  quantity="other">%d rilevazioni relative ai Km giornalieri</item>
     </plurals>
 </resources>

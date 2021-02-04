@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <plurals name="statisticsStepsr">
-        <item quantity="zero">%d rilevazioni relativa ai passi giornalieri</item>
+        <item quantity="zero">%d rilevazioni relative ai passi giornalieri</item>
         <item quantity="one">%d rilevazione relativa ai passi giornalieri</item>
-        <item quantity="two">%d rilevazioni relativa ai passi giornalieri</item>
-        <item quantity="other">%d rilevazioni relativa ai passi giornalieri</item>
+        <item quantity="two">%d rilevazioni relative ai passi giornalieri</item>
+        <item quantity="other">%d rilevazioni relative ai passi giornalieri</item>
     </plurals>
     <plurals name="statisticsKcal">
-        <item quantity="zero">%d rilevazioni relativa alle Kcal giornaliere</item>
+        <item quantity="zero">%d rilevazioni relative alle Kcal giornaliere</item>
         <item quantity="one">%d rilevazione relativa alle Kcal giornaliere</item>
-        <item quantity="two">%d rilevazioni relativa alle Kcal giornaliere</item>
-        <item quantity="other">%d rilevazioni relativa alle Kcal giornaliere</item>
+        <item quantity="two">%d rilevazioni relative alle Kcal giornaliere</item>
+        <item quantity="other">%d rilevazioni relative alle Kcal giornaliere</item>
     </plurals>
     <plurals name="statsticsKm">
-        <item  quantity="zero">%d rilevazioni relativa alle Km giornalieri</item>
+        <item  quantity="zero">%d rilevazioni relative alle Km giornalieri</item>
         <item  quantity="one">%d rilevazione relativa alle Km giornalieri</item>
-        <item  quantity="two">%d rilevazioni relativa alle Km giornalieri</item>
-        <item  quantity="other">%d rilevazioni relativa alle Km giornalieri</item>
+        <item  quantity="two">%d rilevazioni relative alle Km giornalieri</item>
+        <item  quantity="other">%d rilevazioni relative alle Km giornalieri</item>
     </plurals>
 </resources>

@@ -404,7 +404,6 @@ public class UserView extends AppCompatActivity {
             public void onLocationChanged(@NonNull Location location) {
                 latitude=location.getLatitude();
                 longitude=location.getLongitude();
-                Log.d("coordinates",latitude+"\n"+longitude);
                 try {
                     Geocoder geocoder=new Geocoder(UserView.this);
                     List<Address> addresses=new ArrayList<>();

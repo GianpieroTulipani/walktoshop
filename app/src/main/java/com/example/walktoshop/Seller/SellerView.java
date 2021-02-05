@@ -174,7 +174,7 @@ public class SellerView extends AppCompatActivity {
                             if (document.exists()) {
                                 discountUID=(ArrayList) document.get("discountUID");
                                 String name = document.getString("name");
-                                scontiAttivita.setText(getResources().getString(R.string.discount) + name + ":");
+                                scontiAttivita.setText(getResources().getString(R.string.discount) + " " + name + ":");
                                 if(discountUID!=null && !discountUID.isEmpty()){
                                     //se l'attività possiede degli sconti parte la query per l'estrazione degli uid relativi
                                     getDiscounts();

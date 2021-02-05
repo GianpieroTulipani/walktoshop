@@ -256,7 +256,7 @@ public class UserStatistics extends AppCompatActivity {
         xAxisKcal.setGranularity(1);
         xAxisKcal.setGranularityEnabled(true);
         kcalBarChart.setDragEnabled(true);
-        kcalBarChart.setVisibleXRangeMaximum(3);
+        kcalBarChart.setVisibleXRangeMaximum(7);
         kcalBarChart.invalidate();
 
         BarData data = new BarData(steps);
@@ -268,7 +268,7 @@ public class UserStatistics extends AppCompatActivity {
         xAxis.setGranularity(1);
         xAxis.setGranularityEnabled(true);
         barChart.setDragEnabled(true);
-        barChart.setVisibleXRangeMaximum(3);
+        barChart.setVisibleXRangeMaximum(7);
         barChart.invalidate();
 
         BarData barDataKm = new BarData(km);
@@ -280,7 +280,7 @@ public class UserStatistics extends AppCompatActivity {
         xAxisKm.setGranularity(1);
         xAxisKm.setGranularityEnabled(true);
         kmBarChart.setDragEnabled(true);
-        kmBarChart.setVisibleXRangeMaximum(3);
+        kmBarChart.setVisibleXRangeMaximum(7);
         kmBarChart.invalidate();
     }
 

@@ -43,7 +43,7 @@
                 android:id="@+id/userImage"
                 android:layout_width="match_parent"
                 android:layout_gravity="center"
-                android:layout_height="150dp"
+                android:layout_height="140dp"
                 android:src="@drawable/_707919"/>
 
         </LinearLayout>
@@ -72,8 +72,9 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textStyle="bold"
+                    android:layout_gravity="center"
                     android:text="@string/activediscount"
-                    android:textAppearance="?attr/textAppearanceHeadline4"/>
+                    android:textAppearance="?attr/textAppearanceHeadline5"/>
             </LinearLayout>
 
 

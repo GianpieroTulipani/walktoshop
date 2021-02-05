@@ -103,14 +103,13 @@
     <string name="allert_business_exist">Attività già esistente, inseriscine un\'altra.</string>
     //FragmentMapBackdrop
     <string name="discount_list">Lista sconti disponibili</string>
-    <string name="no_discount_available">Nessuno sconto disponibile</string>
+    <string name="no_discount_available">Nessuno sconto disponibile </string>
     <string name="expiringd">scadenza :</string>
     <string name="exp">Scaduto</string>
     //Statistics
     <string name="dailysteps">Passi giornalieri</string>
     <string name="dailykilocal">Kcal giornaliere</string>
     <string name="dailymeters">Metri giornalieri</string>
-
 
 
 </resources>

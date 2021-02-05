@@ -73,6 +73,7 @@ public class SellerView extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startManageDiscount();
+                alert.setVisibility(View.INVISIBLE);
             }
         });
         progressBar=findViewById(R.id.sellerViewProgressBar);
@@ -96,20 +97,6 @@ public class SellerView extends AppCompatActivity {
         }
         //query al db che controlla se il venditore è in possesso di un 'attività e in tal caso ne prende gli sconti con delle query innestrate
         getSellerBusinessUID();
-        if(businessUID == null){
-            businessUID = new ArrayList<String>();
-        }else if(businessUID.size()<= 0){
-            addActivityButton.setVisibility(View.VISIBLE);
-            discountImage.setVisibility(View.GONE);
-            scontiAttivita.setVisibility(View.GONE);
-            alert.setText("Nessuna attività registrata");
-            addActivityButton.setVisibility(View.VISIBLE);
-            mFab.setVisibility(View.GONE);
-        }else if(discountUID==null){
-            addActivityButton.setVisibility(View.INVISIBLE);
-        }else if(discountUID.isEmpty()){
-            addActivityButton.setVisibility(View.INVISIBLE);
-        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu){
@@ -126,8 +113,8 @@ public class SellerView extends AppCompatActivity {
         }
     }
     /**
-    Metodo che verifica se il venditore è già in possesso di un'attività in tal caso la query prosegue altrimenti
-    gli viene notificata l'assenza dell'attività
+     Metodo che verifica se il venditore è già in possesso di un'attività in tal caso la query prosegue altrimenti
+     gli viene notificata l'assenza dell'attività
      */
     private void getSellerBusinessUID(){
         if(UID!=null){
@@ -143,7 +130,15 @@ public class SellerView extends AppCompatActivity {
                             //in caso l'attività ci sia vengono estratti dal db i relativi sconti
                             getBusiness();
                             progressBar.setVisibility(View.INVISIBLE);
-                        }else{
+                        } else if(businessUID == null){
+                            alert.setText(getResources().getString(R.string.noActivity));
+                            businessUID = new ArrayList<String>();
+                        }
+                        if(businessUID.isEmpty()) {
+                            addActivityButton.setVisibility(View.VISIBLE);
+                            discountImage.setVisibility(View.GONE);
+                            scontiAttivita.setVisibility(View.GONE);
+                            mFab.setVisibility(View.GONE);
                             alert.setText(getResources().getString(R.string.noActivity));
                             addActivityButton.setVisibility(View.VISIBLE);
                             progressBar.setVisibility(View.INVISIBLE);
@@ -154,7 +149,7 @@ public class SellerView extends AppCompatActivity {
         }
     }
     /**
-    Metodo che prende gli id degli sconti e della relativa attività per poi passarli nel ViewAdapter,inoltre sono settate alcune
+     Metodo che prende gli id degli sconti e della relativa attività per poi passarli nel ViewAdapter,inoltre sono settate alcune
      importanti informazioni quali il nome dell'attività di modo che l'interfaccia sia più user friendly per il venditore e la descrizione sconto
      */
     private void getBusiness(){
@@ -175,6 +170,9 @@ public class SellerView extends AppCompatActivity {
                                 discountUID=(ArrayList) document.get("discountUID");
                                 String name = document.getString("name");
                                 scontiAttivita.setText(getResources().getString(R.string.discount) + " " + name + ":");
+                                if(discountUID == null){
+                                    discountUID = new ArrayList<>();
+                                }
                                 if(discountUID!=null && !discountUID.isEmpty()){
                                     //se l'attività possiede degli sconti parte la query per l'estrazione degli uid relativi
                                     getDiscounts();
@@ -183,8 +181,15 @@ public class SellerView extends AppCompatActivity {
                                     altrimenti viene settato l'adapter con un array vuoto e con l'utilizzo "sellerhome" questo consentirà al ViewAdapter
                                     di essere riusabile e di effettuare al suo interno un gioco di visibilità
                                      */
-                                    alert.setText(getResources().getString(R.string.noDiscount));
-                                    alert.setVisibility(View.VISIBLE);
+                                    if(discountUID == null && discountUID.isEmpty()){
+                                        addActivityButton.setVisibility(View.INVISIBLE);
+                                    }
+                                    if(discountArray.isEmpty()){
+                                        alert.setText(getResources().getString(R.string.noDiscount));
+                                        alert.setVisibility(View.VISIBLE);
+                                    } else {
+                                        alert.setVisibility(View.GONE);
+                                    }
                                     final ViewAdapter adapter=new ViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
                                     listView.setAdapter(adapter);
                                 }
@@ -202,30 +207,30 @@ public class SellerView extends AppCompatActivity {
      */
     private void getDiscounts(){
         discountArray.clear();
-            for(int k=0;k<discountUID.size();k++){
-                db.collection("sconti").document(discountUID.get(k)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if(task.isSuccessful()){
-                            Discount discount=new Discount();
-                            DocumentSnapshot document=task.getResult();
-                            discount.setUID(document.getString("uid"));
-                            discount.setBusinessUID(document.getString("businessUID"));
-                            discount.setStartDiscountDate(document.getString("startDiscountDate"));
-                            discount.setExpiringDate(document.getString("expiringDate"));
-                            discount.setDescription(document.getString("description"));
-                            discount.setDiscountsQuantity(document.getString("discountsQuantity"));
-                            discountArray.add(discount);
-                        }
+        for(int k=0;k<discountUID.size();k++){
+            db.collection("sconti").document(discountUID.get(k)).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful()){
+                        Discount discount=new Discount();
+                        DocumentSnapshot document=task.getResult();
+                        discount.setUID(document.getString("uid"));
+                        discount.setBusinessUID(document.getString("businessUID"));
+                        discount.setStartDiscountDate(document.getString("startDiscountDate"));
+                        discount.setExpiringDate(document.getString("expiringDate"));
+                        discount.setDescription(document.getString("description"));
+                        discount.setDiscountsQuantity(document.getString("discountsQuantity"));
+                        discountArray.add(discount);
                     }
-                }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        final ViewAdapter adapter=new ViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
-                        listView.setAdapter(adapter);
-                    }
-                });
-            }
+                }
+            }).addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    final ViewAdapter adapter=new ViewAdapter(SellerView.this,discountArray, UID,businessUID,"sellerHome");
+                    listView.setAdapter(adapter);
+                }
+            });
+        }
     }
     /**
      * Metodo che rimanda all'activity SellerMapView passando l'id del venditore per effettuare le query

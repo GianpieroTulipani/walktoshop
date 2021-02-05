@@ -236,6 +236,10 @@ public class UserView extends AppCompatActivity {
                                 discount.setDiscountsQuantity(document.getString("discountsQuantity"));
                                 discount.setStartDiscountDate(document.getString("startDiscountDate"));
                                 discount.setDescription(document.getString("description"));
+                                /*
+                                L'utente quando lo sconto scade non lo vede più,dovrà essere eliminato dal relativo venditore
+                                che l'ha pubblicato
+                                 */
                                 if(Long.parseLong(discount.getExpiringDate()) > Calendar.getInstance().getTimeInMillis()) {
                                     myDiscounts.add(discount);
                                 }

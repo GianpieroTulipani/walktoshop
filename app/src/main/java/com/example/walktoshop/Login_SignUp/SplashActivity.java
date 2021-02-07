@@ -77,8 +77,10 @@ public class SplashActivity extends AppCompatActivity {
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                     if(documentSnapshot.exists()) {
                         goSellerViewActivity();
+                        finish();
                     }else{
                         goUserViewActivity();
+                        finish();
                     }
                 }
             });

@@ -91,7 +91,7 @@ public class LogIn extends AppCompatActivity {
 
     /**
      * All'interno del metodo onStart() viene effettuato un controllo sulla connessione
-     * e un controllo per quanto riguarda il currentUser, ovvero se l'utente quando è entrato nell'applicazione
+     * e un controllo per quanto riguarda il currentUser, ovvero se l'utente quando è entrato nell'applicazione e
      * non ha effettuato il LogOut, l'utente nel momento in cui riapre l'app viene rispedito nella rispettiva home
      * altrimenti viene lasciato nel LogIn
      */

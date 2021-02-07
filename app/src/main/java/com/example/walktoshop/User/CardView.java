@@ -194,17 +194,29 @@ public class CardView extends AppCompatActivity {
                 goalStepRatio.setText(goal+"/"+goal);
                 discountTitle.setText(getResources().getString(R.string.hereDiscount));
                 code.setText(discountCode);
+
+                progressBar.setProgress((int)percentage);//viene settata la percentuale anche nella progress bar per dare un feed di avanzamento
+                float km=calculateKilometers(Integer.parseInt(CardView.this.userHeight), goal);
+                kilometers.setText(km+" Km");
+                int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),goal);
+                kcal.setText(calories+" Kcal");
                 //viene scritto che lo sconto è completato su file
                 writeInSharedPref(d.getUID());
                 shareButton.setVisibility(View.VISIBLE);
             }else{
                 goalStepRatio.setText(totalSteps+"/"+goal);
+
+                progressBar.setProgress((int)percentage);//viene settata la percentuale anche nella progress bar per dare un feed di avanzamento
+                float km=calculateKilometers(Integer.parseInt(CardView.this.userHeight), totalSteps);
+                kilometers.setText(km+" Km");
+                int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),totalSteps);
+                kcal.setText(calories+" Kcal");
             }
-            progressBar.setProgress((int)percentage);//viene settata la percentuale anche nella progress bar per dare un feed di avanzamento
+            /*progressBar.setProgress((int)percentage);//viene settata la percentuale anche nella progress bar per dare un feed di avanzamento
             float km=calculateKilometers(Integer.parseInt(CardView.this.userHeight), totalSteps);
             kilometers.setText(km+" Km");
             int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),totalSteps);
-            kcal.setText(calories+" Kcal");
+            kcal.setText(calories+" Kcal");*/
         }
     }
 

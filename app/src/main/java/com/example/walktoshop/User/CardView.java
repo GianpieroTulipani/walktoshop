@@ -212,11 +212,6 @@ public class CardView extends AppCompatActivity {
                 int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),totalSteps);
                 kcal.setText(calories+" Kcal");
             }
-            /*progressBar.setProgress((int)percentage);//viene settata la percentuale anche nella progress bar per dare un feed di avanzamento
-            float km=calculateKilometers(Integer.parseInt(CardView.this.userHeight), totalSteps);
-            kilometers.setText(km+" Km");
-            int calories=calculateKcal(Integer.parseInt(CardView.this.userWeight),totalSteps);
-            kcal.setText(calories+" Kcal");*/
         }
     }
 

@@ -61,7 +61,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="ok">Ok</string>
-    <string name="businessNotFound">Sorry! Location not found. Please try again</string>
+    <string name="businessNotFound">Sorry! Location not found. Please try again, by entering the name in the following format "Business name, Business city"</string>
     <string name="emptyBusiness">You have no business! To register one click the button at the bottom right!</string>
     <string name="DialogFirstTime">You have just activated the steps counter, this applies to all your discounts in the Home. To have an accurate detection, place the device in your pocket, do your walks and at the end remember to deactivate it to see your results !!</string>
     <string name="action_stepcounter">Steps counter</string>

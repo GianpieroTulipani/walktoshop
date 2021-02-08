@@ -65,6 +65,8 @@ public class UserMapView extends AppCompatActivity implements GoogleMap.OnMarker
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_map_view);
 
+        getSupportActionBar().setTitle(R.string.map);
+
         cache=getSharedPref();//viene preso il numero di sconti precedentemente visibile all'interno della mappa
 
 

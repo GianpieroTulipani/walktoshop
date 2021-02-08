@@ -111,5 +111,11 @@
     <string name="dailykilocal">Kcal giornaliere</string>
     <string name="dailymeters">Metri giornalieri</string>
 
+    <string name="chose_business">Seleziona Attività</string>
+    <string name="add_discount">Aggiunta Sconto</string>
+    <string name="discount_detail">Dettaglio Sconto</string>
+    <string name="map">Mappa</string>
+    <string name="statistics">Statistiche</string>
+
 
 </resources>

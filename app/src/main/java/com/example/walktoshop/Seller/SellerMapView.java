@@ -1,7 +1,9 @@
 package com.example.walktoshop.Seller;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.app.AlertDialog;
@@ -35,7 +37,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SellerMapView extends FragmentActivity implements OnMapReadyCallback {
+public class SellerMapView extends AppCompatActivity implements OnMapReadyCallback {
 
     FirebaseFirestore db=FirebaseFirestore.getInstance();
     private GoogleMap mMap;
@@ -51,6 +53,8 @@ public class SellerMapView extends FragmentActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_map_view);
+
+        getSupportActionBar().setTitle(R.string.chose_business);
 
         //riceve l'intent contenente l'identificatore univoco dell'utente
         Intent intent = getIntent();

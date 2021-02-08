@@ -131,6 +131,10 @@
         <item  quantity="other">%d measurements relating to Km steps</item>
     </plurals>
 
-
+    <string name="chose_business">Select Business</string>
+    <string name="add_discount">Discount added</string>
+    <string name="discount_detail">Discount Detail</string>
+    <string name="map">Map</string>
+    <string name="statistics">Statistics</string>
 
 </resources>

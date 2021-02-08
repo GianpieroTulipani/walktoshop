@@ -73,6 +73,9 @@ public class UserStatistics extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_statistics);
+
+        getSupportActionBar().setTitle(R.string.statistics);
+
         Intent intent = getIntent();
         /*
         Vengono prese le informazioni necessarie per effettuare le query

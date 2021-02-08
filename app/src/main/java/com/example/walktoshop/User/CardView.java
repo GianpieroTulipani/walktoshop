@@ -55,6 +55,7 @@ public class CardView extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_view);
+        getSupportActionBar().setTitle(R.string.discount_detail);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         //inizializzazione elementi presenti nel layout activity_cardview.xml

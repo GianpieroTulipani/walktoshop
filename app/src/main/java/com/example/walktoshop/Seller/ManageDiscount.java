@@ -72,6 +72,7 @@ public class ManageDiscount extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_managediscount);
+        getSupportActionBar().setTitle(R.string.add_discount);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         //Viene ricevuto l'uid dell'attività del venditore ,inviato tramite intent da SellerView in modo da poter fare le query sul db

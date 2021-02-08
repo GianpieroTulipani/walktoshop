@@ -35,8 +35,8 @@
     <string name="InvalidUsername">Invalid password</string>
     <string name="emailExists">Email already exists</string>
     <string name="usernameExists">Username already exists</string>
-    <string name="weight">Weight</string>
-    <string name="height">Height</string>
+    <string name="weight">Weight(Kg)</string>
+    <string name="height">Height(cm)</string>
     <string name="InvalidWeight">wrong weight format</string>
     <string name="InvalidHeight">wrong height format</string>
     <string name="title_activity_seller_maps_view">Map</string>

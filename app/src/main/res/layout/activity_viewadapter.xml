@@ -17,23 +17,23 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/imageView"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/sconti"></ImageView>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
@@ -56,20 +56,48 @@
                             android:src="@drawable/ic_green" />
                     </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/disocuntDescription"
-                        android:layout_width="210dp"
+                    <LinearLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="questa è una entuale descrizione da inserire all'interno dello sconto"
-                        android:textColor="@color/black"
-                        android:textSize="17dp"></TextView>
+                        android:orientation="horizontal">
+
+
+                        <TextView
+                            android:id="@+id/disocuntDescription"
+                            android:layout_width="210sp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:text=""
+                            android:textColor="@color/black"
+                            android:textSize="17dp"></TextView>
+
+                        <ImageButton
+                            android:id="@+id/arrow"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/white"
+                            android:visibility="visible"
+                            android:src="@drawable/ic_navigate_next_black_48dp">
+
+                        </ImageButton>
+
+                        <ImageButton
+                            android:id="@+id/addButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="right"
+                            android:background="@color/white"
+                            android:visibility="gone"
+                            android:src="@drawable/ic_add_black_48dp"/>
+
+
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="right"
+                        android:layout_gravity="left"
                         android:layout_marginLeft="20dp"
                         android:text="scadenza: 27/01/2021"
                         android:textColor="@color/black"
@@ -78,28 +106,6 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center">
-
-                    <ImageButton
-                        android:id="@+id/arrow"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:visibility="gone"
-                        android:src="@drawable/ic_navigate_next_black_48dp">
-
-                    </ImageButton>
-
-                    <ImageButton
-                        android:id="@+id/addButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white"
-                        android:src="@drawable/ic_add_black_48dp"/>
-                </LinearLayout>
             </LinearLayout>
 
             <ImageButton
@@ -111,7 +117,7 @@
                 android:background="@color/white"
                 android:src="@android:drawable/ic_menu_delete"
                 android:tint="@color/verde_maggio"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
 
         </LinearLayout>

@@ -80,6 +80,11 @@ public class UserView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_view);
+
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_launcher);
+        getSupportActionBar().setTitle("WalkToShop");
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         alert=findViewById(R.id.alert);
         alert.setVisibility(View.GONE);

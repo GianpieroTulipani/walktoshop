@@ -25,6 +25,7 @@
                 android:text="WalkToShop"
                 android:textAlignment="center"
                 android:textSize="55dp"
+                android:fontFamily="cursive"
                 android:textColor="@color/verde_maggio"
                 android:textStyle="bold"
                 android:layout_marginTop="20dp"

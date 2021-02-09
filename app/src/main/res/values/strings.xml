@@ -116,6 +116,7 @@
     <string name="discount_detail">Dettaglio Sconto</string>
     <string name="map">Mappa</string>
     <string name="statistics">Statistiche</string>
+    <string name="queryHint">Nome attività, Città</string>
 
 
 </resources>

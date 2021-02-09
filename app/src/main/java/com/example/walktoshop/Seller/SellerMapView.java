@@ -77,6 +77,8 @@ public class SellerMapView extends AppCompatActivity implements OnMapReadyCallba
          * ottiene la latitudine e la longitudine dell'attività altrimenti se la stringa digitata è vuota, non esiste oppure è stata digitata un attività già esistente
          * verra mostrato un dialog che avvisa l'utente dell'errore commesso.
          */
+        search.setIconified(false);
+        search.setQueryHint(getResources().getString(R.string.queryHint));
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {

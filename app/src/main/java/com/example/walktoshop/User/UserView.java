@@ -2,8 +2,10 @@ package com.example.walktoshop.User;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
@@ -83,7 +85,6 @@ public class UserView extends AppCompatActivity {
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.drawable.ic_launcher);
-        getSupportActionBar().setTitle("WalkToShop");
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         alert=findViewById(R.id.alert);

@@ -52,6 +52,9 @@ public class SellerView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seller_view);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_launcher);
+
         alert = (TextView) findViewById(R.id.alertSeller);
         addActivityButton=(FloatingActionButton)findViewById(R.id.addBusinessFab);
         scontiAttivita = (TextView) findViewById(R.id.scontiAttivita);

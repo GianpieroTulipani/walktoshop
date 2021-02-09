@@ -189,10 +189,16 @@ public class UserStatistics extends AppCompatActivity {
                             }
                         }
                         if(stringedWalks != null){
-                            //plurals
-                            report.setText(getResources().getQuantityString(R.plurals.statisticsStepsr,stringedWalks.size(),stringedWalks.size()));
-                            report1.setText(getResources().getQuantityString(R.plurals.statisticsKcal,stringedWalks.size(),stringedWalks.size()));
-                            report2.setText(getResources().getQuantityString(R.plurals.statsticsKm,stringedWalks.size(),stringedWalks.size()));
+                            if(stringedWalks.size() >= 7){
+                                report.setText(getResources().getQuantityString(R.plurals.statisticsStepsr,stringedWalks.size(),7));
+                                report1.setText(getResources().getQuantityString(R.plurals.statisticsKcal,stringedWalks.size(), 7));
+                                report2.setText(getResources().getQuantityString(R.plurals.statsticsKm,stringedWalks.size(),7));
+                            } else {
+                                //plurals
+                                report.setText(getResources().getQuantityString(R.plurals.statisticsStepsr,stringedWalks.size(),stringedWalks.size()));
+                                report1.setText(getResources().getQuantityString(R.plurals.statisticsKcal,stringedWalks.size(),stringedWalks.size()));
+                                report2.setText(getResources().getQuantityString(R.plurals.statsticsKm,stringedWalks.size(),stringedWalks.size()));
+                            }
                         }
 
                         String[] daysArray = new String[UserStatistics.this.days.size()];

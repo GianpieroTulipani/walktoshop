@@ -78,12 +78,12 @@
                     android:textAppearance="?attr/textAppearanceHeadline5"/>
             </LinearLayout>
 
-
             <ListView
                 android:id="@+id/homeListView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="65dp"/>
+
         </LinearLayout>
     </LinearLayout>
     <com.google.android.material.bottomnavigation.BottomNavigationView

@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +50,7 @@ public class ViewAdapter extends ArrayAdapter {
     private String UID;
     private ArrayList<String> businessUID;
     private String usage;
+    LinearLayout viewAdapter;
     FirebaseFirestore db =FirebaseFirestore.getInstance();
 
     /**
@@ -114,7 +116,6 @@ public class ViewAdapter extends ArrayAdapter {
         ImageButton arrow = (ImageButton) activity.findViewById(R.id.arrow);
         ImageView addDiscount = (ImageView) activity.findViewById(R.id.addButton);
         View card = activity.findViewById(R.id.card);
-
         /*
         A seguito se vi sono sconti dall'array passato
          */
@@ -174,6 +175,19 @@ public class ViewAdapter extends ArrayAdapter {
                     date.setText(getContext().getResources().getString(R.string.completed));
                     date.setTextColor(activity.getResources().getColor(R.color.verde_maggio));
                 }
+                viewAdapter = (LinearLayout) activity.findViewById(R.id.ViewAdapterLayout);
+                viewAdapter.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final Intent intent = new Intent(getContext(), CardView.class);
+                        Gson gson = new Gson();
+                        String jsonDiscount = gson.toJson(d);
+                        intent.putExtra("discount",jsonDiscount);
+                        Log.d("json",jsonDiscount);
+                        intent.putExtra("UID",UID);
+                        context.startActivity(intent);
+                    }
+                });
                 //freccia per i dettagli sconto in cui si passa l'oggetto di tipo sconto tramite intent
                 arrow.setOnClickListener(new View.OnClickListener() {
                     @Override

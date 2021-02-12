@@ -72,15 +72,15 @@
                             android:textColor="@color/black"
                             android:textSize="17dp"></TextView>
 
-                        <ImageButton
+                        <ImageView
                             android:id="@+id/arrow"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@color/white"
-                            android:visibility="visible"
-                            android:src="@drawable/ic_navigate_next_black_48dp">
+                            android:src="@drawable/ic_navigate_next_black_48dp"
+                            android:visibility="visible">
 
-                        </ImageButton>
+                        </ImageView>
 
                         <ImageButton
                             android:id="@+id/addButton"

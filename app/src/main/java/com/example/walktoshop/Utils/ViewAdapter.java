@@ -263,21 +263,9 @@ public class ViewAdapter extends ArrayAdapter {
      * Query di eliminazione dallo sconto dal db richiama query innestate
      */
     private void deleteDiscount(int position){
-        //getBusiness(position);
         db.collection("sconti").document(discounts.get(position).getUID())
                 .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-
-                    }
-                }).addOnCompleteListener(new OnCompleteListener<Void>() {
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast toast = Toast.makeText(getContext(),getContext().getResources().getString(R.string.deletedDiscount),Toast.LENGTH_SHORT);
@@ -302,7 +290,6 @@ public class ViewAdapter extends ArrayAdapter {
                 {   Log.d("position",position+" ");
                     DocumentSnapshot document = task.getResult();
                     ArrayList<String> discountUID = (ArrayList<String>) document.get("discountUID");
-                    discountUID.remove(position);
                     Log.d("discountUID", discountUID.size()+" ");
                     updateBusiness(discountUID,position);
                 }else{
@@ -348,6 +335,7 @@ public class ViewAdapter extends ArrayAdapter {
                 if(task.isSuccessful())
                 {   //effettiva elimnazione sconto dal db
                     deleteDiscount(position);
+                    discountUID.remove(position);
                 }
             }
         });

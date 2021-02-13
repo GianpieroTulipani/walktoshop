@@ -146,7 +146,7 @@ public class FragmentUserMapBackDrop extends Fragment {
      */
     private void getDiscounts(ArrayList<String> discountUID, ArrayList<String> userDisUID){
 
-        for(int i=0;i<discountUID.size();i++){
+        for(int i=0; i<discountUID.size(); i++){
             if(!userDisUID.contains(discountUID.get(i))){
                 disUID.add(discountUID.get(i));
             }
@@ -187,6 +187,9 @@ public class FragmentUserMapBackDrop extends Fragment {
 
                 }
             });
+        }
+        if(disUID.isEmpty() || disUID == null){
+            discountDescription.setText(R.string.no_discount_available);
         }
     }
 

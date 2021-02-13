@@ -130,7 +130,7 @@ public class ViewAdapter extends ArrayAdapter {
             if(stringedGoal != null){
                 int goal= Integer.parseInt(stringedGoal);
                 if(goal<5000){
-                    difficulty.setText(getContext().getResources().getString(R.string.easy));
+                    difficulty.setText(getContext().getResources().getString(R.string.easy));difficultyColor.setImageResource(R.drawable.ic_green);
                 }else if(goal>=5000 && goal<=20000){
                     difficulty.setText(getContext().getResources().getString(R.string.mediumDifficulty));
                     difficultyColor.setImageResource(R.drawable.ic_yellow);

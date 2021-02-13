@@ -53,8 +53,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_gravity="center"
-                            android:layout_marginTop="1dp"
-                            android:src="@drawable/ic_green" />
+                            />
                     </LinearLayout>
 
                     <LinearLayout

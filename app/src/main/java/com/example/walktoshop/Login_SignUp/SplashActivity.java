@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.walktoshop.R;
 import com.example.walktoshop.Seller.SellerView;
 import com.example.walktoshop.User.UserView;
+import com.example.walktoshop.Utils.NetworkController;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -64,6 +65,11 @@ public class SplashActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mStartTime = SystemClock.uptimeMillis();
+        //qui viene effettuato il controllo sullo stato della connessione
+        NetworkController networkController =new NetworkController();
+        if(!networkController.isConnected(SplashActivity.this)){
+            networkController.connectionDialog(SplashActivity.this);
+        }
 
         /*qui viene effettuato il controllo sullo stato dell'utente se è ancora loggato o meno
          * il controllo viene fatto prendendo il currentUser attraverso l'mAuth e se questo non è vuoto, quindi è rimasto loggato

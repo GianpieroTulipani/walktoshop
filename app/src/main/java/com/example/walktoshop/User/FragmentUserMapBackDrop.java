@@ -171,6 +171,9 @@ public class FragmentUserMapBackDrop extends Fragment {
                                     discountArray.add(discount);
                                 } else {
                                     disUID.remove(finalK);
+                                    if(disUID.isEmpty() || disUID == null){
+                                        discountDescription.setText(R.string.no_discount_available);
+                                    }
                                 }
                             }
                         }
@@ -184,9 +187,6 @@ public class FragmentUserMapBackDrop extends Fragment {
 
                 }
             });
-        }
-        if(disUID.isEmpty() || disUID == null){
-            discountDescription.setText(R.string.no_discount_available);
         }
     }
 
